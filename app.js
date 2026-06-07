@@ -1,6 +1,6 @@
 let data = [];
 
-// ✅ PAGAIDI līdz DOM ielādēts
+// ✅ “gali” režīms (strādā arī iPhone)
 window.onload = () => {
 
   document.getElementById("length").addEventListener("change", (e) => {
@@ -15,7 +15,7 @@ window.onload = () => {
 
 };
 
-// ✅ GALVENĀ FUNKCIJA (SALABOTA)
+// ✅ PIEVIENO IERAKSTU
 function add() {
 
   const areaVal = document.getElementById("area").value.trim();
@@ -26,25 +26,25 @@ function add() {
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
 
-  // ✅ VALIDĀCIJA
   if (!areaVal) return error("Apgabals obligāts");
   if (!packagesVal) return error("Pakas obligātas");
   if (!thicknessVal) return error("Biezums obligāts");
   if (!widthVal) return error("Platums obligāts");
 
   if (!monthVal || monthVal < 1 || monthVal > 12)
-    return error("Mēnesis 1–12 obligāts");
+    return error("Mēnesis 1–12");
 
   if (!yearVal)
     return error("Gads obligāts");
 
-  let lengthVal = document.getElementById("length").value.trim().toLowerCase();
+  let rawLength = document.getElementById("length").value.trim();
+  let lengthVal = rawLength.toLowerCase();
   let piecesVal = Number(document.getElementById("pieces").value);
 
   let totalM3 = 0;
   let m3PerPack = 0;
 
-  // ✅ GALI FIX
+  // ✅ GALI režīms
   if (lengthVal === "gali") {
 
     m3PerPack = Number(document.getElementById("m3PackInput").value);
@@ -55,13 +55,13 @@ function add() {
 
   } else {
 
-    lengthVal = Number(lengthVal);
+    let lengthNum = Number(rawLength);
 
-    if (!lengthVal) return error("Garums nav pareizs");
+    if (!lengthNum) return error("Garums nav pareizs");
     if (!piecesVal) return error("Gabali pakā obligāti");
 
     m3PerPack =
-      (thicknessVal * widthVal * lengthVal * piecesVal) / 1000000000;
+      (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
 
     totalM3 = m3PerPack * packagesVal;
   }
@@ -69,10 +69,18 @@ function add() {
   const entry = {
     area: areaVal,
     packages: packagesVal,
-    total: totalM3,
-    m3Pack: m3PerPack,
+    thickness: thicknessVal,
+    width: widthVal,
+    length: rawLength,
+    pieces: piecesVal,
     month: monthVal,
     year: yearVal,
+    name: document.getElementById("name").value,
+    code: document.getElementById("productCode").value,
+    grade: document.getElementById("grade").value,
+    comment: document.getElementById("comment").value,
+    m3Pack: m3PerPack,
+    total: totalM3
   };
 
   data.push(entry);
@@ -81,8 +89,7 @@ function add() {
   render();
 }
 
-// ✅ TABULA
-
+// ✅ TABULA (tikai svarīgais preview)
 function render() {
 
   let html = `
@@ -95,9 +102,10 @@ function render() {
 
   data.forEach((e, i) => {
 
-    let size = e.length === "gali"
-      ? "gali"
-      : `${e.thickness}x${e.width}x${e.length}`;
+    let size =
+      e.length.toLowerCase() === "gali"
+        ? "gali"
+        : `${e.thickness}×${e.width}×${e.length}`;
 
     html += `
     <tr>
@@ -114,13 +122,43 @@ function render() {
   document.getElementById("table").innerHTML = html;
 }
 
+// ✅ DELETE
+function remove(i) {
+  data.splice(i, 1);
+  render();
+}
+
+// ✅ EDIT
+function edit(i) {
+  const e = data[i];
+
+  document.getElementById("area").value = e.area;
+  document.getElementById("packages").value = e.packages;
+  document.getElementById("thickness").value = e.thickness;
+  document.getElementById("width").value = e.width;
+  document.getElementById("length").value = e.length;
+  document.getElementById("pieces").value = e.pieces;
+  document.getElementById("month").value = e.month;
+  document.getElementById("year").value = e.year;
+  document.getElementById("name").value = e.name;
+  document.getElementById("productCode").value = e.code;
+  document.getElementById("grade").value = e.grade;
+  document.getElementById("comment").value = e.comment;
+
+  if (e.length.toLowerCase() === "gali") {
+    document.getElementById("m3PackInput").style.display = "block";
+    document.getElementById("m3PackInput").value = e.m3Pack;
+  }
+
+  data.splice(i, 1);
+  render();
+}
 
 // ✅ ERROR
 function error(msg) {
   document.getElementById("error").innerText = msg;
 }
 
-// ✅ CLEAR ERROR
 function clearError() {
   document.getElementById("error").innerText = "";
 }
