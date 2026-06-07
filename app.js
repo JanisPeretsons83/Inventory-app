@@ -49,6 +49,10 @@ function add() {
   let packWidth = null;
   let packLength = null;
   let packHeight = null;
+  
+document.querySelectorAll("input").forEach(i => i.value = "");
+document.getElementById("grade").value = "";
+document.getElementById("galiInputs").style.display = "none";
 
   // ✅ GALI režīms (PAKAS IZMĒRI)
   if (lengthVal === "gali") {
@@ -131,10 +135,12 @@ function render() {
       <td>${e.area}</td>
       <td>${e.packages}</td>
       <td>${size}</td>
+
       <td>
-        <button onclick="edit(${i})">✏️</button>
-        <button onclick="remove(${i})">🗑️</button>
+        <button class="action-btn" onclick="edit(${i})">✏️</button>
+        <button class="action-btn" onclick="remove(${i})">🗑️</button>
       </td>
+
     </tr>`;
   });
 
