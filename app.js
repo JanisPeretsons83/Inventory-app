@@ -185,3 +185,13 @@ function error(msg) {
 function clearError() {
   document.getElementById("error").innerText = "";
 }
+
+let tableVisible = true;
+
+function toggleTable() {
+  const t = document.getElementById("table");
+
+  tableVisible = !tableVisible;
+
+  t.style.display = tableVisible ? "table" : "none";
+}
