@@ -3,7 +3,7 @@ let data = [];
 // ✅ PAGAIDI līdz DOM ielādēts
 window.onload = () => {
 
-  document.getElementById("length").addEventListener("input", (e) => {
+  document.getElementById("length").addEventListener("change", (e) => {
     const val = e.target.value.trim().toLowerCase();
 
     if (val === "gali") {
@@ -33,7 +33,7 @@ function add() {
   if (!widthVal) return error("Platums obligāts");
 
   if (!monthVal || monthVal < 1 || monthVal > 12)
-    return error("Mēnesis 1–12");
+    return error("Mēnesis 1–12 obligāts");
 
   if (!yearVal)
     return error("Gads obligāts");
@@ -90,7 +90,7 @@ function render() {
     <th>Pakas</th>
     <th>Mēn</th>
     <th>Gads</th>
-    <th>m³/paka</th>
+    <th>m³/pakā</th>
     <th>Kopā</th>
   </tr>`;
 
