@@ -1,7 +1,5 @@
-
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Inventarizācija</title>
@@ -9,70 +7,90 @@
 <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
 
 <h2>Inventarizācija</h2>
 
-<!-- OBLIGĀTIE -->
+<!-- Apgabals -->
 <input id="area" placeholder="Apgabals *">
-<input id="packages" type="number" placeholder="Pakas *">
-<input id="thickness" type="number" placeholder="Biezums (mm) *">
-<input id="width" type="number" placeholder="Platums (mm) *">
-<input id="length" placeholder="Garums vai 'gali'">
-<input id="pieces" type="number" placeholder="Gabali pakā">
 
-<!-- JA PARĀDĀS 'gali' -->
-
-<div id="galiInputs" style="display:none">
-
-  <input id="packWidth" type="number" placeholder="Pakas platums (mm)">
-  <input id="packLength" type="number" placeholder="Pakas garums (mm)">
-  <input id="packHeight" type="number" placeholder="Pakas augstums (mm)">
-
+<!-- Pakas + datums -->
+<div class="row">
+  <input id="packages" type="number" placeholder="Pakas *">
+  <input id="month" type="number" placeholder="Mēn *">
+  <input id="year" type="number" placeholder="Gads *">
 </div>
 
+<!-- Izmēri -->
+<div class="row">
+  <input id="thickness" type="number" placeholder="Biezums *">
+  <input id="width" type="number" placeholder="Platums *">
+  <input id="length" placeholder="Garums / gali">
+</div>
 
-<!-- DATUMS -->
-<input id="month" type="number" placeholder="Mēnesis (1–12) *">
-<input id="year" type="number" placeholder="Gads *">
+<!-- GALI (pakas izmēri) -->
+<div id="galiInputs" class="row" style="display:none">
+  <input id="packWidth" type="number" placeholder="Platums">
+  <input id="packLength" type="number" placeholder="Garums">
+  <input id="packHeight" type="number" placeholder="Augstums">
+</div>
 
-<!-- PAPILDUS -->
-<input id="name" placeholder="Detaļas nosaukums">
-<input id="productCode" placeholder="Produkta kods">
+<!-- Gabali -->
+<input id="pieces" type="number" placeholder="Gabali pakā">
 
+<!-- Nosaukums + kods -->
+<div class="row">
+  <input id="name" placeholder="Detaļas nosaukums">
+  <input id="productCode" placeholder="Produkta kods">
+</div>
 
+<!-- Šķira -->
 <select id="grade">
     <option value="">-- Izvēlies šķiru --</option>
   <optgroup label="K-kods">
     <option value="K">Sakomplektēta produkcija (K)</option>
+  </optgroup>
+  
   <optgroup label="Augstākā šķira">
     <option value="A">Pilnībā gatava detaļas, pabeigtas visas operācijjas, t.sk., impregnācija (A)</option>
+  </optgroup>
+  
   <optgroup label="1. šķira">
     <option value="1a">Ēvelēti dēļi (1a)</option>
     <option value="1b">Neēvelēti, bet sagarināti dēļi (1b)</option>
     <option value="1c">Ēvelētas sagarinātas sagataves (1c)</option>
     <option value="1d">Tālākā apstrādē esošas sagataves (1d)</option>
+  </optgroup>
+  
   <optgroup label="2. šķira">
     <option value="2a">Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma  (2a)</option>
     <option value="2b">Brāķis, kuram redzam pielietojumu - varam izmantot tālākā apstrādē (2b)</option>
     <option value="2c">Brāķis, kuram nav pielietojums - iznīcināms (2c)</option>
+  </optgroup>
+  
   <optgroup label="Paletes">
     <option value="PAL">Paletes gatavai produkcijai (PAL)</option>
+  </optgroup>
+  
 </select>
 
-
+<!-- Komentārs -->
 <input id="comment" placeholder="Komentārs">
 
-<button onclick="add()">Pievienot</button>
+<!-- Pogas -->
+<button class="primary" onclick="add()">➕ Pievienot</button>
+
+<button class="secondary" onclick="toggleTable()">
+📋 Skatīt / Slēpt
+</button>
+
+<button class="primary" onclick="exportExcel()">
+📤 Saglabāt Excel
+</button>
 
 <div id="error"></div>
 
 <table id="table"></table>
-
-<button class="secondary" onclick="toggleTable()">📋 Skatīt / Slēpt</button>
-
-<button class="primary" onclick="exportExcel()">📤 Saglabāt Excel</button>
 
 <script src="app.js"></script>
 
