@@ -6,11 +6,23 @@ window.onload = () => {
   document.getElementById("length").addEventListener("change", (e) => {
     const val = e.target.value.trim().toLowerCase();
 
-    if (val === "gali") {
-      document.getElementById("m3PackInput").style.display = "block";
-    } else {
-      document.getElementById("m3PackInput").style.display = "none";
-    }
+    
+if (lengthVal === "gali") {
+
+  const pW = Number(document.getElementById("packWidth").value);
+  const pL = Number(document.getElementById("packLength").value);
+  const pH = Number(document.getElementById("packHeight").value);
+
+  if (!pW || !pL || !pH)
+    return error("Aizpildi pakas izmērus");
+
+  // ✅ m³ vienā pakā
+  m3PerPack = (pW * pL * pH) / 1000000000;
+
+  // ✅ kopējais m³
+  totalM3 = m3PerPack * packagesVal;
+}
+
   });
 
 };
