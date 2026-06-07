@@ -69,3 +69,15 @@ th {
   border-radius: 6px;
   font-size: 14px;
 }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 500px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
