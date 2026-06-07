@@ -1,21 +1,30 @@
 let data = [];
 
-// ✅ parāda/slēpj “gali” lauku
-length.addEventListener('input', () => {
-  if (length.value.trim().toLowerCase() === "gali") {
-    m3PackInput.style.display = "block";
-  } else {
-    m3PackInput.style.display = "none";
-  }
-});
+// ✅ PAGAIDI līdz DOM ielādēts
+window.onload = () => {
 
+  document.getElementById("length").addEventListener("input", (e) => {
+    const val = e.target.value.trim().toLowerCase();
+
+    if (val === "gali") {
+      document.getElementById("m3PackInput").style.display = "block";
+    } else {
+      document.getElementById("m3PackInput").style.display = "none";
+    }
+  });
+
+};
+
+// ✅ GALVENĀ FUNKCIJA (SALABOTA)
 function add() {
-  const areaVal = area.value.trim();
-  const packagesVal = Number(packages.value);
-  const thicknessVal = Number(thickness.value);
-  const widthVal = Number(width.value);
-  const monthVal = Number(month.value);
-  const yearVal = Number(year.value);
+
+  const areaVal = document.getElementById("area").value.trim();
+  const packagesVal = Number(document.getElementById("packages").value);
+  const thicknessVal = Number(document.getElementById("thickness").value);
+  const widthVal = Number(document.getElementById("width").value);
+
+  const monthVal = Number(document.getElementById("month").value);
+  const yearVal = Number(document.getElementById("year").value);
 
   // ✅ VALIDĀCIJA
   if (!areaVal) return error("Apgabals obligāts");
@@ -29,22 +38,23 @@ function add() {
   if (!yearVal)
     return error("Gads obligāts");
 
-  let lengthVal = length.value.trim().toLowerCase();
-  let piecesVal = Number(pieces.value);
+  let lengthVal = document.getElementById("length").value.trim().toLowerCase();
+  let piecesVal = Number(document.getElementById("pieces").value);
 
   let totalM3 = 0;
   let m3PerPack = 0;
 
-  // ✅ GALI režīms
+  // ✅ GALI FIX
   if (lengthVal === "gali") {
-    m3PerPack = Number(m3PackInput.value);
+
+    m3PerPack = Number(document.getElementById("m3PackInput").value);
 
     if (!m3PerPack) return error("Ievadi m³ vienā pakā");
 
     totalM3 = m3PerPack * packagesVal;
-  } 
-  // ✅ Normālais režīms
-  else {
+
+  } else {
+
     lengthVal = Number(lengthVal);
 
     if (!lengthVal) return error("Garums nav pareizs");
@@ -59,37 +69,29 @@ function add() {
   const entry = {
     area: areaVal,
     packages: packagesVal,
-    name: name.value,
-    code: productCode.value,
-    m3Pack: m3PerPack,
-    thickness: thicknessVal,
-    width: widthVal,
-    length: lengthVal,
-    pieces: piecesVal,
     total: totalM3,
+    m3Pack: m3PerPack,
     month: monthVal,
     year: yearVal,
-    grade: grade.value,
-    comment: comment.value
   };
 
   data.push(entry);
+
   clearError();
   render();
 }
 
+// ✅ TABULA
 function render() {
+
   let html = `
   <tr>
     <th>Apgabals</th>
     <th>Pakas</th>
-    <th>Nosaukums</th>
-    <th>Kods</th>
     <th>Mēn</th>
     <th>Gads</th>
-    <th>Šķira</th>
     <th>m³/paka</th>
-    <th>Kopā m³</th>
+    <th>Kopā</th>
   </tr>`;
 
   data.forEach(e => {
@@ -97,24 +99,22 @@ function render() {
     <tr>
       <td>${e.area}</td>
       <td>${e.packages}</td>
-      <td>${e.name || ""}</td>
-      <td>${e.code || ""}</td>
       <td>${e.month}</td>
       <td>${e.year}</td>
-      <td>${e.grade || ""}</td>
       <td>${e.m3Pack.toFixed(5)}</td>
       <td>${e.total.toFixed(5)}</td>
     </tr>`;
   });
 
-  table.innerHTML = html;
+  document.getElementById("table").innerHTML = html;
 }
 
+// ✅ ERROR
 function error(msg) {
   document.getElementById("error").innerText = msg;
 }
 
+// ✅ CLEAR ERROR
 function clearError() {
   document.getElementById("error").innerText = "";
 }
-``
