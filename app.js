@@ -53,6 +53,7 @@ function add() {
 document.querySelectorAll("input").forEach(i => i.value = "");
 document.getElementById("grade").value = "";
 document.getElementById("galiInputs").style.display = "none";
+document.getElementById("area").focus();
 
   // ✅ GALI režīms (PAKAS IZMĒRI)
   if (lengthVal === "gali") {
