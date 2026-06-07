@@ -30,17 +30,25 @@
 <input id="name" placeholder="Detaļas nosaukums">
 <input id="productCode" placeholder="Produkta kods">
 
+
 <select id="grade">
-<option value="">Šķira</option>
-<option value="1a">1a</option>
-<option value="1b">1b</option>
-<option value="1c">1c</option>
-<option value="1d">1d</option>
-<option value="2a">2a</option>
-<option value="2b">2b</option>
-<option value="2c">2c</option>
-<option value="PAL">PAL</option>
+  <option value="">-- Izvēlies šķiru --</option>
+
+  <option value="K">Sakomplektēta produkcija (K)</option>
+  <option value="A">Pilnībā gatava detaļas (A)</option>
+
+  <option value="1a">Ēvelēti dēļi (1a)</option>
+  <option value="1b">Neēvelēti, bet sagarināti dēļi (1b)</option>
+  <option value="1c">Ēvelētas sagarinātas sagataves (1c)</option>
+  <option value="1d">Tālākā apstrādē esošas sagataves (1d)</option>
+
+  <option value="2a">Nav konkrēta pielietojuma (2a)</option>
+  <option value="2b">Brāķis ar pielietojumu (2b)</option>
+  <option value="2c">Brāķis - iznīcināms (2c)</option>
+
+  <option value="PAL">Paletes (PAL)</option>
 </select>
+
 
 <input id="comment" placeholder="Komentārs">
 
