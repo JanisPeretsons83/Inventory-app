@@ -82,32 +82,38 @@ function add() {
 }
 
 // ✅ TABULA
+
 function render() {
 
   let html = `
   <tr>
     <th>Apgabals</th>
     <th>Pakas</th>
-    <th>Mēn</th>
-    <th>Gads</th>
-    <th>m³/pakā</th>
-    <th>Kopā</th>
+    <th>Izmērs</th>
+    <th>Darbības</th>
   </tr>`;
 
-  data.forEach(e => {
+  data.forEach((e, i) => {
+
+    let size = e.length === "gali"
+      ? "gali"
+      : `${e.thickness}x${e.width}x${e.length}`;
+
     html += `
     <tr>
       <td>${e.area}</td>
       <td>${e.packages}</td>
-      <td>${e.month}</td>
-      <td>${e.year}</td>
-      <td>${e.m3Pack.toFixed(5)}</td>
-      <td>${e.total.toFixed(5)}</td>
+      <td>${size}</td>
+      <td>
+        <button onclick="edit(${i})">✏️</button>
+        <button onclick="remove(${i})">🗑️</button>
+      </td>
     </tr>`;
   });
 
   document.getElementById("table").innerHTML = html;
 }
+
 
 // ✅ ERROR
 function error(msg) {
