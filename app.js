@@ -1,28 +1,19 @@
 let data = [];
 
-// ✅ “gali” režīms (strādā arī iPhone)
+// ✅ “gali” režīms
 window.onload = () => {
 
-  document.getElementById("length").addEventListener("change", (e) => {
+  const lengthInput = document.getElementById("length");
+  const block = document.getElementById("galiInputs");
+
+  lengthInput.addEventListener("change", (e) => {
     const val = e.target.value.trim().toLowerCase();
 
-    
-if (lengthVal === "gali") {
-
-  const pW = Number(document.getElementById("packWidth").value);
-  const pL = Number(document.getElementById("packLength").value);
-  const pH = Number(document.getElementById("packHeight").value);
-
-  if (!pW || !pL || !pH)
-    return error("Aizpildi pakas izmērus");
-
-  // ✅ m³ vienā pakā
-  m3PerPack = (pW * pL * pH) / 1000000000;
-
-  // ✅ kopējais m³
-  totalM3 = m3PerPack * packagesVal;
-}
-
+    if (val === "gali") {
+      block.style.display = "block";
+    } else {
+      block.style.display = "none";
+    }
   });
 
 };
@@ -51,23 +42,31 @@ function add() {
 
   let rawLength = document.getElementById("length").value.trim();
   let lengthVal = rawLength.toLowerCase();
-  let piecesVal = Number(document.getElementById("pieces").value);
 
   let totalM3 = 0;
   let m3PerPack = 0;
 
-  // ✅ GALI režīms
+  let packWidth = null;
+  let packLength = null;
+  let packHeight = null;
+
+  // ✅ GALI režīms (PAKAS IZMĒRI)
   if (lengthVal === "gali") {
 
-    m3PerPack = Number(document.getElementById("m3PackInput").value);
+    packWidth = Number(document.getElementById("packWidth").value);
+    packLength = Number(document.getElementById("packLength").value);
+    packHeight = Number(document.getElementById("packHeight").value);
 
-    if (!m3PerPack) return error("Ievadi m³ vienā pakā");
+    if (!packWidth || !packLength || !packHeight)
+      return error("Aizpildi pakas izmērus");
 
+    m3PerPack = (packWidth * packLength * packHeight) / 1000000000;
     totalM3 = m3PerPack * packagesVal;
 
   } else {
 
     let lengthNum = Number(rawLength);
+    let piecesVal = Number(document.getElementById("pieces").value);
 
     if (!lengthNum) return error("Garums nav pareizs");
     if (!piecesVal) return error("Gabali pakā obligāti");
@@ -84,13 +83,18 @@ function add() {
     thickness: thicknessVal,
     width: widthVal,
     length: rawLength,
-    pieces: piecesVal,
     month: monthVal,
     year: yearVal,
+
+    packWidth,
+    packLength,
+    packHeight,
+
     name: document.getElementById("name").value,
     code: document.getElementById("productCode").value,
     grade: document.getElementById("grade").value,
     comment: document.getElementById("comment").value,
+
     m3Pack: m3PerPack,
     total: totalM3
   };
@@ -101,7 +105,7 @@ function add() {
   render();
 }
 
-// ✅ TABULA (tikai svarīgais preview)
+// ✅ TABULA (tikai svarīgais)
 function render() {
 
   let html = `
@@ -114,10 +118,13 @@ function render() {
 
   data.forEach((e, i) => {
 
-    let size =
-      e.length.toLowerCase() === "gali"
-        ? "gali"
-        : `${e.thickness}×${e.width}×${e.length}`;
+    let size;
+
+    if (e.length.toLowerCase() === "gali") {
+      size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
+    } else {
+      size = `${e.thickness}×${e.width}×${e.length}`;
+    }
 
     html += `
     <tr>
@@ -142,6 +149,7 @@ function remove(i) {
 
 // ✅ EDIT
 function edit(i) {
+
   const e = data[i];
 
   document.getElementById("area").value = e.area;
@@ -149,17 +157,20 @@ function edit(i) {
   document.getElementById("thickness").value = e.thickness;
   document.getElementById("width").value = e.width;
   document.getElementById("length").value = e.length;
-  document.getElementById("pieces").value = e.pieces;
   document.getElementById("month").value = e.month;
   document.getElementById("year").value = e.year;
+
   document.getElementById("name").value = e.name;
   document.getElementById("productCode").value = e.code;
   document.getElementById("grade").value = e.grade;
   document.getElementById("comment").value = e.comment;
 
   if (e.length.toLowerCase() === "gali") {
-    document.getElementById("m3PackInput").style.display = "block";
-    document.getElementById("m3PackInput").value = e.m3Pack;
+    document.getElementById("galiInputs").style.display = "block";
+
+    document.getElementById("packWidth").value = e.packWidth;
+    document.getElementById("packLength").value = e.packLength;
+    document.getElementById("packHeight").value = e.packHeight;
   }
 
   data.splice(i, 1);
