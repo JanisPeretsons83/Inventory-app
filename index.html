@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,17 +6,52 @@
 <title>Inventory Tool</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <h2>Inventarizācija</h2>
+
+<!-- OBLIGĀTIE -->
 <input id="area" placeholder="Apgabals *">
 <input id="packages" type="number" placeholder="Pakas *">
-<input id="thickness" type="number" placeholder="Biezums *">
-<input id="width" type="number" placeholder="Platums *">
+<input id="thickness" type="number" placeholder="Biezums (mm) *">
+<input id="width" type="number" placeholder="Platums (mm) *">
+
+<!-- DATUMS -->
+<input id="month" type="number" placeholder="Mēnesis (1–12) *">
+<input id="year" type="number" placeholder="Gads *">
+
+<!-- PAPILDUS -->
+<input id="name" placeholder="Detaļas nosaukums">
+<input id="productCode" placeholder="Produkta kods">
+
 <input id="length" placeholder="Garums vai 'gali'">
 <input id="pieces" type="number" placeholder="Gabali pakā">
+
+<!-- JA PARĀDĀS 'gali' -->
+<input id="m3PackInput" type="number" step="0.00001" placeholder="m³ vienā pakā (gali gadījumā)" style="display:none">
+
+<select id="grade">
+<option value="">Šķira</option>
+<option value="1a">1a</option>
+<option value="1b">1b</option>
+<option value="1c">1c</option>
+<option value="1d">1d</option>
+<option value="2a">2a</option>
+<option value="2b">2b</option>
+<option value="2c">2c</option>
+<option value="PAL">PAL</option>
+</select>
+
+<input id="comment" placeholder="Komentārs">
+
 <button onclick="add()">Pievienot</button>
+
 <div id="error"></div>
+
 <table id="table"></table>
+
 <script src="app.js"></script>
+
 </body>
 </html>
