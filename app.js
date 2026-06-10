@@ -1,5 +1,20 @@
 let data = [];
 
+// ✅ Login
+
+let currentLocation = "";
+
+function setLocation(loc) {
+  currentLocation = loc;
+
+  localStorage.setItem("location", loc);
+
+  document.getElementById("locationSelect").style.display = "none";
+  document.getElementById("appContent").style.display = "block";
+
+  setHeaderInfo();
+}
+
 
 // ✅ PIEVIENO IERAKSTU
 function add() {
