@@ -468,21 +468,26 @@ function exportExcel() {
     "Garums": e.length,
 
     "Gabali pakā": e.pieces,
-    "m3 kopā": e.total?.toFixed(4),
+    "m3": e.total?.toFixed(4),
 
-    "Mēnesis": e.month,
-    "Gads": e.year,
+    "Mēnesis": String(e.month).padStart(2, "0"),
+    "Gads": e.year < 100 ? 2000 + e.year : e.year,
     "Šķira": e.grade,
     "Komentārs": e.comment
   }));
 
 // ✅ KOPSUMMA EXCEL
+
 rows.push({
-  "Apgabals": "Kopā",
-  "Paku skaits": totalPackages,
-  "m3 vienā pakā": "",
-  "m3 kopā": totalM3.toFixed(4)
+  "Apgabals": "Pakas kopā:",
+  "Paku skaits": totalPackages
 });
+
+rows.push({
+  "Apgabals": "m3 kopā:",
+  "m3": totalM3.toFixed(4)
+});
+
 
   // ✅ WORKSHEET
   const ws = XLSX.utils.json_to_sheet(rows);
@@ -496,16 +501,34 @@ rows.push({
   ], { origin: "A1" });
 
   // ✅ pārbīda tabulu uz leju
-  const wsData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+ 
+const headers = [
+  "Apgabals",
+  "Paku skaits",
+  "Detaļas nosaukums",
+  "Produkta kods",
+  "m3 vienā pakā",
+  "Biezums",
+  "Platums",
+  "Garums",
+  "Gabali pakā",
+  "m3",
+  "Mēnesis",
+  "Gads",
+  "Šķira",
+  "Komentārs"
+];
 
-  const finalData = [
-    [`Inventarizācija - ${location}`],
-    [`Sastādīja: ${name}`],
-    [`Datums: ${dateStr}`],
-    [],
-    Object.keys(rows[0]),
-    ...rows.map(r => Object.values(r))
-  ];
+const finalData = [
+  [`Inventarizācija - ${location}`],
+  [`Sastādīja: ${name}`],
+  [`Datums: ${dateStr}`],
+  [],
+  headers,
+  ...rows.map(r => headers.map(h => r[h] ?? ""))
+];
+
+
 
   const newWs = XLSX.utils.aoa_to_sheet(finalData);
 
