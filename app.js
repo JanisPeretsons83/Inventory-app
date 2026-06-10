@@ -348,18 +348,6 @@ window.onload = () => {
 
 };
 
-
-  // ✅ GALI toggle (IMPORTANT)
-  const lengthInput = document.getElementById("length");
-  const block = document.getElementById("galiInputs");
-
-  lengthInput.addEventListener("input", (e) => {
-    const val = (e.target.value || "").trim().toLowerCase();
-    block.style.display = val === "gali" ? "block" : "none";
-  });
-
-
-
 // ✅ ERROR
 function error(msg) {
   document.getElementById("error").innerText = msg;
