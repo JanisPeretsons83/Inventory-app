@@ -409,6 +409,88 @@ function calculateGali() {
   // ✅ IEVIETO LAUKĀ
   document.getElementById("pieces").value = piecesPerPack;
 }
+
+  //
+
+function exportExcel() {
+
+  if (data.length === 0) {
+    alert("Nav datu eksportam!");
+    return;
+  }
+
+  const location = localStorage.getItem("location") || "";
+  const name = localStorage.getItem("userName") || "";
+
+  const d = new Date();
+
+  const dateStr =
+    String(d.getDate()).padStart(2, "0") + "." +
+    String(d.getMonth() + 1).padStart(2, "0") + "." +
+    d.getFullYear();
+
+  const fileDate =
+    String(d.getDate()).padStart(2, "0") + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    d.getFullYear();
+
+  // ✅ TABULAS DATI
+  const rows = data.map(e => ({
+
+    "Apgabals": e.area,
+    "Paku skaits": e.packages,
+    "Detaļas nosaukums": e.name,
+    "Produkta kods": e.code,
+
+    "m3 vienā pakā": e.m3Pack?.toFixed(4),
+    "Biezums": e.thickness,
+    "Platums": e.width,
+    "Garums": e.length,
+
+    "Gabali pakā": e.pieces,
+    "m3 kopā": e.total?.toFixed(4),
+
+    "Mēnesis": e.month,
+    "Gads": e.year,
+    "Šķira": e.grade,
+    "Komentārs": e.comment
+  }));
+
+  // ✅ WORKSHEET
+  const ws = XLSX.utils.json_to_sheet(rows);
+
+  // ✅ HEADER INFO (augšā)
+  XLSX.utils.sheet_add_aoa(ws, [
+    [`Inventarizācija - ${location}`],
+    [`Sastādīja: ${name}`],
+    [`Datums: ${dateStr}`],
+    []
+  ], { origin: "A1" });
+
+  // ✅ pārbīda tabulu uz leju
+  const wsData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+  const finalData = [
+    [`Inventarizācija - ${location}`],
+    [`Sastādīja: ${name}`],
+    [`Datums: ${dateStr}`],
+    [],
+    Object.keys(rows[0]),
+    ...rows.map(r => Object.values(r))
+  ];
+
+  const newWs = XLSX.utils.aoa_to_sheet(finalData);
+
+  // ✅ WORKBOOK
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, newWs, "Inventarizācija");
+
+  // ✅ FAILA NOSAUKUMS
+  XLSX.writeFile(wb, `inv_${fileDate}.xlsx`);
+}
+
+  //
+
   // ✅ LOG OUT
 function endSession() {
 
