@@ -42,51 +42,40 @@ function add() {
   let avgLength = null;
 
   // ✅ GALI režīms
-  if (lengthVal === "gali") {
+  
+if (lengthVal === "gali") {
 
-    packWidth = Number(document.getElementById("packWidth").value);
-    packLength = Number(document.getElementById("packLength").value);
-    packHeight = Number(document.getElementById("packHeight").value);
-    avgLength = Number(document.getElementById("avgLength").value);
+  packWidth = Number(document.getElementById("packWidth").value);
+  packLength = Number(document.getElementById("packLength").value);
+  packHeight = Number(document.getElementById("packHeight").value);
+  avgLength = Number(document.getElementById("avgLength").value);
 
-    if (
-      packWidth <= 0 || isNaN(packWidth) ||
-      packLength <= 0 || isNaN(packLength) ||
-      packHeight <= 0 || isNaN(packHeight) ||
-      avgLength <= 0 || isNaN(avgLength)
-    ) {
-      return error("Aizpildi pakas izmērus + vidējo garumu");
-    }
-
-    m3PerPack =
-      (packWidth * packLength * packHeight) / 1000000000;
-
-    let pieceVolume =
-      (thicknessVal * widthVal * avgLength) / 1000000000;
-        
-        if (pieceVolume <= 0) return error("Nepareizs detaļas tilpums");
-      piecesPerPack = Math.floor(m3PerPack / pieceVolume);
-
-    totalM3 = m3PerPack * packagesVal;
-
-  } else {
-
-    let lengthNum = Number(rawLength);
-    let piecesVal = Number(document.getElementById("pieces").value);
-
-    if (lengthNum <= 0 || isNaN(lengthNum))
-      return error("Garums nav pareizs");
-
-    if (piecesVal <= 0 || isNaN(piecesVal))
-      return error("Gabali pakā obligāti");
-
-    piecesPerPack = piecesVal;
-
-    m3PerPack =
-      (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
-
-    totalM3 = m3PerPack * packagesVal;
+  if (
+    packWidth <= 0 || isNaN(packWidth) ||
+    packLength <= 0 || isNaN(packLength) ||
+    packHeight <= 0 || isNaN(packHeight) ||
+    avgLength <= 0 || isNaN(avgLength)
+  ) {
+    return error("Aizpildi pakas izmērus + vidējo garumu");
   }
+
+  m3PerPack =
+    (packWidth * packLength * packHeight) / 1000000000;
+
+  // ✅ JAUNA LOĢIKA
+  let crossSection = thicknessVal * widthVal;
+  let packSection = packWidth * packHeight;
+
+  let piecesInLayer = Math.floor(packSection / crossSection);
+  let layers = Math.floor(packLength / avgLength);
+
+  let efficiency = 0.7;
+
+  piecesPerPack =
+    Math.floor(piecesInLayer * layers * efficiency);
+
+  totalM3 = m3PerPack * packagesVal;
+}
 
   const entry = {
     area: areaVal,
