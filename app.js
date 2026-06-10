@@ -266,6 +266,8 @@ html += `
   <td></td>
   <td>${totalM3.toFixed(4)}</td>
 </tr>`;
+  
+};
 
   document.getElementById("table").innerHTML = html;
 }
