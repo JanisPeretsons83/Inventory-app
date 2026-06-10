@@ -1,5 +1,6 @@
 let data = [];
 
+
 // ✅ PIEVIENO IERAKSTU
 function add() {
 
@@ -42,44 +43,61 @@ function add() {
   let avgLength = null;
 
   // ✅ GALI režīms
-  
-if (lengthVal === "gali") {
+  if (lengthVal === "gali") {
 
-  packWidth = Number(document.getElementById("packWidth").value);
-  packLength = Number(document.getElementById("packLength").value);
-  packHeight = Number(document.getElementById("packHeight").value);
-  avgLength = Number(document.getElementById("avgLength").value);
-  
-  if (
-    packWidth <= 0 || isNaN(packWidth) ||
-    packLength <= 0 || isNaN(packLength) ||
-    packHeight <= 0 || isNaN(packHeight) ||
-    avgLength <= 0 || isNaN(avgLength)
-  ) {
-    return error("Aizpildi pakas izmērus + vidējo garumu");
+    packWidth = Number(document.getElementById("packWidth").value);
+    packLength = Number(document.getElementById("packLength").value);
+    packHeight = Number(document.getElementById("packHeight").value);
+    avgLength = Number(document.getElementById("avgLength").value);
+
+    if (
+      packWidth <= 0 || isNaN(packWidth) ||
+      packLength <= 0 || isNaN(packLength) ||
+      packHeight <= 0 || isNaN(packHeight) ||
+      avgLength <= 0 || isNaN(avgLength)
+    ) {
+      return error("Aizpildi pakas izmērus + vidējo garumu");
+    }
+
+    m3PerPack =
+      (packWidth * packLength * packHeight) / 1000000000;
+
+    // ✅ REĀLAIS GABALU APRĒĶINS
+    let crossSection = thicknessVal * widthVal;
+    let packSection = packWidth * packHeight;
+
+    let piecesInLayer = Math.floor(packSection / crossSection);
+    let layers = Math.floor(packLength / avgLength);
+
+    let efficiency = 0.7;
+
+    piecesPerPack = Math.max(1,
+      Math.floor(piecesInLayer * layers * efficiency)
+    );
+
+    // ✅ UZREIZ PARĀDA LAUKĀ
+    document.getElementById("pieces").value = piecesPerPack;
+
+    totalM3 = m3PerPack * packagesVal;
+
+  } else {
+
+    let lengthNum = Number(rawLength);
+    let piecesVal = Number(document.getElementById("pieces").value);
+
+    if (lengthNum <= 0 || isNaN(lengthNum))
+      return error("Garums nav pareizs");
+
+    if (piecesVal <= 0 || isNaN(piecesVal))
+      return error("Gabali pakā obligāti");
+
+    piecesPerPack = piecesVal;
+
+    m3PerPack =
+      (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
+
+    totalM3 = m3PerPack * packagesVal;
   }
-
-  m3PerPack =
-    (packWidth * packLength * packHeight) / 1000000000;
-
-  // ✅ JAUNA LOĢIKA
-  let crossSection = thicknessVal * widthVal;
-  let packSection = packWidth * packHeight;
-
-  let piecesInLayer = Math.floor(packSection / crossSection);
-  let layers = Math.floor(packLength / avgLength);
-
-  let efficiency = 0.7;
-  
-piecesPerPack =
-  Math.floor(piecesInLayer * layers * efficiency);
-
-// ✅ PARĀDA UI
-document.getElementById("pieces").value = piecesPerPack;
-
-
-  totalM3 = m3PerPack * packagesVal;
-}
 
   const entry = {
     area: areaVal,
@@ -107,7 +125,9 @@ document.getElementById("pieces").value = piecesPerPack;
   };
 
   data.push(entry);
-  
+  localStorage.setItem("data", JSON.stringify(data));
+
+  // ✅ saglabā formu
   localStorage.setItem("lastForm", JSON.stringify({
     area: areaVal,
     thickness: thicknessVal,
@@ -115,10 +135,10 @@ document.getElementById("pieces").value = piecesPerPack;
     grade: document.getElementById("grade").value
   }));
 
-
   clearError();
   render();
 
+  // ✅ tīra tikai mainīgos laukus
   document.getElementById("length").value = "";
   document.getElementById("pieces").value = "";
   document.getElementById("packWidth").value = "";
@@ -128,58 +148,55 @@ document.getElementById("pieces").value = piecesPerPack;
 
   document.getElementById("length").focus();
   document.getElementById("galiInputs").style.display = "none";
-
 }
+
 
 // ✅ TABULA
 function render() {
 
-  
-let html = `
-<tr>
-  <th>Apgabals</th>
-  <th>Pakas</th>
-  <th>Izmērs</th>
-  <th>Gabali</th>
-  <th>Darbības</th>
-</tr>`;
-
-data.forEach((e, i) => {
-
-  let size;
-
-  if ((e.length || "").trim().toLowerCase() === "gali") {
-    size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
-  } else {
-    size = `${e.thickness}×${e.width}×${e.length}`;
-  }
-
-  html += `
+  let html = `
   <tr>
-    <td>${e.area}</td>
-    <td>${e.packages}</td>
-    <td>${size}</td>
-    <td>${e.pieces || ""}</td>
-    <td>
-      <button onclick="edit(${i})">✏️</button>
-      <button onclick="remove(${i})">🗑️</button>
-    </td>
+    <th>Apgabals</th>
+    <th>Pakas</th>
+    <th>Izmērs</th>
+    <th>Gabali</th>
+    <th>Darbības</th>
   </tr>`;
-});
 
+  data.forEach((e, i) => {
+
+    let size;
+
+    if ((e.length || "").trim().toLowerCase() === "gali") {
+      size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
+    } else {
+      size = `${e.thickness}×${e.width}×${e.length}`;
+    }
+
+    html += `
+    <tr>
+      <td>${e.area}</td>
+      <td>${e.packages}</td>
+      <td>${size}</td>
+      <td>${e.pieces || ""}</td>
+      <td>
+        <button onclick="edit(${i})">✏️</button>
+        <button onclick="remove(${i})">🗑️</button>
+      </td>
+    </tr>`;
+  });
 
   document.getElementById("table").innerHTML = html;
 }
 
+
 // ✅ DELETE
 function remove(i) {
-
   data.splice(i, 1);
-
   localStorage.setItem("data", JSON.stringify(data));
-
   render();
 }
+
 
 // ✅ EDIT
 function edit(i) {
@@ -200,73 +217,50 @@ function edit(i) {
   document.getElementById("comment").value = e.comment;
 
   if ((e.length || "").toLowerCase() === "gali") {
-
     document.getElementById("galiInputs").style.display = "block";
 
     document.getElementById("packWidth").value = e.packWidth;
     document.getElementById("packLength").value = e.packLength;
     document.getElementById("packHeight").value = e.packHeight;
     document.getElementById("avgLength").value = e.avgLength || "";
-
-  } else {
-
-    document.getElementById("galiInputs").style.display = "none";
-
-    document.getElementById("packWidth").value = "";
-    document.getElementById("packLength").value = "";
-    document.getElementById("packHeight").value = "";
-    document.getElementById("avgLength").value = "";
   }
 
   data.splice(i, 1);
-
   localStorage.setItem("data", JSON.stringify(data));
-
   render();
 }
 
+
+// ✅ ON LOAD
 window.onload = () => {
 
+  // load dati
   const savedData = localStorage.getItem("data");
-
   if (savedData) {
     data = JSON.parse(savedData);
     render();
   }
 
-  const lengthInput = document.getElementById("length");
-  const block = document.getElementById("galiInputs");
-  const savedArea = localStorage.getItem("area");
-  
-  if (savedArea) {
-    document.getElementById("area").value = savedArea;
+  // load forma
+  const savedForm = localStorage.getItem("lastForm");
+  if (savedForm) {
+    const f = JSON.parse(savedForm);
+    document.getElementById("area").value = f.area || "";
+    document.getElementById("thickness").value = f.thickness || "";
+    document.getElementById("width").value = f.width || "";
+    document.getElementById("grade").value = f.grade || "";
   }
 
-  
-lengthInput.addEventListener("input", (e) => {
+  // ✅ GALI toggle (IMPORTANT)
+  const lengthInput = document.getElementById("length");
+  const block = document.getElementById("galiInputs");
 
-  const val = (e.target.value || "").trim().toLowerCase();
-
-  block.style.display =
-    val === "gali" ? "block" : "none";
-});
-  
-
-    const currentLength = document.getElementById("length").value;
-
-      if (currentLength.trim().toLowerCase() === "gali") {
-        document.getElementById("galiInputs").style.display = "block";
-      }
-
-    const savedForm = localStorage.getItem("lastForm");
-      if (savedForm) {  
-        const f = JSON.parse(savedForm);  
-          document.getElementById("area").value = f.area || "";  
-          document.getElementById("thickness").value = f.thickness || "";  
-          document.getElementById("width").value = f.width || "";  
-          document.getElementById("grade").value = f.grade || "";
-      }
+  lengthInput.addEventListener("input", (e) => {
+    const val = (e.target.value || "").trim().toLowerCase();
+    block.style.display = val === "gali" ? "block" : "none";
+  });
 };
+
 
 // ✅ ERROR
 function error(msg) {
@@ -277,14 +271,12 @@ function clearError() {
   document.getElementById("error").innerText = "";
 }
 
+
+// ✅ TABULAS SLĒPŠANA
 let tableVisible = true;
 
 function toggleTable() {
-
   const t = document.getElementById("table");
-
   tableVisible = !tableVisible;
-
-  t.style.display =
-    tableVisible ? "table" : "none";
+  t.style.display = tableVisible ? "table" : "none";
 }
