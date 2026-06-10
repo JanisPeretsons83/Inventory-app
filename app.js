@@ -31,6 +31,17 @@ function setHeaderInfo() {
     `${location} | ${name} | ${formattedDate}`;
 }
 
+function saveUser() {
+  const name = document.getElementById("userNameInput").value.trim();
+
+  if (!name) {
+    alert("Ievadi vārdu!");
+    return;
+  }
+
+  localStorage.setItem("userName", name);
+}
+
 
 // ✅ PIEVIENO IERAKSTU
 function add() {
