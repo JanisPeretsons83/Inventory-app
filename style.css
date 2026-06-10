@@ -12,6 +12,11 @@ body {
   margin-bottom: 10px;
 }
 
+.activeLocation {
+  background: #2e7d32 !important;
+  color: white !important;
+}
+
 h2 {
   text-align: center;
   margin-bottom: 15px;
