@@ -130,37 +130,39 @@ if (lengthVal === "gali") {
 // ✅ TABULA
 function render() {
 
-  let html = `
+  
+let html = `
+<tr>
+  <th>Apgabals</th>
+  <th>Pakas</th>
+  <th>Izmērs</th>
+  <th>Gabali</th>
+  <th>Darbības</th>
+</tr>`;
+
+data.forEach((e, i) => {
+
+  let size;
+
+  if ((e.length || "").trim().toLowerCase() === "gali") {
+    size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
+  } else {
+    size = `${e.thickness}×${e.width}×${e.length}`;
+  }
+
+  html += `
   <tr>
-    <th>Apgabals</th>
-    <th>Pakas</th>
-    <th>Izmērs</th>
-    <th>Darbības</th>
+    <td>${e.area}</td>
+    <td>${e.packages}</td>
+    <td>${size}</td>
+    <td>${e.pieces || ""}</td>
+    <td>
+      <button onclick="edit(${i})">✏️</button>
+      <button onclick="remove(${i})">🗑️</button>
+    </td>
   </tr>`;
+});
 
-  data.forEach((e, i) => {
-
-    let size;
-    
-    if ((e.length || "").trim().toLowerCase() === "gali") {
-      size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
-    } else {
-      size = `${e.thickness}×${e.width}×${e.length}`;
-    }
-
-    html += `
-    <tr>
-      <td>${e.area}</td>
-      <td>${e.packages}</td>
-      <td>${size}</td>
-
-      <td>
-        <button class="action-btn" onclick="edit(${i})">✏️</button>
-        <button class="action-btn" onclick="remove(${i})">🗑️</button>
-      </td>
-
-    </tr>`;
-  });
 
   document.getElementById("table").innerHTML = html;
 }
