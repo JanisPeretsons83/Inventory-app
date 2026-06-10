@@ -15,6 +15,22 @@ function setLocation(loc) {
   setHeaderInfo();
 }
 
+function setHeaderInfo() {
+
+  const name = localStorage.getItem("userName") || "";
+  const location = localStorage.getItem("location") || "";
+
+  const today = new Date();
+
+  const formattedDate =
+    String(today.getDate()).padStart(2, '0') + "." +
+    String(today.getMonth() + 1).padStart(2, '0') + "." +
+    today.getFullYear();
+
+  document.getElementById("infoLine").innerText =
+    `${location} | ${name} | ${formattedDate}`;
+}
+
 
 // ✅ PIEVIENO IERAKSTU
 function add() {
