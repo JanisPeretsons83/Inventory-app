@@ -12,6 +12,11 @@ body {
   margin-bottom: 10px;
 }
 
+.danger {
+  background: #c62828;
+  color: white;
+}
+
 .activeLocation {
   background: #2e7d32 !important;
   color: white !important;
