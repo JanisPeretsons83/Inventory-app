@@ -241,22 +241,27 @@ window.onload = () => {
 
   const lengthInput = document.getElementById("length");
   const block = document.getElementById("galiInputs");
-
+  const savedArea = localStorage.getItem("area");
+  
   if (savedArea) {
     document.getElementById("area").value = savedArea;
   }
 
-  lengthInput.addEventListener("change", (e) => {
-
-    const val = e.target.value.trim().toLowerCase();
-
-    block.style.display =
-      val === "gali" ? "block" : "none";
-  });
   
-if (lengthVal === "gali") {
-  document.getElementById("galiInputs").style.display = "block";
-}
+lengthInput.addEventListener("input", (e) => {
+
+  const val = (e.target.value || "").trim().toLowerCase();
+
+  block.style.display =
+    val === "gali" ? "block" : "none";
+});
+  
+
+    const currentLength = document.getElementById("length").value;
+
+      if (currentLength.trim().toLowerCase() === "gali") {
+        document.getElementById("galiInputs").style.display = "block";
+      }
 
     const savedForm = localStorage.getItem("lastForm");
       if (savedForm) {  
