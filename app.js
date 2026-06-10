@@ -357,7 +357,7 @@ window.onload = () => {
     const val = (e.target.value || "").trim().toLowerCase();
     block.style.display = val === "gali" ? "block" : "none";
   });
-};
+
 
 
 // ✅ ERROR
