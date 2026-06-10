@@ -49,7 +49,7 @@ if (lengthVal === "gali") {
   packLength = Number(document.getElementById("packLength").value);
   packHeight = Number(document.getElementById("packHeight").value);
   avgLength = Number(document.getElementById("avgLength").value);
-
+  
   if (
     packWidth <= 0 || isNaN(packWidth) ||
     packLength <= 0 || isNaN(packLength) ||
@@ -70,9 +70,13 @@ if (lengthVal === "gali") {
   let layers = Math.floor(packLength / avgLength);
 
   let efficiency = 0.7;
+  
+piecesPerPack =
+  Math.floor(piecesInLayer * layers * efficiency);
 
-  piecesPerPack =
-    Math.floor(piecesInLayer * layers * efficiency);
+// ✅ PARĀDA UI
+document.getElementById("pieces").value = piecesPerPack;
+
 
   totalM3 = m3PerPack * packagesVal;
 }
