@@ -409,3 +409,32 @@ function calculateGali() {
   // ✅ IEVIETO LAUKĀ
   document.getElementById("pieces").value = piecesPerPack;
 }
+  // ✅ LOG OUT
+function endSession() {
+
+  const confirmSave = confirm("Vai ievadītie dati tika saglabāti?");
+
+  if (confirmSave) {
+
+    // ✅ dzēš datus
+    localStorage.removeItem("data");
+    data = [];
+
+    // ✅ dzēš lietotāju (ja gribi pilnu restartu)
+    localStorage.removeItem("userName");
+    localStorage.removeItem("location");
+
+    // ✅ atgriežas uz login
+    document.getElementById("appContent").style.display = "none";
+    document.getElementById("locationSelect").style.display = "block";
+
+    // ✅ notīra tabulu
+    render();
+
+  } else {
+
+    // ❌ neko nedara
+    alert("Saglabā datus pirms iziešanas!");
+
+  }
+}
