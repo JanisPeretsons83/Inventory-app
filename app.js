@@ -15,6 +15,23 @@ function setLocation(loc) {
   setHeaderInfo();
 }
 
+let selectedBtn = null;
+
+function setLocation(loc, btn) {
+
+  currentLocation = loc;
+  localStorage.setItem("location", loc);
+
+  // ✅ noņem highlight no iepriekšējās
+  if (selectedBtn) {
+    selectedBtn.classList.remove("activeLocation");
+  }
+
+  // ✅ uzliek highlight jaunajai
+  btn.classList.add("activeLocation");
+  selectedBtn = btn;
+}
+
 function setHeaderInfo() {
 
   const name = localStorage.getItem("userName") || "";
