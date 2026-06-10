@@ -222,30 +222,51 @@ function render() {
     <th>Pakas</th>
     <th>Izmērs</th>
     <th>Gabali</th>
+    <th>m3</th>
     <th>Darbības</th>
   </tr>`;
+  
+  let totalPackages = 0;
+  let totalM3 = 0;
 
-  data.forEach((e, i) => {
+  
+data.forEach((e, i) => {
 
-    let size;
+  totalPackages += e.packages || 0;
+  totalM3 += e.total || 0;
 
-    if ((e.length || "").trim().toLowerCase() === "gali") {
-      size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
-    } else {
-      size = `${e.thickness}×${e.width}×${e.length}`;
-    }
+  let size;
 
-    html += `
-    <tr>
-      <td>${e.area}</td>
-      <td>${e.packages}</td>
-      <td>${size}</td>
-      <td>${e.pieces || ""}</td>
-      <td>
-        <button onclick="edit(${i})">✏️</button>
-        <button onclick="remove(${i})">🗑️</button>
-      </td>
-    </tr>`;
+  if ((e.length || "").trim().toLowerCase() === "gali") {
+    size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
+  } else {
+    size = `${e.thickness}×${e.width}×${e.length}`;
+  }
+
+  html += `
+  <tr>
+    <td>${e.area}</td>
+    <td>${e.packages}</td>
+    <td>${size}</td>
+    <td>${e.pieces || ""}</td>
+    <td>${e.total?.toFixed(4) || ""}</td>
+    <td>
+      <button onclick="edit(${i})">✏️</button>
+      <button onclick="remove(${i})">🗑️</button>
+    </td>
+  </tr>`;
+});
+
+// ✅ KOPSUMMA (vienreiz!)
+html += `
+<tr style="font-weight:bold; background:#eee;">
+  <td>Kopā:</td>
+  <td>${totalPackages}</td>
+  <td></td>
+  <td></td>
+  <td>${totalM3.toFixed(4)}</td>
+</tr>`;
+
   });
 
   document.getElementById("table").innerHTML = html;
@@ -355,9 +376,6 @@ if (lengthInput && block) {
 
 };
 
-
-
-
 // ✅ ERROR
 function error(msg) {
   document.getElementById("error").innerText = msg;
@@ -435,6 +453,10 @@ function exportExcel() {
     d.getFullYear();
 
   // ✅ TABULAS DATI
+  
+  
+  const totalPackages = data.reduce((sum, e) => sum + (e.packages || 0), 0);
+  const totalM3 = data.reduce((sum, e) => sum + (e.total || 0), 0);
   const rows = data.map(e => ({
 
     "Apgabals": e.area,
@@ -455,6 +477,14 @@ function exportExcel() {
     "Šķira": e.grade,
     "Komentārs": e.comment
   }));
+
+// ✅ KOPSUMMA EXCEL
+rows.push({
+  "Apgabals": "Kopā",
+  "Paku skaits": totalPackages,
+  "m3 vienā pakā": "",
+  "m3 kopā": totalM3.toFixed(4)
+});
 
   // ✅ WORKSHEET
   const ws = XLSX.utils.json_to_sheet(rows);
@@ -484,12 +514,10 @@ function exportExcel() {
   // ✅ WORKBOOK
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, newWs, "Inventarizācija");
-
+  
   // ✅ FAILA NOSAUKUMS
   XLSX.writeFile(wb, `inv_${fileDate}.xlsx`);
 }
-
-  //
 
   // ✅ LOG OUT
 function endSession() {
