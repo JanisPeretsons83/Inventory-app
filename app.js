@@ -2,19 +2,6 @@ let data = [];
 
 // ✅ Login
 
-let currentLocation = "";
-
-function setLocation(loc) {
-  currentLocation = loc;
-
-  localStorage.setItem("location", loc);
-
-  document.getElementById("locationSelect").style.display = "none";
-  document.getElementById("appContent").style.display = "block";
-
-  setHeaderInfo();
-}
-
 let selectedBtn = null;
 
 function setLocation(loc, btn) {
@@ -305,15 +292,15 @@ function edit(i) {
   render();
 }
 
-// ✅ ON LOAD
+
 window.onload = () => {
 
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
 
+  // LOGIN CHECK
   if (location && name) {
-
     currentLocation = location;
 
     document.getElementById("locationSelect").style.display = "none";
@@ -322,6 +309,7 @@ window.onload = () => {
     setHeaderInfo();
   }
 
+  // LOAD DATA
   if (savedData) {
     try {
       data = JSON.parse(savedData);
@@ -331,13 +319,7 @@ window.onload = () => {
     }
   }
 
-};
-
-  // load dati
-  const savedData = localStorage.getItem("data");
-  
-
-  // load forma
+  // LOAD FORM
   const savedForm = localStorage.getItem("lastForm");
   if (savedForm) {
     const f = JSON.parse(savedForm);
@@ -345,14 +327,27 @@ window.onload = () => {
     document.getElementById("thickness").value = f.thickness || "";
     document.getElementById("width").value = f.width || "";
     document.getElementById("grade").value = f.grade || "";
-    
-    document.getElementById("avgLength").addEventListener("input", calculateGali);
-    document.getElementById("packWidth").addEventListener("input", calculateGali);
-    document.getElementById("packLength").addEventListener("input", calculateGali);
-    document.getElementById("packHeight").addEventListener("input", calculateGali);
-    document.getElementById("thickness").addEventListener("input", calculateGali);
-    document.getElementById("width").addEventListener("input", calculateGali);
   }
+
+  // ✅ GALI toggle
+  const lengthInput = document.getElementById("length");
+  const block = document.getElementById("galiInputs");
+
+  lengthInput.addEventListener("input", (e) => {
+    const val = (e.target.value || "").trim().toLowerCase();
+    block.style.display = val === "gali" ? "block" : "none";
+  });
+
+  // ✅ LIVE APRĒĶINS
+  document.getElementById("avgLength").addEventListener("input", calculateGali);
+  document.getElementById("packWidth").addEventListener("input", calculateGali);
+  document.getElementById("packLength").addEventListener("input", calculateGali);
+  document.getElementById("packHeight").addEventListener("input", calculateGali);
+  document.getElementById("thickness").addEventListener("input", calculateGali);
+  document.getElementById("width").addEventListener("input", calculateGali);
+
+};
+
 
   // ✅ GALI toggle (IMPORTANT)
   const lengthInput = document.getElementById("length");
