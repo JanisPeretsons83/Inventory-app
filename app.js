@@ -249,6 +249,13 @@ window.onload = () => {
     document.getElementById("thickness").value = f.thickness || "";
     document.getElementById("width").value = f.width || "";
     document.getElementById("grade").value = f.grade || "";
+    
+    document.getElementById("avgLength").addEventListener("input", calculateGali);
+    document.getElementById("packWidth").addEventListener("input", calculateGali);
+    document.getElementById("packLength").addEventListener("input", calculateGali);
+    document.getElementById("packHeight").addEventListener("input", calculateGali);
+    document.getElementById("thickness").addEventListener("input", calculateGali);
+    document.getElementById("width").addEventListener("input", calculateGali);
   }
 
   // ✅ GALI toggle (IMPORTANT)
@@ -279,4 +286,37 @@ function toggleTable() {
   const t = document.getElementById("table");
   tableVisible = !tableVisible;
   t.style.display = tableVisible ? "table" : "none";
+}
+
+function calculateGali() {
+
+  const thicknessVal = Number(document.getElementById("thickness").value);
+  const widthVal = Number(document.getElementById("width").value);
+
+  const packWidth = Number(document.getElementById("packWidth").value);
+  const packLength = Number(document.getElementById("packLength").value);
+  const packHeight = Number(document.getElementById("packHeight").value);
+  const avgLength = Number(document.getElementById("avgLength").value);
+
+  if (
+    thicknessVal <= 0 || widthVal <= 0 ||
+    packWidth <= 0 || packLength <= 0 || packHeight <= 0 ||
+    avgLength <= 0
+  ) {
+    return;
+  }
+
+  let crossSection = thicknessVal * widthVal;
+  let packSection = packWidth * packHeight;
+
+  let piecesInLayer = Math.floor(packSection / crossSection);
+  let layers = Math.floor(packLength / avgLength);
+
+  let efficiency = 0.7;
+
+  let piecesPerPack =
+    Math.max(1, Math.floor(piecesInLayer * layers * efficiency));
+
+  // ✅ IEVIETO LAUKĀ
+  document.getElementById("pieces").value = piecesPerPack;
 }
