@@ -253,6 +253,11 @@ window.onload = () => {
     block.style.display =
       val === "gali" ? "block" : "none";
   });
+  
+if (lengthVal === "gali") {
+  document.getElementById("galiInputs").style.display = "block";
+}
+
     const savedForm = localStorage.getItem("lastForm");
       if (savedForm) {  
         const f = JSON.parse(savedForm);  
