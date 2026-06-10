@@ -329,15 +329,6 @@ window.onload = () => {
     document.getElementById("grade").value = f.grade || "";
   }
 
-  // ✅ GALI toggle
-  const lengthInput = document.getElementById("length");
-  const block = document.getElementById("galiInputs");
-
-  lengthInput.addEventListener("input", (e) => {
-    const val = (e.target.value || "").trim().toLowerCase();
-    block.style.display = val === "gali" ? "block" : "none";
-  });
-
   // ✅ LIVE APRĒĶINS
   document.getElementById("avgLength").addEventListener("input", calculateGali);
   document.getElementById("packWidth").addEventListener("input", calculateGali);
