@@ -276,12 +276,32 @@ function edit(i) {
 // ✅ ON LOAD
 window.onload = () => {
 
+  const savedLocation = localStorage.getItem("location");
+  const savedData = localStorage.getItem("data");
+
+  if (savedLocation) {
+    currentLocation = savedLocation;
+
+    document.getElementById("locationSelect").style.display = "none";
+    document.getElementById("appContent").style.display = "block";
+
+    setHeaderInfo();
+
+    if (savedData) {
+      try {
+        data = JSON.parse(savedData);
+        render();
+      } catch (e) {
+        console.warn("Neizdevās ielādēt datus", e);
+      }
+    }
+  }
+
+};
+
   // load dati
   const savedData = localStorage.getItem("data");
-  if (savedData) {
-    data = JSON.parse(savedData);
-    render();
-  }
+  
 
   // load forma
   const savedForm = localStorage.getItem("lastForm");
