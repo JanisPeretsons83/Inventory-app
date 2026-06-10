@@ -37,27 +37,43 @@ function setHeaderInfo() {
   const name = localStorage.getItem("userName") || "";
   const location = localStorage.getItem("location") || "";
 
-  const today = new Date();
+  const d = new Date();
 
-  const formattedDate =
-    String(today.getDate()).padStart(2, '0') + "." +
-    String(today.getMonth() + 1).padStart(2, '0') + "." +
-    today.getFullYear();
+  const date =
+    String(d.getDate()).padStart(2, "0") + "." +
+    String(d.getMonth() + 1).padStart(2, "0") + "." +
+    d.getFullYear();
 
   document.getElementById("infoLine").innerText =
-    `${location} | ${name} | ${formattedDate}`;
+    `${location} | ${name} | ${date}`;
 }
 
 function saveUser() {
+
   const name = document.getElementById("userNameInput").value.trim();
+  const location = localStorage.getItem("location");
+
+  if (!location) {
+    alert("Izvēlies ražotni!");
+    return;
+  }
 
   if (!name) {
     alert("Ievadi vārdu!");
     return;
   }
 
+  // ✅ saglabā
   localStorage.setItem("userName", name);
+
+  // ✅ PARĀDA APP
+  document.getElementById("locationSelect").style.display = "none";
+  document.getElementById("appContent").style.display = "block";
+
+  // ✅ header info
+  setHeaderInfo();
 }
+
 
 
 // ✅ PIEVIENO IERAKSTU
@@ -289,28 +305,29 @@ function edit(i) {
   render();
 }
 
-
 // ✅ ON LOAD
 window.onload = () => {
 
-  const savedLocation = localStorage.getItem("location");
+  const location = localStorage.getItem("location");
+  const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
 
-  if (savedLocation) {
-    currentLocation = savedLocation;
+  if (location && name) {
+
+    currentLocation = location;
 
     document.getElementById("locationSelect").style.display = "none";
     document.getElementById("appContent").style.display = "block";
 
     setHeaderInfo();
+  }
 
-    if (savedData) {
-      try {
-        data = JSON.parse(savedData);
-        render();
-      } catch (e) {
-        console.warn("Neizdevās ielādēt datus", e);
-      }
+  if (savedData) {
+    try {
+      data = JSON.parse(savedData);
+      render();
+    } catch (e) {
+      console.warn("Neizdevās ielādēt datus", e);
     }
   }
 
