@@ -414,6 +414,11 @@ function endSession() {
 
   const confirmSave = confirm("Vai ievadītie dati tika saglabāti?");
 
+  if (data.length === 0) {
+    alert("Nav datu ko dzēst");
+    return;
+  }
+
   if (confirmSave) {
 
     // ✅ dzēš datus
