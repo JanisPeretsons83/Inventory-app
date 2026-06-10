@@ -318,6 +318,22 @@ window.onload = () => {
       console.warn("Neizdevās ielādēt datus", e);
     }
   }
+  
+// ✅ GALI toggle
+
+const lengthInput = document.getElementById("length");
+const block = document.getElementById("galiInputs");
+
+if (lengthInput && block) {
+  lengthInput.addEventListener("input", (e) => {
+    const val = (e.target.value || "").trim().toLowerCase();
+    const isGali = val === "gali";
+
+    block.style.display = isGali ? "block" : "none";
+
+    if (isGali) calculateGali();
+  });
+}
 
   // LOAD FORM
   const savedForm = localStorage.getItem("lastForm");
@@ -338,6 +354,9 @@ window.onload = () => {
   document.getElementById("width").addEventListener("input", calculateGali);
 
 };
+
+
+
 
 // ✅ ERROR
 function error(msg) {
