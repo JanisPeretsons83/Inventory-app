@@ -45,20 +45,29 @@ function updateMaps() {
   map1.style.display = "none";
   map2.style.display = "none";
 
-  if (location === "Dārdu") {
+  
+if (location === "Dārdu") {
 
-    map1.src = "dardu_map1.jpeg";
-    map2.src = "dardu_map2.jpeg";
+  map1.src = "dardu_map1.jpeg";
+  map2.src = "dardu_map2.jpeg";
 
-    map1.style.display = "block";
-    map2.style.display = "block";
+  map1.style.display = "block";
+  map2.style.display = "block";
 
-  } else if (location === "Cecīļu") {
+  // ✅ PIEVIENO ŠO
+  map1.onclick = () => openImage(map1);
+  map2.onclick = () => openImage(map2);
+}
+else if (location === "Cecīļu") {
 
-    map1.src = "cecilu_map.jpeg";
+  map1.src = "cecilu_map.jpeg";
 
-    map1.style.display = "block";
-  }
+  map1.style.display = "block";
+
+  // ✅ PIEVIENO ŠO
+  map1.onclick = () => openImage(map1);
+}
+
 }
 
 function openImage(img) {
