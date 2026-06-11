@@ -61,6 +61,19 @@ function updateMaps() {
   }
 }
 
+function openImage(img) {
+
+  const modal = document.getElementById("imageModal");
+  const modalImg = document.getElementById("modalImg");
+
+  modal.style.display = "block";
+  modalImg.src = img.src;
+}
+
+// ✅ aizver uz klikšķa
+document.getElementById("imageModal").onclick = () => {
+  document.getElementById("imageModal").style.display = "none";
+};
 
 function setLocation(loc, btn) {
 
