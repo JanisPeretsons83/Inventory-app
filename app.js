@@ -548,8 +548,6 @@ async function exportExcel() {
       { formula: `B${rowIndex}*E${rowIndex}` }
 ]);
 
-    ]);
-
     row.eachCell(cell => {
       cell.border = {
         top: { style: "thin" },
