@@ -4,6 +4,18 @@ let data = [];
 
 let selectedBtn = null;
 
+const areasByLocation = {
+
+  "Dārdu": [
+    "2-1", "2-2", "2-3", "3-1", "3-2"
+  ],
+
+  "Cecīļu": [
+    "1-1", "1-2", "1-3"
+  ]
+
+};
+
 function setLocation(loc, btn) {
 
   currentLocation = loc;
