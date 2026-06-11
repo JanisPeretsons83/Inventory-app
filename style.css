@@ -23,8 +23,11 @@ body {
 }
 
 #mapsContainer img {
-  width: 80px;
+  width: 60px;
+  height: auto;
   cursor: pointer;
+  margin: 5px;
+  border-radius: 6px;
 }
 
 h2 {
