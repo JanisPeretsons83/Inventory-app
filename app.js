@@ -74,7 +74,7 @@ else if (location === "Cecīļu") {
 
 
 function openImage(img) {
-console.log("openImage palaidās");
+
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImg");
 
