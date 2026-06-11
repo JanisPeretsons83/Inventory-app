@@ -428,6 +428,7 @@ function calculateGali() {
 
   //
 
+
 function exportExcel() {
 
   if (data.length === 0) {
@@ -450,93 +451,110 @@ function exportExcel() {
     String(d.getMonth() + 1).padStart(2, "0") + "-" +
     d.getFullYear();
 
-  // ✅ TABULAS DATI
-  
-  
-  const totalPackages = data.reduce((sum, e) => sum + (e.packages || 0), 0);
-  const totalM3 = data.reduce((sum, e) => sum + (e.total || 0), 0);
-  const rows = data.map(e => ({
+  let totalPackages = 0;
+  let totalM3 = 0;
 
-    "Apgabals": e.area,
-    "Paku skaits": e.packages,
-    "Detaļas nosaukums": e.name,
-    "Produkta kods": e.code,
+  const rows = data.map(e => {
 
-    "m3 vienā pakā": e.m3Pack?.toFixed(4),
-    "Biezums": e.thickness,
-    "Platums": e.width,
-    "Garums": e.length,
+    totalPackages += e.packages || 0;
+    totalM3 += e.total || 0;
 
-    "Gabali pakā": e.pieces,
-    "m3": e.total?.toFixed(4),
+    // ✅ VIENAS DETAĻAS m3
+    let pieceM3 = 0;
 
-    "Mēnesis": String(e.month).padStart(2, "0"),
-    "Gads": e.year < 100 ? 2000 + e.year : e.year,
-    "Šķira": e.grade,
-    "Komentārs": e.comment
-  }));
+    if ((e.length || "").toLowerCase() === "gali") {
+      pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
+    } else {
+      const lengthNum = Number(e.length);
+      pieceM3 = (e.thickness * e.width * lengthNum) / 1000000000;
+    }
 
-// ✅ KOPSUMMA EXCEL
+    return [
+      e.area,
+      e.packages,
+      e.name,
+      e.code,
+      e.m3Pack?.toFixed(4),
 
-rows.push({
-  "Apgabals": "Pakas kopā:",
-  "Paku skaits": totalPackages
-});
+      e.thickness,
+      e.width,
+      e.length,
 
-rows.push({
-  "Apgabals": "m3 kopā:",
-  "m3": totalM3.toFixed(4)
-});
+      e.pieces,
+      pieceM3.toFixed(5),
 
+      String(e.month).padStart(2, "0"),
+      e.year < 100 ? "20" + e.year : e.year,
 
-  // ✅ WORKSHEET
-  const ws = XLSX.utils.json_to_sheet(rows);
+      e.grade,
+      e.comment
+    ];
+  });
 
-  // ✅ HEADER INFO (augšā)
-  XLSX.utils.sheet_add_aoa(ws, [
+  const sheetData = [
+
     [`Inventarizācija - ${location}`],
     [`Sastādīja: ${name}`],
     [`Datums: ${dateStr}`],
-    []
-  ], { origin: "A1" });
+    [],
 
-  // ✅ pārbīda tabulu uz leju
- 
-const headers = [
-  "Apgabals",
-  "Paku skaits",
-  "Detaļas nosaukums",
-  "Produkta kods",
-  "m3 vienā pakā",
-  "Biezums",
-  "Platums",
-  "Garums",
-  "Gabali pakā",
-  "m3",
-  "Mēnesis",
-  "Gads",
-  "Šķira",
-  "Komentārs"
-];
+    // ✅ HEADER
+    [
+      "Apgabals",
+      "Paku skaits",
+      "Detaļas nosaukums",
+      "Produkta kods",
+      "m3 vienā pakā",
 
-const finalData = [
-  [`Inventarizācija - ${location}`],
-  [`Sastādīja: ${name}`],
-  [`Datums: ${dateStr}`],
-  [],
-  headers,
-  ...rows.map(r => headers.map(h => r[h] ?? ""))
-];
+      "Biezums",
+      "Platums",
+      "Garums",
 
+      "Gabali pakā",
+      "m3",
 
+      "Mēnesis",
+      "Gads",
 
-  const newWs = XLSX.utils.aoa_to_sheet(finalData);
+      "Šķira",
+      "Komentārs"
+    ],
 
-  // ✅ WORKBOOK
+    ...rows,
+
+    // ✅ KOPSUMMAS
+    [],
+    ["Pakas kopā:", totalPackages],
+    ["m3 kopā:", totalM3.toFixed(4)]
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+  // ✅ KOLONNU PLATUMI (izskatās kā Excel)
+  ws['!cols'] = [
+    { wch: 10 },
+    { wch: 12 },
+    { wch: 20 },
+    { wch: 18 },
+    { wch: 14 },
+
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 10 },
+
+    { wch: 14 },
+    { wch: 10 },
+
+    { wch: 10 },
+    { wch: 10 },
+
+    { wch: 10 },
+    { wch: 20 }
+  ];
+
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, newWs, "Inventarizācija");
-  
-  // ✅ FAILA NOSAUKUMS
+  XLSX.utils.book_append_sheet(wb, ws, "Inventarizācija");
+
   XLSX.writeFile(wb, `inv_${fileDate}.xlsx`);
 }
 
