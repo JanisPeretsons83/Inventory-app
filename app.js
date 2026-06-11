@@ -429,7 +429,8 @@ function calculateGali() {
   //
 
 
-function exportExcel() {
+
+async function exportExcel() {
 
   if (data.length === 0) {
     alert("Nav datu eksportam!");
@@ -451,136 +452,140 @@ function exportExcel() {
     String(d.getMonth() + 1).padStart(2, "0") + "-" +
     d.getFullYear();
 
-  const startRow = 17;
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Inventarizācija");
 
-  let totalPackages = 0;
+  // ✅ TITLE
+  ws.mergeCells("A1:N1");
+  ws.getCell("A1").value = "Nepabeigtas Ražošanas Inventarizācijas protokols";
+  ws.getCell("A1").alignment = { horizontal: "center" };
+  ws.getCell("A1").font = { bold: true, size: 14 };
 
-  const rows = data.map(e => {
+  // ✅ INFO RINDA
+  ws.getCell("A3").value = "Datums:";
+  ws.getCell("B3").value = dateStr;
 
-    totalPackages += e.packages || 0;
+  ws.getCell("E3").value = "Sastādīja:";
+  ws.getCell("F3").value = name;
+
+  ws.getCell("I3").value = "Ražotne:";
+  ws.getCell("J3").value = location;
+
+  // ✅ HEADER
+  const headerRow = 5;
+
+  const headers = [
+    "Apgabals",
+    "Paku skaits",
+    "Detaļas nosaukums",
+    "Produkta kods",
+    "m3 vienā pakā",
+    "Biezums",
+    "Platums",
+    "Garums",
+    "Detaļu skaits pakā",
+    "m3",
+    "Mēnesis",
+    "Gads",
+    "Šķira",
+    "Komentārs"
+  ];
+
+  const header = ws.addRow(headers);
+
+  header.eachCell(cell => {
+    cell.font = { bold: true };
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFD9D9D9" } // pelēks
+    };
+
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" }
+    };
+  });
+
+  // ✅ DATA
+  let startRow = 6;
+
+  data.forEach(e => {
 
     let pieceM3 = 0;
 
     if ((e.length || "").toLowerCase() === "gali") {
       pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
     } else {
-      const lengthNum = Number(e.length);
-      pieceM3 = (e.thickness * e.width * lengthNum) / 1000000000;
+      pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
     }
 
-    return [
+    const row = ws.addRow([
       e.area,
       e.packages,
       e.name,
       e.code,
-      e.m3Pack?.toFixed(4),
+      Number(e.m3Pack?.toFixed(4)),
 
       e.thickness,
       e.width,
       e.length,
 
       e.pieces,
-      pieceM3.toFixed(5),
+      Number(pieceM3.toFixed(5)),
 
       String(e.month).padStart(2, "0"),
       e.year < 100 ? "20" + e.year : e.year,
 
       e.grade,
       e.comment
-    ];
+    ]);
+
+    row.eachCell(cell => {
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" }
+      };
+    });
   });
 
-  const lastRow = startRow + rows.length - 1;
+  let lastRow = ws.rowCount;
 
-  const sheetData = [
+  // ✅ SUM
+  ws.addRow([]);
 
-    // ✅ TITLE (center)
-    ["", "", "", "", "", "", "", "", "Nepabeigtas Ražošanas Inventarizācijas protokols"],
-
-    [],
-
-    // ✅ info row (vienā līnijā kā bildē)
-    [
-      "Datums:", dateStr,
-      "", "",
-      "Sastādīja:", name,
-      "", "",
-      "Ražotne:", location
-    ],
-
-    [],
-
-    // ✅ HEADER TABULAI
-    [
-      "Apgabals",
-      "Paku skaits",
-      "Detaļas nosaukums",
-      "Produkta kods",
-      "m3 vienā pakā",
-
-      "Biezums",
-      "Platums",
-      "Garums",
-
-      "Detaļu skaits pakā",
-      "m3",
-
-      "Mēnesis",
-      "Gads",
-
-      "Šķira",
-      "Komentārs"
-    ],
-
-    ...rows
-  ];
-
-  // ✅ SUM formulas
-  sheetData.push([]);
-  sheetData.push([
+  ws.addRow([
     "Pakas kopā:",
-    { f: `SUM(B${startRow}:B${lastRow})` }
+    { formula: `SUM(B${startRow}:B${lastRow})` }
   ]);
 
-  sheetData.push([
+  ws.addRow([
     "m3 kopā:",
-    { f: `SUM(J${startRow}:J${lastRow})` }
+    { formula: `SUM(J${startRow}:J${lastRow})` }
   ]);
 
-  const ws = XLSX.utils.aoa_to_sheet(sheetData);
+  // ✅ COLUMN WIDTH
+  [
+    10, 12, 25, 20, 14,
+    10, 10, 10,
+    16, 10,
+    10, 10,
+    10, 25
+  ].forEach((w, i) => {
+    ws.getColumn(i + 1).width = w;
+  });
 
-  // ✅ MERGE (center title)
-  ws['!merges'] = [
-    { s: { r: 0, c: 0 }, e: { r: 0, c: 12 } } // TITLE across
-  ];
-
-  // ✅ COLUMN WIDTHS
-  ws['!cols'] = [
-    { wch: 10 },
-    { wch: 14 },
-    { wch: 25 },
-    { wch: 22 },
-    { wch: 14 },
-
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
-
-    { wch: 16 },
-    { wch: 10 },
-
-    { wch: 10 },
-    { wch: 10 },
-
-    { wch: 10 },
-    { wch: 25 }
-  ];
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Inventarizācija");
-
-  XLSX.writeFile(wb, `inv_${fileDate}.xlsx`);
+  // ✅ SAVE
+  const buf = await wb.xlsx.writeBuffer();
+  saveAs(new Blob([buf]), `inv_${fileDate}.xlsx`);
 }
+
 
   // ✅ LOG OUT
 function endSession() {
