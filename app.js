@@ -559,16 +559,17 @@ async function exportExcel() {
 
   // ✅ SUM
   ws.addRow([]);
+ 
+ws.addRow([
+  "Pakas kopā:",
+  { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
+]);
 
-  ws.addRow([
-    "Pakas kopā:",
-    { formula: `SUM(B${startRow}:B${lastRow})` }
-  ]);
+ws.addRow([
+  "m3 kopā:",
+  { formula: `SUM(J${startRow}:J${lastRow})`, result: null }
+]);
 
-  ws.addRow([
-    "m3 kopā:",
-    { formula: `SUM(J${startRow}:J${lastRow})` }
-  ]);
 
   // ✅ COLUMN WIDTH
   [
