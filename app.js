@@ -47,15 +47,15 @@ function updateMaps() {
 
   if (location === "Dārdu") {
 
-    map1.src = "dardu_map1.jpg";
-    map2.src = "dardu_map2.jpg";
+    map1.src = "dardu_map1.jpeg";
+    map2.src = "dardu_map2.jpeg";
 
     map1.style.display = "block";
     map2.style.display = "block";
 
   } else if (location === "Cecīļu") {
 
-    map1.src = "cecilu_map.jpg";
+    map1.src = "cecilu_map.jpeg";
 
     map1.style.display = "block";
   }
