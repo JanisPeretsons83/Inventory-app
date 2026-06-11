@@ -427,9 +427,6 @@ function calculateGali() {
 }
 
   //
-
-
-
 async function exportExcel() {
 
   if (data.length === 0) {
@@ -513,50 +510,55 @@ async function exportExcel() {
   });
 
   // ✅ DATA
-  let startRow = 5;
+  
+let startRow = 6;
+let totalPackages = 0;
 
-  data.forEach(e => {
+data.forEach(e => {
 
-    let pieceM3 = 0;
+  totalPackages += e.packages || 0;
 
-    if ((e.length || "").toLowerCase() === "gali") {
-      pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
-    } else {
-      pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
-    }
-    
-    const rowIndex = ws.rowCount + 1;
-    const row = ws.addRow([
-      e.area,
-      e.packages,
-      e.name,
-      e.code,
-      Number(e.m3Pack?.toFixed(4)),
+  let pieceM3 = 0;
 
-      e.thickness,
-      e.width,
-      e.length,
+  if ((e.length || "").toLowerCase() === "gali") {
+    pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
+  } else {
+    pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
+  }
 
-      e.pieces,
-      Number(pieceM3.toFixed(5)),
+  const rowIndex = ws.rowCount + 1;
 
-      String(e.month).padStart(2, "0"),
-      e.year < 100 ? "20" + e.year : e.year,
+  const row = ws.addRow([
+    e.area,
+    e.packages,
+    e.name,
+    e.code,
+    Number(e.m3Pack?.toFixed(4)),
 
-      e.grade,
-      e.comment,      
-      { formula: `B${rowIndex}*E${rowIndex}` }
-]);
+    e.thickness,
+    e.width,
+    e.length,
 
-    row.eachCell(cell => {
-      cell.border = {
-        top: { style: "thin" },
-        left: { style: "thin" },
-        bottom: { style: "thin" },
-        right: { style: "thin" }
-      };
-    });
+    e.pieces,
+    Number(pieceM3.toFixed(5)),
+
+    String(e.month).padStart(2, "0"),
+    e.year < 100 ? "20" + e.year : e.year,
+
+    e.grade,
+    e.comment,
+    { formula: `B${rowIndex}*E${rowIndex}` }
+  ]);
+
+  row.eachCell(cell => {
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" }
+    };
   });
+});
 
   let lastRow = ws.rowCount;
 
@@ -567,13 +569,11 @@ ws.addRow([
   "Pakas kopā:",
   { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
 ]);
-
+  
 ws.addRow([
   "m3 kopā:",
-  { formula: `SUM(J${startRow}:J${lastRow})`, result: null }
+  { formula: `SUM(O${startRow}:O${lastRow})` }
 ]);
-
-
 
 
   // ✅ COLUMN WIDTH
