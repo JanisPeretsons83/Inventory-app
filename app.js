@@ -19,6 +19,49 @@ const areasByLocation = {
 
 };
 
+function updateAreas() {
+
+  const location = localStorage.getItem("location");
+  const select = document.getElementById("area");
+
+  select.innerHTML = `<option value="">Apgabals *</option>`;
+
+  (areasByLocation[location] || []).forEach(a => {
+    const opt = document.createElement("option");
+    opt.value = a;
+    opt.textContent = a;
+    select.appendChild(opt);
+  });
+}
+
+function updateMaps() {
+
+  const location = localStorage.getItem("location");
+
+  const map1 = document.getElementById("map1");
+  const map2 = document.getElementById("map2");
+
+  // RESET
+  map1.style.display = "none";
+  map2.style.display = "none";
+
+  if (location === "Dārdu") {
+
+    map1.src = "dardu_map1.jpg";
+    map2.src = "dardu_map2.jpg";
+
+    map1.style.display = "block";
+    map2.style.display = "block";
+
+  } else if (location === "Cecīļu") {
+
+    map1.src = "cecilu_map.jpg";
+
+    map1.style.display = "block";
+  }
+}
+
+
 function setLocation(loc, btn) {
 
   currentLocation = loc;
@@ -71,9 +114,11 @@ function saveUser() {
   // ✅ PARĀDA APP
   document.getElementById("locationSelect").style.display = "none";
   document.getElementById("appContent").style.display = "block";
-
+  
   // ✅ header info
   setHeaderInfo();
+  updateAreas();
+  updateMaps();
 }
 
 
@@ -340,7 +385,10 @@ window.onload = () => {
     document.getElementById("locationSelect").style.display = "none";
     document.getElementById("appContent").style.display = "block";
 
-    setHeaderInfo();
+    setHeaderInfo();    
+    updateAreas();
+    updateMaps(); 
+
   }
 
   // LOAD DATA
