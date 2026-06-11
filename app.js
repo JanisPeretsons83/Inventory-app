@@ -56,8 +56,8 @@ if (location === "Dārdu") {
 
   // ✅ PIEVIENO ŠO
  
-map1.onclick = () => alert("klik map1");
-map2.onclick = () => alert("klik map2");
+map1.onclick = () => openImage(map1);
+map2.onclick = () => openImage(map2);
 
 }
 else if (location === "Cecīļu") {
@@ -72,14 +72,21 @@ else if (location === "Cecīļu") {
 
 }
 
-function openImage(img) {
 
+function openImage(img) {
+console.log("openImage palaidās");
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImg");
+
+  if (!modal || !modalImg) {
+    console.error("Modal nav atrasts!");
+    return;
+  }
 
   modal.style.display = "block";
   modalImg.src = img.src;
 }
+
 
 // ✅ aizver uz klikšķa
 document.getElementById("imageModal").onclick = () => {
