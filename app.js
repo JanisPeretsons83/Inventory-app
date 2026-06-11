@@ -511,7 +511,7 @@ async function exportExcel() {
 
   // ✅ DATA
   
-let startRow = 6;
+let startRow = 5;
 let totalPackages = 0;
 
 data.forEach(e => {
