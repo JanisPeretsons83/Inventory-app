@@ -451,15 +451,14 @@ function exportExcel() {
     String(d.getMonth() + 1).padStart(2, "0") + "-" +
     d.getFullYear();
 
+  const startRow = 17;
+
   let totalPackages = 0;
-  let totalM3 = 0;
 
   const rows = data.map(e => {
 
     totalPackages += e.packages || 0;
-    totalM3 += e.total || 0;
 
-    // ✅ VIENAS DETAĻAS m3
     let pieceM3 = 0;
 
     if ((e.length || "").toLowerCase() === "gali") {
@@ -491,14 +490,27 @@ function exportExcel() {
     ];
   });
 
+  const lastRow = startRow + rows.length - 1;
+
   const sheetData = [
 
-    [`Inventarizācija - ${location}`],
-    [`Sastādīja: ${name}`],
-    [`Datums: ${dateStr}`],
+    // ✅ TITLE (center)
+    ["", "", "", "", "", "", "", "", "Nepabeigtas Ražošanas Inventarizācijas protokols"],
+
     [],
 
-    // ✅ HEADER
+    // ✅ info row (vienā līnijā kā bildē)
+    [
+      "Datums:", dateStr,
+      "", "",
+      "Sastādīja:", name,
+      "", "",
+      "Ražotne:", location
+    ],
+
+    [],
+
+    // ✅ HEADER TABULAI
     [
       "Apgabals",
       "Paku skaits",
@@ -510,7 +522,7 @@ function exportExcel() {
       "Platums",
       "Garums",
 
-      "Gabali pakā",
+      "Detaļu skaits pakā",
       "m3",
 
       "Mēnesis",
@@ -520,36 +532,48 @@ function exportExcel() {
       "Komentārs"
     ],
 
-    ...rows,
-
-    // ✅ KOPSUMMAS
-    [],
-    ["Pakas kopā:", totalPackages],
-    ["m3 kopā:", totalM3.toFixed(4)]
+    ...rows
   ];
+
+  // ✅ SUM formulas
+  sheetData.push([]);
+  sheetData.push([
+    "Pakas kopā:",
+    { f: `SUM(B${startRow}:B${lastRow})` }
+  ]);
+
+  sheetData.push([
+    "m3 kopā:",
+    { f: `SUM(J${startRow}:J${lastRow})` }
+  ]);
 
   const ws = XLSX.utils.aoa_to_sheet(sheetData);
 
-  // ✅ KOLONNU PLATUMI (izskatās kā Excel)
+  // ✅ MERGE (center title)
+  ws['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 12 } } // TITLE across
+  ];
+
+  // ✅ COLUMN WIDTHS
   ws['!cols'] = [
     { wch: 10 },
-    { wch: 12 },
-    { wch: 20 },
-    { wch: 18 },
+    { wch: 14 },
+    { wch: 25 },
+    { wch: 22 },
     { wch: 14 },
 
     { wch: 10 },
     { wch: 10 },
     { wch: 10 },
 
-    { wch: 14 },
+    { wch: 16 },
     { wch: 10 },
 
     { wch: 10 },
     { wch: 10 },
 
     { wch: 10 },
-    { wch: 20 }
+    { wch: 25 }
   ];
 
   const wb = XLSX.utils.book_new();
