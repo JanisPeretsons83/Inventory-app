@@ -488,7 +488,8 @@ async function exportExcel() {
     "Mēnesis",
     "Gads",
     "Šķira",
-    "Komentārs"
+    "Komentārs",
+    "m3 kopā"
   ];
 
   const header = ws.addRow(headers);
@@ -512,7 +513,7 @@ async function exportExcel() {
   });
 
   // ✅ DATA
-  let startRow = 6;
+  let startRow = 5;
 
   data.forEach(e => {
 
@@ -523,7 +524,8 @@ async function exportExcel() {
     } else {
       pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
     }
-
+    
+    const rowIndex = ws.rowCount + 1;
     const row = ws.addRow([
       e.area,
       e.packages,
@@ -542,7 +544,10 @@ async function exportExcel() {
       e.year < 100 ? "20" + e.year : e.year,
 
       e.grade,
-      e.comment
+      e.comment,      
+      { formula: `B${rowIndex}*E${rowIndex}` }
+]);
+
     ]);
 
     row.eachCell(cell => {
@@ -559,7 +564,7 @@ async function exportExcel() {
 
   // ✅ SUM
   ws.addRow([]);
- 
+
 ws.addRow([
   "Pakas kopā:",
   { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
@@ -569,6 +574,8 @@ ws.addRow([
   "m3 kopā:",
   { formula: `SUM(J${startRow}:J${lastRow})`, result: null }
 ]);
+
+
 
 
   // ✅ COLUMN WIDTH
