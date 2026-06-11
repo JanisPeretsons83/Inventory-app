@@ -55,8 +55,10 @@ if (location === "Dārdu") {
   map2.style.display = "block";
 
   // ✅ PIEVIENO ŠO
-  map1.onclick = () => openImage(map1);
-  map2.onclick = () => openImage(map2);
+ 
+map1.onclick = () => alert("klik map1");
+map2.onclick = () => alert("klik map2");
+
 }
 else if (location === "Cecīļu") {
 
