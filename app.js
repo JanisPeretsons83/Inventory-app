@@ -528,7 +528,63 @@ function calculateGali() {
   document.getElementById("pieces").value = piecesPerPack;
 }
 
-  //
+ //✅ Border
+function borderAll() {
+  return {
+    top: { style: "thin" },
+    left: { style: "thin" },
+    bottom: { style: "thin" },
+    right: { style: "thin" }
+  };
+}
+
+//✅ Color
+function fillGray() {
+  return {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFD9D9D9" }
+  };
+}
+
+//✅ Row style
+function applyRowStyle(row, type) {
+
+  let color;
+
+  switch (type) {
+    case "lightGreen":
+      color = "FFC6EFCE";
+      break;
+    case "yellow":
+      color = "FFFFEB9C";
+      break;
+    case "softGreen":
+      color = "FFE2EFDA";
+      break;
+    case "blue":
+      color = "FFBDD7EE";
+      break;
+    case "beige":
+      color = "FFFCE4D6";
+      break;
+    default:
+      color = "FFFFFFFF";
+  }
+
+  row.eachCell(cell => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: color }
+    };
+    cell.border = borderAll();
+  });
+}
+
+
+  //✅ Export Excel
+
 async function exportExcel() {
 
   if (data.length === 0) {
@@ -554,24 +610,65 @@ async function exportExcel() {
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Inventarizācija");
 
-  // ✅ TITLE
-  ws.mergeCells("A1:N1");
+ //✅ TITLE
+  ws.mergeCells("A1:O1");
   ws.getCell("A1").value = "Nepabeigtas Ražošanas Inventarizācijas protokols";
   ws.getCell("A1").alignment = { horizontal: "center" };
   ws.getCell("A1").font = { bold: true, size: 14 };
 
-  // ✅ INFO RINDA
-  ws.getCell("A3").value = "Datums:";
-  ws.getCell("B3").value = dateStr;
+  ws.addRow([]);
 
-  ws.getCell("E3").value = "Sastādīja:";
-  ws.getCell("F3").value = name;
+ //✅ SKAIDROJUMU BLOKS
 
-  ws.getCell("I3").value = "Ražotne:";
-  ws.getCell("J3").value = location;
+  let legendHeader = ws.addRow([
+    "Šķira", "Skaidrojums", "", "", "", "", "", "", "", "", "", "", "", "Apzīmējums"
+  ]);
 
-  // ✅ HEADER
-  const headerRow = 5;
+  legendHeader.eachCell(cell => {
+    cell.font = { bold: true };
+    cell.alignment = { horizontal: "center" };
+    cell.border = borderAll();
+    cell.fill = fillGray();
+  });
+
+  applyRowStyle(ws.addRow(["K kods", "Sakomplektēta produkcija", "", "", "", "", "", "", "", "", "", "", "", "K"]), "lightGreen");
+  applyRowStyle(ws.addRow(["Augstākā šķira", "Pilnībā gatava detaļa, pabeigtas visas operācijas, t.sk., impregnācija", "", "", "", "", "", "", "", "", "", "", "", "A"]), "yellow");
+
+  [
+    ["1. šķira", "Ēvelēti dēļi", "1a"],
+    ["", "Neēvelēti, bet sagarināti dēļi", "1b"],
+    ["", "Ēvelētas sagarinātas sagataves", "1c"],
+    ["", "Tālākā apstrādē esošas sagataves", "1d"]
+  ].forEach(r => {
+    applyRowStyle(ws.addRow([r[0], r[1], "", "", "", "", "", "", "", "", "", "", "", r[2]]), "softGreen");
+  });
+
+  [
+    ["2. šķira", "Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma", "2a"],
+    ["", "Brāķis, kuram redzams pielietojums - varam izmantot tālākā apstrādē", "2b"],
+    ["", "Brāķis, kuram nav pielietojums - iznīcināms", "2c"]
+  ].forEach(r => {
+    applyRowStyle(ws.addRow([r[0], r[1], "", "", "", "", "", "", "", "", "", "", "", r[2]]), "blue");
+  });
+
+  applyRowStyle(ws.addRow(["Paletes", "Paletes gatavai produkcijai", "", "", "", "", "", "", "", "", "", "", "", "PAL"]), "beige");
+
+  ws.addRow([]);
+  ws.addRow([]);
+
+  //✅ INFO
+
+  ws.addRow([
+    "Datums:", dateStr,
+    "", "",
+    "Sastādīja:", name,
+    "", "",
+    "Ražotne:", location
+  ]);
+
+  ws.addRow([]);
+
+  //✅ TABULAS HEADER
 
   const headers = [
     "Apgabals",
@@ -591,108 +688,91 @@ async function exportExcel() {
     "m3 kopā"
   ];
 
-  const header = ws.addRow(headers);
+  const tableHeader = ws.addRow(headers);
 
-  header.eachCell(cell => {
+  tableHeader.eachCell(cell => {
     cell.font = { bold: true };
-    cell.alignment = { horizontal: "center", vertical: "middle" };
-
-    cell.fill = {
-      type: "pattern",
-      pattern: "solid",
-      fgColor: { argb: "FFD9D9D9" } // pelēks
-    };
-
-    cell.border = {
-      top: { style: "thin" },
-      left: { style: "thin" },
-      bottom: { style: "thin" },
-      right: { style: "thin" }
-    };
+    cell.alignment = { horizontal: "center" };
+    cell.border = borderAll();
+    cell.fill = fillGray();
   });
 
-  // ✅ DATA
-  
-let startRow = 5;
-let totalPackages = 0;
+  const startRow = tableHeader.number + 1;
 
-data.forEach(e => {
+ //✅ DATA
 
-  totalPackages += e.packages || 0;
+  let totalPackages = 0;
 
-  let pieceM3 = 0;
+  data.forEach(e => {
 
-  if ((e.length || "").toLowerCase() === "gali") {
-    pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
-  } else {
-    pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
-  }
+    totalPackages += e.packages || 0;
 
-  const rowIndex = ws.rowCount + 1;
+    let pieceM3 = 0;
 
-  const row = ws.addRow([
-    e.area,
-    e.packages,
-    e.name,
-    e.code,
-    Number(e.m3Pack?.toFixed(4)),
+    if ((e.length || "").toLowerCase() === "gali") {
+      pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
+    } else {
+      pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
+    }
 
-    e.thickness,
-    e.width,
-    e.length,
+    const rowIndex = ws.rowCount + 1;
 
-    e.pieces,
-    Number(pieceM3.toFixed(5)),
+    const row = ws.addRow([
+      e.area,
+      e.packages,
+      e.name,
+      e.code,
+      Number(e.m3Pack?.toFixed(4)),
+      e.thickness,
+      e.width,
+      e.length,
+      e.pieces,
+      Number(pieceM3.toFixed(5)),
+      String(e.month).padStart(2, "0"),
+      e.year < 100 ? "20" + e.year : e.year,
+      e.grade,
+      e.comment,
+      { formula: `B${rowIndex}*E${rowIndex}` }
+    ]);
 
-    String(e.month).padStart(2, "0"),
-    e.year < 100 ? "20" + e.year : e.year,
-
-    e.grade,
-    e.comment,
-    { formula: `B${rowIndex}*E${rowIndex}` }
-  ]);
-
-  row.eachCell(cell => {
-    cell.border = {
-      top: { style: "thin" },
-      left: { style: "thin" },
-      bottom: { style: "thin" },
-      right: { style: "thin" }
-    };
+    row.eachCell(cell => {
+      cell.border = borderAll();
+    });
   });
-});
 
-  let lastRow = ws.rowCount;
+  const lastRow = ws.rowCount;
 
-  // ✅ SUM
+  //✅ SUM
   ws.addRow([]);
 
-ws.addRow([
-  "Pakas kopā:",
-  { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
-]);
-  
-ws.addRow([
-  "m3 kopā:",
-  { formula: `SUM(O${startRow}:O${lastRow})` }
-]);
+  ws.addRow([
+    "Pakas kopā:",
+    { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
+  ]);
 
+  ws.addRow([
+    "m3 kopā:",
+    { formula: `SUM(O${startRow}:O${lastRow})` }
+  ]);
 
-  // ✅ COLUMN WIDTH
+  //✅ COLUMN WIDTH
+
   [
     10, 12, 25, 20, 14,
     10, 10, 10,
     16, 10,
     10, 10,
-    10, 25
+    10, 25, 12
   ].forEach((w, i) => {
     ws.getColumn(i + 1).width = w;
   });
 
-  // ✅ SAVE
+  //✅ SAVE
+
   const buf = await wb.xlsx.writeBuffer();
   saveAs(new Blob([buf]), `inv_${fileDate}.xlsx`);
 }
+
 
 
   // ✅ LOG OUT
