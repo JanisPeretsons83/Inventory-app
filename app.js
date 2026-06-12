@@ -697,6 +697,20 @@ ws.addRow([
 
   // ✅ LOG OUT
 
+function doLogout() {
+
+  localStorage.removeItem("data");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("location");
+
+  data = [];
+
+  document.getElementById("appContent").style.display = "none";
+  document.getElementById("locationSelect").style.display = "block";
+
+  render();
+}
+
 
 function endSession() {
 
