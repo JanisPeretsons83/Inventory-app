@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "inventory-app-v1";
+const CACHE_NAME = "inventory-app-v2"; // 🔥 MAINI ŠO katru update!
 
 const urlsToCache = [
   "/",
@@ -12,20 +12,35 @@ const urlsToCache = [
   "/icons/worklog-192.png"
 ];
 
-// ✅ install
+// ✅ INSTALL (kešo failus)
 self.addEventListener("install", event => {
+  self.skipWaiting(); // ✅ uzreiz aktivizējas
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// ✅ fetch (offline)
+// ✅ ACTIVATE (dzēš veco cache!)
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key); // ✅ DZĒŠ VECO
+          }
+        })
+      );
+    })
+  );
+});
+
+// ✅ FETCH
 self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
+      .then(response => response || fetch(event.request))
   );
 });
