@@ -690,36 +690,30 @@ ws.addRow([
 
 
   // ✅ LOG OUT
+
+
 function endSession() {
 
-  const confirmSave = confirm("Vai ievadītie dati tika saglabāti?");
-
+  // ✅ JA NAV DATU → vienkārši iziet
   if (data.length === 0) {
-    alert("Nav datu ko dzēst");
+    doLogout();
     return;
   }
 
-  if (confirmSave) {
+  // ✅ IR DATI → gudrais dialogs
+  const choice = confirm(
+    "Tev ir ievadīti dati.\n\nOK = Saglabāt Excel un iziet\nCancel = Vēl neiziet"
+  );
 
-    // ✅ dzēš datus
-    localStorage.removeItem("data");
-    data = [];
+  if (choice) {
+    // ✅ saglabā Excel
+    exportExcel();
 
-    // ✅ dzēš lietotāju (ja gribi pilnu restartu)
-    localStorage.removeItem("userName");
-    localStorage.removeItem("location");
-
-    // ✅ atgriežas uz login
-    document.getElementById("appContent").style.display = "none";
-    document.getElementById("locationSelect").style.display = "block";
-
-    // ✅ notīra tabulu
-    render();
-
-  } else {
-
-    // ❌ neko nedara
-    alert("Saglabā datus pirms iziešanas!");
-
+    // ✅ iziet
+    doLogout();
   }
+
+  // ❌ ja Cancel → neko nedara
 }
+
+
