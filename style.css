@@ -22,14 +22,29 @@ body {
   color: white !important;
 }
 
-#mapsContainer img {
-  width: 60px;
-  height: auto;
-  cursor: pointer;
-  margin: 5px;
-  border-radius: 6px;
+#mapsContainer a {
+  display: block;
+  margin: 5px 0;
+  text-decoration: none;
+  font-size: 16px;
 }
 
+/*Lokācijas izvēlne*/
+.areaRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.areaRow select {
+  flex: 1; /* aizņem vietu */
+}
+
+.areaRow a {
+  white-space: nowrap; /* lai neiet jaunā rindā */
+  font-size: 14px;
+}
+/**/
 h2 {
   text-align: center;
   margin-bottom: 15px;
