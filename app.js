@@ -34,64 +34,52 @@ function updateAreas() {
   });
 }
 
+
 function updateMaps() {
 
   const location = localStorage.getItem("location");
+  const container = document.getElementById("mapLinks");
 
-  const map1 = document.getElementById("map1");
-  const map2 = document.getElementById("map2");
+  container.innerHTML = ""; // notīra iepriekšējo
 
-  // RESET
-  map1.style.display = "none";
-  map2.style.display = "none";
+  if (location === "Dārdu") {
 
-  
-if (location === "Dārdu") {
+    container.innerHTML = `
+      <a href="#" onclick="openImageFromSrc('dardu_map1.jpeg'); return false;">
+        📍 Karte 1
+      </a>
 
-  map1.src = "dardu_map1.jpeg";
-  map2.src = "dardu_map2.jpeg";
+      <a href="#" onclick="openImageFromSrc('dardu_map2.jpeg'); return false;">
+        📍 Karte 2
+      </a>
+    `;
 
-  map1.style.display = "block";
-  map2.style.display = "block";
+  } else if (location === "Cecīļu") {
 
-  // ✅ PIEVIENO ŠO
- 
-map1.onclick = () => openImage(map1);
-map2.onclick = () => openImage(map2);
-
-}
-else if (location === "Cecīļu") {
-
-  map1.src = "cecilu_map.jpeg";
-
-  map1.style.display = "block";
-
-  // ✅ PIEVIENO ŠO
-  map1.onclick = () => openImage(map1);
-}
-
+    container.innerHTML = `
+      <a href="#" onclick="openImageFromSrc('cecilu_map.jpeg'); return false;">
+        📍 Karte
+      </a>
+    `;
+  }
 }
 
 
-function openImage(img) {
+function openImageFromSrc(src) {
 
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImg");
 
-  if (!modal || !modalImg) {
-    console.error("Modal nav atrasts!");
-    return;
-  }
-
   modal.style.display = "block";
-  modalImg.src = img.src;
+  modalImg.src = src;
 }
 
-
 // ✅ aizver uz klikšķa
-document.getElementById("imageModal").onclick = () => {
-  document.getElementById("imageModal").style.display = "none";
+
+document.getElementById("imageModal").onclick = function () {
+  this.style.display = "none";
 };
+
 
 function setLocation(loc, btn) {
 
