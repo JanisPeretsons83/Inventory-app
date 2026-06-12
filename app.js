@@ -717,13 +717,23 @@ function endSession() {
 }
 
 // ✅ SERVICE WORKER
+
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js")
-      .then(() => console.log("SW OK"))
-      .catch(err => console.log("SW ERROR", err));
-  });
+
+  navigator.serviceWorker.register("sw.js")
+    .then(reg => {
+
+      console.log("SW registered");
+
+      // ✅ pārbauda update
+      setInterval(() => {
+        reg.update();
+      }, 60000); // ik 60 sekundes
+
+    })
+    .catch(err => console.log("SW error", err));
 }
+
 
 // ✅ INSTALL PROMPT (Android)
 let deferredPrompt;
