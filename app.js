@@ -548,6 +548,7 @@ function fillGray() {
 }
 
 //✅ Row style
+
 function applyRowStyle(row, type) {
 
   let color;
@@ -572,15 +573,41 @@ function applyRowStyle(row, type) {
       color = "FFFFFFFF";
   }
 
-  row.eachCell(cell => {
+  // ✅ palielina rindas augstumu (vizuāls "padding")
+  row.height = 22;
+
+  row.eachCell((cell, colNumber) => {
+
     cell.fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: color }
     };
+
     cell.border = borderAll();
+
+    // ✅ centrē tekstu visur
+    cell.alignment = {
+      vertical: "middle",
+      horizontal: colNumber === 2 ? "left" : "center", // tekstam pa kreisi, kodi centrā
+      wrapText: true,
+      indent: colNumber === 2 ? 1 : 0  // ✅ “margin” efekts tekstam
+    };
+
   });
 }
+
+header.eachCell(cell => {
+  cell.font = { bold: true };
+
+  cell.alignment = {
+    horizontal: "center",
+    vertical: "middle"
+  };
+
+  cell.border = borderAll();
+  cell.fill = fillGray();
+});
 
 
   //✅ Export Excel
