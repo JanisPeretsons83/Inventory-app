@@ -716,4 +716,22 @@ function endSession() {
   // ❌ ja Cancel → neko nedara
 }
 
+// ✅ SERVICE WORKER
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js")
+      .then(() => console.log("SW OK"))
+      .catch(err => console.log("SW ERROR", err));
+  });
+}
+
+// ✅ INSTALL PROMPT (Android)
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log("Install pieejams");
+});
+
 
