@@ -734,4 +734,9 @@ window.addEventListener("beforeinstallprompt", (e) => {
   console.log("Install pieejams");
 });
 
+// ✅ AUTO REFRESH JA IR JAUNA VERSIJA
+navigator.serviceWorker.addEventListener("controllerchange", () => {
+  console.log("New version loaded → reload");
+  window.location.reload();
+});
 
