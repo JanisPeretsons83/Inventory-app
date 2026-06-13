@@ -238,7 +238,7 @@ function add() {
 
 
     // ✅ UZREIZ PARĀDA LAUKĀ
-    document.getElementById("pieces").value = "≈ " piecesPerPack;
+    document.getElementById("pieces").value = "≈ "+ piecesPerPack;
 
     totalM3 = m3PerPack * packagesVal;
 
