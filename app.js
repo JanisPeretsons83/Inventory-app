@@ -274,7 +274,7 @@ function add() {
     packLength,
     packHeight,
 
-    pieces: piecesPerPack, ✅ // saglabā TĪRU skaitli!
+    pieces: piecesPerPack, // ✅ saglabā TĪRU skaitli!
     avgLength,
 
     name: document.getElementById("name").value,
