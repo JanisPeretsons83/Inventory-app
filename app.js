@@ -785,7 +785,7 @@ async function exportExcel() {
 
   ws.addRow([
     "m3 kopā:",
-    { formula: `SUM(O${startRow}:O${lastRow})` }
+    { formula: `SUM(P${startRow}:P${lastRow})` }
   ]);
 
   //✅ COLUMN WIDTH
