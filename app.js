@@ -522,6 +522,12 @@ function calculateGali() {
   // ✅ PARĀDA AR ≈
   document.getElementById("pieces").value =
     "≈ " + piecesPerPack;
+  document.getElementById("calcInfo").style.display = "block";
+  
+if (!isGali) {
+  document.getElementById("calcInfo").style.display = "none";
+}
+
 }
 
  //✅ Border
