@@ -488,6 +488,7 @@ function toggleTable() {
   t.style.display = tableVisible ? "table" : "none";
 }
 
+
 function calculateGali() {
 
   const thicknessVal = Number(document.getElementById("thickness").value);
@@ -502,9 +503,7 @@ function calculateGali() {
     thicknessVal <= 0 || widthVal <= 0 ||
     packWidth <= 0 || packLength <= 0 || packHeight <= 0 ||
     avgLength <= 0
-  ) {
-    return;
-  }
+  ) return;
 
   let crossSection = thicknessVal * widthVal;
   let packSection = packWidth * packHeight;
@@ -512,13 +511,15 @@ function calculateGali() {
   let piecesInLayer = Math.floor(packSection / crossSection);
   let layers = Math.floor(packLength / avgLength);
 
-  let efficiency = 0.7;
+  // ✅ MAINĪJUMS ŠEIT
+  let efficiency = 0.95;
 
   let piecesPerPack =
     Math.max(1, Math.floor(piecesInLayer * layers * efficiency));
 
-  // ✅ IEVIETO LAUKĀ
-  document.getElementById("pieces").value = piecesPerPack;
+  // ✅ PARĀDA AR ≈
+  document.getElementById("pieces").value =
+    "≈ " + piecesPerPack;
 }
 
  //✅ Border
