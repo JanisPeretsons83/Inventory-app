@@ -714,6 +714,7 @@ async function exportExcel() {
     "Gads",
     "Šķira",
     "Komentārs",
+    "",
     "m3 kopā"
   ];
 
@@ -753,14 +754,17 @@ async function exportExcel() {
       e.code,
       Number(e.m3Pack?.toFixed(4)),
       e.thickness,
-      e.width,
-      e.length,
+      e.width,      
+      (e.length || "").toLowerCase() === "gali"
+        ? e.avgLength || ""
+        : Number(e.length),
       e.pieces,
       Number(pieceM3.toFixed(5)),
       String(e.month).padStart(2, "0"),
       e.year < 100 ? "20" + e.year : e.year,
       e.grade,
       e.comment,
+      (e.length || "").toLowerCase() === "gali" ? "Gali" : "",
       { formula: `B${rowIndex}*E${rowIndex}` }
     ]);
 
@@ -791,7 +795,7 @@ async function exportExcel() {
     10, 10, 10,
     16, 10,
     10, 10,
-    10, 25, 12
+    10, 25, 10, 12
   ].forEach((w, i) => {
     ws.getColumn(i + 1).width = w;
   });
