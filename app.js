@@ -163,6 +163,7 @@ function saveUser() {
 
 
 // ✅ PIEVIENO IERAKSTU
+
 function add() {
 
   const areaVal = document.getElementById("area").value.trim();
@@ -203,63 +204,41 @@ function add() {
   let piecesPerPack = null;
   let avgLength = null;
 
-  
-// ✅ GALI režīms
-if (lengthVal === "gali") {
+  // ✅ GALI režīms
+  if (lengthVal === "gali") {
 
-  packWidth = Number(document.getElementById("packWidth").value);
-  packLength = Number(document.getElementById("packLength").value);
-  packHeight = Number(document.getElementById("packHeight").value);
-  avgLength = Number(document.getElementById("avgLength").value);
+    packWidth = Number(document.getElementById("packWidth").value);
+    packLength = Number(document.getElementById("packLength").value);
+    packHeight = Number(document.getElementById("packHeight").value);
+    avgLength = Number(document.getElementById("avgLength").value);
 
-  if (
-    packWidth <= 0 || isNaN(packWidth) ||
-    packLength <= 0 || isNaN(packLength) ||
-    packHeight <= 0 || isNaN(packHeight) ||
-    avgLength <= 0 || isNaN(avgLength)
-  ) {
-    return error("Aizpildi pakas izmērus + vidējo garumu");
-  }
+    if (
+      packWidth <= 0 || isNaN(packWidth) ||
+      packLength <= 0 || isNaN(packLength) ||
+      packHeight <= 0 || isNaN(packHeight) ||
+      avgLength <= 0 || isNaN(avgLength)
+    ) {
+      return error("Aizpildi pakas izmērus + vidējo garumu");
+    }
 
-  m3PerPack =
-    (packWidth * packLength * packHeight) / 1000000000;
+    m3PerPack =
+      (packWidth * packLength * packHeight) / 1000000000;
 
-  let crossSection = thicknessVal * widthVal;
-  let packSection = packWidth * packHeight;
-
-  let piecesInLayer = Math.floor(packSection / crossSection);
-  let layers = Math.floor(packLength / avgLength);
-
-  // ✅ JAUNS — 95%
-  let efficiency = 0.95;
-
-  piecesPerPack = Math.max(1,
-    Math.floor(piecesInLayer * layers * efficiency)
-  );
-
-  // ✅ PARĀDA PIE LIETOTĀJA
-  document.getElementById("pieces").value = "≈ " + piecesPerPack;
-
-  totalM3 = m3PerPack * packagesVal;
-}
-
-
-    // ✅ REĀLAIS GABALU APRĒĶINS
     let crossSection = thicknessVal * widthVal;
     let packSection = packWidth * packHeight;
 
     let piecesInLayer = Math.floor(packSection / crossSection);
     let layers = Math.floor(packLength / avgLength);
 
+    // ✅ 95% efektivitāte
     let efficiency = 0.95;
 
-      piecesPerPack = Math.max(1,
-        Math.floor(piecesInLayer * layers * efficiency)
-      );
+    piecesPerPack = Math.max(1,
+      Math.floor(piecesInLayer * layers * efficiency)
+    );
 
-
-    // ✅ UZREIZ PARĀDA LAUKĀ
-    document.getElementById("pieces").value = "≈ "+ piecesPerPack;
+    // ✅ parāda ar ≈
+    document.getElementById("pieces").value = "≈ " + piecesPerPack;
 
     totalM3 = m3PerPack * packagesVal;
 
@@ -295,7 +274,7 @@ if (lengthVal === "gali") {
     packLength,
     packHeight,
 
-    pieces: piecesPerPack,
+    pieces: piecesPerPack, ✅ // saglabā TĪRU skaitli!
     avgLength,
 
     name: document.getElementById("name").value,
@@ -310,18 +289,10 @@ if (lengthVal === "gali") {
   data.push(entry);
   localStorage.setItem("data", JSON.stringify(data));
 
-  // ✅ saglabā formu
-  localStorage.setItem("lastForm", JSON.stringify({
-    area: areaVal,
-    thickness: thicknessVal,
-    width: widthVal,
-    grade: document.getElementById("grade").value
-  }));
-
   clearError();
   render();
 
-  // ✅ tīra tikai mainīgos laukus
+  // ✅ tīrīšana
   document.getElementById("length").value = "";
   document.getElementById("pieces").value = "";
   document.getElementById("packWidth").value = "";
@@ -329,9 +300,9 @@ if (lengthVal === "gali") {
   document.getElementById("packHeight").value = "";
   document.getElementById("avgLength").value = "";
 
-  document.getElementById("length").focus();
   document.getElementById("galiInputs").style.display = "none";
 }
+
 
 
 // ✅ TABULA
