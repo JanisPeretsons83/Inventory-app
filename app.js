@@ -437,6 +437,7 @@ window.onload = () => {
 
 const lengthInput = document.getElementById("length");
 const block = document.getElementById("galiInputs");
+const calcInfo = document.getElementById("calcInfo");
 
 if (lengthInput && block) {
   lengthInput.addEventListener("input", (e) => {
@@ -444,6 +445,7 @@ if (lengthInput && block) {
     const isGali = val === "gali";
 
     block.style.display = isGali ? "block" : "none";
+    calcInfo.style.display = isGali ? "block" : "none";
 
     if (isGali) calculateGali();
   });
