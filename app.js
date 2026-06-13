@@ -230,7 +230,7 @@ function add() {
     let piecesInLayer = Math.floor(packSection / crossSection);
     let layers = Math.floor(packLength / avgLength);
 
-    let efficiency = 0.7;
+    let efficiency = 0.95;
 
     piecesPerPack = Math.max(1,
       Math.floor(piecesInLayer * layers * efficiency)
