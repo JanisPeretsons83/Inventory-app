@@ -647,43 +647,89 @@ async function exportExcel() {
 
   ws.addRow([]);
 
- //✅ SKAIDROJUMU BLOKS
 
-  let legendHeader = ws.addRow([
-    "Šķira", "Skaidrojums", "", "", "", "", "", "", "", "", "", "", "", "Apzīmējums"
-  ]);
+//✅ SKAIDROJUMU BLOKS
 
-  legendHeader.eachCell(cell => {
-    cell.font = { bold: true };
-    cell.alignment = { horizontal: "center" };
-    cell.border = borderAll();
-    cell.fill = fillGray();
-  });
+function addLegendRow(values, color) {
+  let row = ws.addRow(values);
 
-  applyRowStyle(ws.addRow(["K kods", "Sakomplektēta produkcija", "", "", "", "", "", "", "", "", "", "", "", "K"]), "lightGreen");
-  applyRowStyle(ws.addRow(["Augstākā šķira", "Pilnībā gatava detaļa, pabeigtas visas operācijas, t.sk., impregnācija", "", "", "", "", "", "", "", "", "", "", "", "A"]), "yellow");
+  applyRowStyle(row, color);
 
-  [
-    ["1. šķira", "Ēvelēti dēļi", "1a"],
-    ["", "Neēvelēti, bet sagarināti dēļi", "1b"],
-    ["", "Ēvelētas sagarinātas sagataves", "1c"],
-    ["", "Tālākā apstrādē esošas sagataves", "1d"]
-  ].forEach(r => {
-    applyRowStyle(ws.addRow([r[0], r[1], "", "", "", "", "", "", "", "", "", "", "", r[2]]), "softGreen");
-  });
+  let r = row.number;
 
-  [
-    ["2. šķira", "Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma", "2a"],
-    ["", "Brāķis, kuram redzams pielietojums - varam izmantot tālākā apstrādē", "2b"],
-    ["", "Brāķis, kuram nav pielietojums - iznīcināms", "2c"]
-  ].forEach(r => {
-    applyRowStyle(ws.addRow([r[0], r[1], "", "", "", "", "", "", "", "", "", "", "", r[2]]), "blue");
-  });
+  // ✅ merge Skaidrojums (B → L)
+  ws.mergeCells(`B${r}:L${r}`);
 
-  applyRowStyle(ws.addRow(["Paletes", "Paletes gatavai produkcijai", "", "", "", "", "", "", "", "", "", "", "", "PAL"]), "beige");
+  // ✅ skaists alignment
+  ws.getCell(`B${r}`).alignment = {
+    vertical: "middle",
+    horizontal: "left",
+    wrapText: true,
+    indent: 1
+  };
+}
 
-  ws.addRow([]);
-  ws.addRow([]);
+// ✅ HEADER
+let legendHeader = ws.addRow([
+  "Šķira", "Skaidrojums", "", "", "", "", "", "", "", "", "", "", "", "Apzīmējums"
+]);
+
+legendHeader.eachCell(cell => {
+  cell.font = { bold: true };
+  cell.alignment = { horizontal: "center", vertical: "middle" };
+  cell.border = borderAll();
+  cell.fill = fillGray();
+});
+
+// ✅ HEADER merge arī
+let hr = legendHeader.number;
+ws.mergeCells(`B${hr}:L${hr}`);
+
+// ✅ ROWS
+addLegendRow(
+  ["K kods", "Sakomplektēta produkcija", "", "", "", "", "", "", "", "", "", "", "", "K"],
+  "lightGreen"
+);
+
+addLegendRow(
+  ["Augstākā šķira", "Pilnībā gatava detaļa, pabeigtas visas operācijas, t.sk., impregnācija", "", "", "", "", "", "", "", "", "", "", "", "A"],
+  "yellow"
+);
+
+// ✅ 1. šķira
+[
+  ["1. šķira", "Ēvelēti dēļi", "1a"],
+  ["", "Neēvelēti, bet sagarināti dēļi", "1b"],
+  ["", "Ēvelētas sagarinātas sagataves", "1c"],
+  ["", "Tālākā apstrādē esošas sagataves", "1d"]
+].forEach(r => {
+  addLegendRow(
+    [r[0], r[1], "", "", "", "", "", "", "", "", "", "", "", r[2]],
+    "softGreen"
+  );
+});
+
+// ✅ 2. šķira
+[
+  ["2. šķira", "Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma", "2a"],
+  ["", "Brāķis, kuram redzams pielietojums - varam izmantot tālākā apstrādē", "2b"],
+  ["", "Brāķis, kuram nav pielietojums - iznīcināms", "2c"]
+].forEach(r => {
+  addLegendRow(
+    [r[0], r[1], "", "", "", "", "", "", "", "", "", "", "", r[2]],
+    "blue"
+  );
+});
+
+// ✅ Paletes
+addLegendRow(
+  ["Paletes", "Paletes gatavai produkcijai", "", "", "", "", "", "", "", "", "", "", "", "PAL"],
+  "beige"
+);
+
+ws.addRow([]);
+ws.addRow([]);
+
 
   //✅ INFO
 
