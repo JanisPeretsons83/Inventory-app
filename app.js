@@ -232,9 +232,10 @@ function add() {
 
     let efficiency = 0.95;
 
-    piecesPerPack = Math.max(1,
-      Math.floor(piecesInLayer * layers * efficiency)
-    );
+      piecesPerPack = Math.max(1,
+        Math.floor(piecesInLayer * layers * efficiency)
+      );
+
 
     // ✅ UZREIZ PARĀDA LAUKĀ
     document.getElementById("pieces").value = piecesPerPack;
