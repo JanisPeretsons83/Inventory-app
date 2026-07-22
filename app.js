@@ -431,7 +431,7 @@ function edit(i) {
   document.getElementById("length").value = e.length;
   document.getElementById("month").value = e.month;
   document.getElementById("year").value = e.year;
-
+  document.getElementById("pieces").value = e.pieces;
   document.getElementById("name").value = e.name;
   document.getElementById("productCode").value = e.code;
   document.getElementById("grade").value = e.grade;
