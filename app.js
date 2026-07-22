@@ -305,10 +305,13 @@ if (editIndex !== null) {
 
   editIndex = null;
 
-  showMessage("✅ Labojums saglabāts");
-
-  document.getElementById("addBtn").innerText =
+document.getElementById("addBtn").innerText =
     "➕ Pievienot";
+
+  document.getElementById("cancelEditBtn").style.display =
+    "none";
+
+  showMessage("✅ Labojums saglabāts");
 
 } else {
 
@@ -334,7 +337,22 @@ localStorage.setItem("data", JSON.stringify(data));
   document.getElementById("galiInputs").style.display = "none";
 }
 
+// ✅ Atcelt
+function cancelEdit() {
 
+  editIndex = null;
+
+  document.getElementById("addBtn").innerText =
+    "➕ Pievienot";
+
+  document.getElementById("cancelEditBtn").style.display =
+    "none";
+
+  clearForm();
+  clearError();
+
+  showMessage("Labošana atcelta");
+}
 
 // ✅ TABULA
 function render() {
@@ -514,6 +532,37 @@ function error(msg) {
 
 function clearError() {
   document.getElementById("error").innerText = "";
+}
+
+function clearForm() {
+
+  document.getElementById("area").value = "";
+  document.getElementById("packages").value = "";
+  document.getElementById("thickness").value = "";
+  document.getElementById("width").value = "";
+  document.getElementById("length").value = "";
+
+  document.getElementById("month").value = "";
+  document.getElementById("year").value = "";
+
+  document.getElementById("name").value = "";
+  document.getElementById("productCode").value = "";
+  document.getElementById("grade").value = "";
+  document.getElementById("comment").value = "";
+
+  document.getElementById("pieces").value = "";
+
+  document.getElementById("packWidth").value = "";
+  document.getElementById("packLength").value = "";
+  document.getElementById("packHeight").value = "";
+  document.getElementById("avgLength").value = "";
+
+  document.getElementById("galiInputs").style.display = "none";
+
+  const calcInfo = document.getElementById("calcInfo");
+  if (calcInfo) {
+    calcInfo.style.display = "none";
+  }
 }
 
 
