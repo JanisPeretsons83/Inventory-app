@@ -1,4 +1,5 @@
 let data = [];
+let editIndex = null;
 
 // ✅ Login
 
@@ -40,6 +41,17 @@ function updateAreas() {
   });
 }
 
+function showMessage(text) {
+
+  const msg = document.getElementById("message");
+
+  msg.innerText = text;
+  msg.style.display = "block";
+
+  setTimeout(() => {
+    msg.style.display = "none";
+  }, 1500);
+}
 
 function updateMaps() {
 
@@ -286,8 +298,27 @@ function add() {
     total: totalM3
   };
 
+  
+if (editIndex !== null) {
+
+  data[editIndex] = entry;
+
+  editIndex = null;
+
+  showMessage("✅ Labojums saglabāts");
+
+  document.getElementById("addBtn").innerText =
+    "➕ Pievienot";
+
+} else {
+
   data.push(entry);
-  localStorage.setItem("data", JSON.stringify(data));
+
+  showMessage("✅ Ieraksts pievienots");
+}
+
+localStorage.setItem("data", JSON.stringify(data));
+
 
   clearError();
   render();
@@ -372,9 +403,13 @@ function remove(i) {
 
 
 // ✅ EDIT
+
 function edit(i) {
 
   const e = data[i];
+
+  // ✅ atceramies kuru ierakstu labo
+  editIndex = i;
 
   document.getElementById("area").value = e.area;
   document.getElementById("packages").value = e.packages;
@@ -390,6 +425,7 @@ function edit(i) {
   document.getElementById("comment").value = e.comment;
 
   if ((e.length || "").toLowerCase() === "gali") {
+
     document.getElementById("galiInputs").style.display = "block";
 
     document.getElementById("packWidth").value = e.packWidth;
@@ -398,9 +434,9 @@ function edit(i) {
     document.getElementById("avgLength").value = e.avgLength || "";
   }
 
-  data.splice(i, 1);
-  localStorage.setItem("data", JSON.stringify(data));
-  render();
+  // ✅ poga pāriet labošanas režīmā
+  document.getElementById("addBtn").innerText =
+    "💾 Saglabāt labojumu";
 }
 
 
