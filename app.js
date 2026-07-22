@@ -327,13 +327,8 @@ localStorage.setItem("data", JSON.stringify(data));
   render();
 
   // ✅ tīrīšana
-  document.getElementById("length").value = "";
-  document.getElementById("pieces").value = "";
-  document.getElementById("packWidth").value = "";
-  document.getElementById("packLength").value = "";
-  document.getElementById("packHeight").value = "";
-  document.getElementById("avgLength").value = "";
-
+  clearForm();
+  
   document.getElementById("galiInputs").style.display = "none";
 }
 
@@ -450,11 +445,19 @@ function edit(i) {
     document.getElementById("packLength").value = e.packLength;
     document.getElementById("packHeight").value = e.packHeight;
     document.getElementById("avgLength").value = e.avgLength || "";
+  }  
+  else {
+    document.getElementById("galiInputs").style.display = "none";
   }
 
-  // ✅ poga pāriet labošanas režīmā
-  document.getElementById("addBtn").innerText =
-    "💾 Saglabāt labojumu";
+
+  // ✅ poga pāriet labošanas režīmā 
+document.getElementById("addBtn").innerText =
+  "💾 Saglabāt labojumu";
+
+document.getElementById("cancelEditBtn").style.display =
+  "inline-block";
+
 }
 
 
@@ -505,16 +508,6 @@ if (lengthInput && block) {
   });
 }
 
-  // LOAD FORM
-  const savedForm = localStorage.getItem("lastForm");
-  if (savedForm) {
-    const f = JSON.parse(savedForm);
-    document.getElementById("area").value = f.area || "";
-    document.getElementById("thickness").value = f.thickness || "";
-    document.getElementById("width").value = f.width || "";
-    document.getElementById("grade").value = f.grade || "";
-  }
-
   // ✅ LIVE APRĒĶINS
   document.getElementById("avgLength").addEventListener("input", calculateGali);
   document.getElementById("packWidth").addEventListener("input", calculateGali);
@@ -536,7 +529,6 @@ function clearError() {
 
 function clearForm() {
 
-  document.getElementById("area").value = "";
   document.getElementById("packages").value = "";
   document.getElementById("thickness").value = "";
   document.getElementById("width").value = "";
@@ -609,10 +601,6 @@ function calculateGali() {
     "≈ " + piecesPerPack;
   document.getElementById("calcInfo").style.display = "block";
   
-if (!isGali) {
-  document.getElementById("calcInfo").style.display = "none";
-}
-
 }
 
  //✅ Border
