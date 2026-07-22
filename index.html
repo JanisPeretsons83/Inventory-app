@@ -126,7 +126,11 @@
 <input id="comment" placeholder="Komentārs">
 
 <!-- Pogas -->
-<button class="primary" onclick="add()">➕ Pievienot</button>
+<button id="addBtn" class="primary" onclick="add()">➕ Pievienot</button>
+
+<button id="cancelEditBtn" style="display:none;">
+  ❌ Atcelt labošanu
+</button>
 
 <button class="secondary" onclick="toggleTable()">
 📋 Skatīt / Slēpt
