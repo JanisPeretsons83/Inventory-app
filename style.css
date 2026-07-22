@@ -12,6 +12,13 @@ body {
   margin-bottom: 10px;
 }
 
+#message {
+  display: none;
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 .danger {
   background: #c62828;
   color: white;
