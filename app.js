@@ -65,11 +65,11 @@ function updateMaps() {
   if (location === "Dārdu") {
 
     container.innerHTML = `
-      <a href="#" onclick="openImageFromSrc(`${BASE_PATH}/dardu_map1.jpeg`); return false;">
+      <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map1.jpeg'); return false;">
         📍 Karte 1
       </a>
 
-      <a href="#" onclick="openImageFromSrc(`${BASE_PATH}/dardu_map2.jpeg`); return false;">
+      <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map2.jpeg'); return false;">
         📍 Karte 2
       </a>
     `;
@@ -77,7 +77,7 @@ function updateMaps() {
   } else if (location === "Cecīļu") {
 
     container.innerHTML = `
-      <a href="#" onclick="openImageFromSrc(`${BASE_PATH}/cecilu_map.jpeg`); return false;">
+      <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
         📍 Karte
       </a>
     `;
@@ -282,7 +282,7 @@ function add() {
     packLength,
     packHeight,
 
-    pieces: piecesPerPack, // ✅ saglabā TĪRU skaitli!
+    pieces: piecesPerPack,
     avgLength,
 
     name: document.getElementById("name").value,
@@ -660,25 +660,13 @@ function applyRowStyle(row, type) {
     // ✅ centrē tekstu visur
     cell.alignment = {
       vertical: "middle",
-      horizontal: colNumber === 2 ? "left" : "center", // tekstam pa kreisi, kodi centrā
+      horizontal: colNumber === 2 ? "left" : "center",
       wrapText: true,
-      indent: colNumber === 2 ? 1 : 0  // ✅ “margin” efekts tekstam
+      indent: colNumber === 2 ? 1 : 0
     };
 
   });
 }
-
-header.eachCell(cell => {
-  cell.font = { bold: true };
-
-  cell.alignment = {
-    horizontal: "center",
-    vertical: "middle"
-  };
-
-  cell.border = borderAll();
-  cell.fill = fillGray();
-});
 
 
   //✅ Export Excel
@@ -997,4 +985,3 @@ navigator.serviceWorker.addEventListener("controllerchange", () => {
   console.log("New version loaded → reload");
   window.location.reload();
 });
-
