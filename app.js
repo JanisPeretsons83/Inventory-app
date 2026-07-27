@@ -1,5 +1,6 @@
 let data = [];
 let editIndex = null;
+let currentLocation = null;
 
 // ✅ Login
 
