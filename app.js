@@ -968,7 +968,7 @@ function endSession() {
 
 if ("serviceWorker" in navigator) {
 
-  navigator.serviceWorker.register("sw.js")
+  navigator.serviceWorker.register("/Inventory-app/sw.js")
     .then(reg => {
 
       console.log("SW registered");
