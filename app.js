@@ -124,12 +124,6 @@ function openImage(img) {
   modalImg.src = img.src;
 }
 
-// aizvēršana
-document.getElementById("imageModal").onclick = () => {
-  document.getElementById("imageModal").style.display = "none";
-};
-
-
 function setHeaderInfo() {
 
   const name = localStorage.getItem("userName") || "";
