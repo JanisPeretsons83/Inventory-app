@@ -58,17 +58,18 @@ function updateMaps() {
 
   const location = localStorage.getItem("location");
   const container = document.getElementById("mapLinks");
+  const BASE_PATH = "/Inventory-app";
 
   container.innerHTML = ""; // notīra iepriekšējo
 
   if (location === "Dārdu") {
 
     container.innerHTML = `
-      <a href="#" onclick="openImageFromSrc('dardu_map1.jpeg'); return false;">
+      <a href="#" onclick="openImageFromSrc(`${BASE_PATH}/dardu_map1.jpeg`); return false;">
         📍 Karte 1
       </a>
 
-      <a href="#" onclick="openImageFromSrc('dardu_map2.jpeg'); return false;">
+      <a href="#" onclick="openImageFromSrc(`${BASE_PATH}/dardu_map2.jpeg`); return false;">
         📍 Karte 2
       </a>
     `;
@@ -76,7 +77,7 @@ function updateMaps() {
   } else if (location === "Cecīļu") {
 
     container.innerHTML = `
-      <a href="#" onclick="openImageFromSrc('cecilu_map.jpeg'); return false;">
+      <a href="#" onclick="openImageFromSrc(`${BASE_PATH}/cecilu_map.jpeg`); return false;">
         📍 Karte
       </a>
     `;
