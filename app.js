@@ -168,7 +168,12 @@ function saveUser() {
   updateMaps();
 }
 
-
+function safeFileName(text) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]/g, "_");
+}
 
 // ✅ PIEVIENO IERAKSTU
 
@@ -682,16 +687,22 @@ async function exportExcel() {
   const name = localStorage.getItem("userName") || "";
 
   const d = new Date();
-
+  const safeLocation = safeFileName(location);
+  const safeName = safeFileName(name);
   const dateStr =
     String(d.getDate()).padStart(2, "0") + "." +
     String(d.getMonth() + 1).padStart(2, "0") + "." +
     d.getFullYear();
-
+  
   const fileDate =
     String(d.getDate()).padStart(2, "0") + "-" +
     String(d.getMonth() + 1).padStart(2, "0") + "-" +
     d.getFullYear();
+
+  const timeStr =
+  String(now.getHours()).padStart(2, "0") +
+  String(now.getMinutes()).padStart(2, "0") +
+  String(now.getSeconds()).padStart(2, "0");
 
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Inventarizācija");
@@ -906,7 +917,10 @@ ws.addRow([]);
   //✅ SAVE
 
   const buf = await wb.xlsx.writeBuffer();
-  saveAs(new Blob([buf]), `inv_${fileDate}.xlsx`);
+  saveAs(
+  new Blob([buf]),
+  `inv_${safeLocation}_${safeName}_${fileDate}_${timeStr}.xlsx`
+);
 }
 
 
