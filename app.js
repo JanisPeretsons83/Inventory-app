@@ -700,9 +700,9 @@ async function exportExcel() {
     d.getFullYear();
 
   const timeStr =
-  String(now.getHours()).padStart(2, "0") +
-  String(now.getMinutes()).padStart(2, "0") +
-  String(now.getSeconds()).padStart(2, "0");
+  String(d.getHours()).padStart(2, "0") +
+  String(d.getMinutes()).padStart(2, "0") +
+  String(d.getSeconds()).padStart(2, "0");
 
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Inventarizācija");
