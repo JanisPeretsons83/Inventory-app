@@ -227,22 +227,22 @@ function add() {
   let isGaliMode = false;
   
   function toggleGali() {
-  isGaliMode = !isGaliMode;
+    isGaliMode = !isGaliMode;
   
   const block = document.getElementById("galiInputs");
   const calcInfo = document.getElementById("calcInfo");
   const btn = document.getElementById("galiBtn");
   
   if (isGaliMode) {
-  block.style.display = "block";
-  calcInfo.style.display = "block";
-  btn.classList.add("active");
+    block.style.display = "block";
+    calcInfo.style.display = "block";
+    btn.classList.add("active");
   } else {
-  block.style.display = "none";
-  calcInfo.style.display = "none";
-  btn.classList.remove("active");
+    block.style.display = "none";
+    calcInfo.style.display = "none";
+    btn.classList.remove("active");
+    }
   }
-  
   if (lengthVal === "gali") {
 
     packWidth = Number(document.getElementById("packWidth").value);
