@@ -61,11 +61,11 @@ body {
 
 /* labojums: label, kas ir inputGroup iekšā, neliek kreiso atstarpi */
 .inputGroup label {
-  margin-left: 0;
+  margin-left: 1;
 }
 
 /* (pēc izvēles) nedaudz lielāks label teksts — ja 6px šķiet pārāk mazs */
-label {
+fieldLabel {
   display: block;
   font-size: 6px; /* iepriekš bija 6px */
   font-weight: 600;
