@@ -35,7 +35,43 @@ body {
   text-decoration: none;
   font-size: 16px;
 }
+/*Label*/
+/* Grupē label virs input un labāk novieto Gali pogu */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
+/* Šai rindiņai 2 kolonnas: laukums + poga */
+.row.galiRow {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Poga nebūs pilnībā 100% platumā un neuzklāsies uz input */
+#galiBtn {
+  width: auto;
+  min-width: 90px;
+  padding: 12px 14px;
+  margin-left: 0;
+  flex-shrink: 0;
+}
+
+/* labojums: label, kas ir inputGroup iekšā, neliek kreiso atstarpi */
+.inputGroup label {
+  margin-left: 0;
+}
+
+/* (pēc izvēles) nedaudz lielāks label teksts — ja 6px šķiet pārāk mazs */
+label {
+  display: block;
+  font-size: 6px; /* iepriekš bija 6px */
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 3px;
+}
 /*Gali komentārs*/
 
 .calcInfo {
