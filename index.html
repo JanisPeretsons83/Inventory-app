@@ -59,14 +59,17 @@
   <input id="width" type="number" inputmode="numeric" min="0" step="1" placeholder="Platums(mm) *">
 </div>  
   <div class="row">
-    
-    <input id="length" type="number" inputmode="numeric" min="0" step="1" placeholder="Garums(mm)">
-      <button
-        type="button"
-        id="galiBtn"
-        onclick="toggleGali()">
-        🪵 Gali
-      </button>
+    <div id="GaliContainer" class="areaRow">
+      <input id="length" type="number" inputmode="numeric" min="0" step="1" placeholder="Garums(mm)">
+        <div id="galibutton">
+          <button
+            type="button"
+            id="galiBtn"
+            onclick="toggleGali()">
+            🪵 Gali
+          </button>
+        </div>
+    </div>
   </div>
 
 
