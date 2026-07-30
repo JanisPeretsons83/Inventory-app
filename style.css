@@ -38,16 +38,21 @@ body {
 
 /* Šai rindiņai 2 kolonnas: laukums + poga */
 .row.galiRow {
+  display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 8px;
 }
 
-#galiContainer  {
-  display: block;
-  margin: 5px 0;
-  text-decoration: none;
-  font-size: 16px;
+#galiContainer {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+#galiBtn {
+height: 50px;
+min-width: 90px;
+margin: 0;
 }
 
 /*Gali komentārs*/
