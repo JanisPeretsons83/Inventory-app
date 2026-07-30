@@ -77,6 +77,18 @@ h2 {
   margin-bottom: 15px;
 }
 
+input,
+select {
+transition: all 0.2s ease;
+}
+input:focus,
+select:focus {
+transform: scale(1.03);
+border: 2px solid #2e7d32;
+box-shadow: 0 0 10px rgba(46,125,50,.25);
+outline: none;
+}
+
 input, select {
   width: 100%;
   padding: 14px;
