@@ -48,11 +48,14 @@ body {
 display: flex;
 align-items: center;
 gap: 8px;
+width: 100%;
+}
+#length {
+flex: 1;
 }
 #galiBtn {
-height: 50px;
-min-width: 90px;
-margin: 0;
+width: 90px;
+height: 48px;
 }
 
 /*Gali komentārs*/
