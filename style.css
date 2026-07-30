@@ -51,6 +51,7 @@ gap: 8px;
 width: 100%;
 }
 #length {
+grid-column: 1;
 flex: 1;
 }
 #galiBtn {
