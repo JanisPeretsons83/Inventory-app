@@ -56,7 +56,8 @@ flex: 1;
 #galiBtn {
 width: 90px;
 height: 48px;
-margin-left: 20px;
+align-items: center;
+margin-left: 50px;
 }
 
 /*Gali komentārs*/
