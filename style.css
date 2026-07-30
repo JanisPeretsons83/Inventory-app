@@ -36,14 +36,6 @@ body {
   font-size: 16px;
 }
 
-/* Šai rindiņai 2 kolonnas: laukums + poga */
-.row.galiRow {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 8px;
-}
-
 #galiContainer {
 display: flex;
 align-items: center;
@@ -51,15 +43,12 @@ gap: 8px;
 width: 100%;
 }
 #length {
-grid-column: 1;
 flex: 1;
 }
 #galiBtn {
 width: 90px;
 height: 48px;
-  grid-column: 2;
-align-items: center;
-margin-left: 30px;
+margin-left: auto;
 }
 
 /*Gali komentārs*/
