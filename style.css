@@ -43,12 +43,13 @@ gap: 8px;
 width: 100%;
 }
 #length {
-flex: 1;
+flex: 1 1 auto;
+min-width: 150px;
 }
 #galiBtn {
 width: 90px;
 height: 48px;
-margin-left: auto;
+flex-shrink: 0;
 }
 
 /*Gali komentārs*/
