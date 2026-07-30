@@ -56,9 +56,9 @@ flex: 1;
 #galiBtn {
 width: 90px;
 height: 48px;
-  grid-column: 3;
+  grid-column: 2;
 align-items: center;
-margin-left: 50px;
+margin-left: 30px;
 }
 
 /*Gali komentārs*/
@@ -177,7 +177,7 @@ th {
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
