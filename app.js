@@ -260,19 +260,16 @@ function add() {
 
     m3PerPack =
       (packWidth * packLength * packHeight) / 1000000000;
-
-    let crossSection = thicknessVal * widthVal;
-    let packSection = packWidth * packHeight;
-
-    let piecesInLayer = Math.floor(packSection / crossSection);
-    let layers = Math.floor(packLength / avgLength);
-
-    // ✅ 95% efektivitāte
-    let efficiency = 0.95;
-
-    piecesPerPack = Math.max(1,
-      Math.floor(piecesInLayer * layers * efficiency)
-    );
+if (avgLength > packLength / 2) {
+return error("Vidējais garums nevar būt lielāks par pusi no pakas garuma");
+}
+let piecesAcrossWidth = Math.floor(packWidth / widthVal);
+let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
+let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
+let columns = Math.floor(packLength / avgLength);
+let efficiency = 0.95;
+piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
+);
 
     // ✅ parāda ar ≈
     document.getElementById("pieces").value = "≈ " + piecesPerPack;
