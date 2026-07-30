@@ -43,13 +43,11 @@ body {
   gap: 8px;
 }
 
-/* Poga nebūs pilnībā 100% platumā un neuzklāsies uz input */
-#galiBtn {
-  width: auto;
-  min-width: 90px;
-  padding: 12px 14px;
-  margin-left: 0;
-  flex-shrink: 0;
+#galiContainer  {
+  display: block;
+  margin: 5px 0;
+  text-decoration: none;
+  font-size: 16px;
 }
 
 /*Gali komentārs*/
