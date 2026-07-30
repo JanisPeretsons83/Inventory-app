@@ -1,6 +1,7 @@
 let data = [];
 let editIndex = null;
 let currentLocation = null;
+let isGaliMode = false;
 
 // ✅ Login
 
@@ -54,6 +55,23 @@ function showMessage(text) {
   }, 1500);
 }
 
+  function toggleGali() {
+    isGaliMode = !isGaliMode;
+  
+  const block = document.getElementById("galiInputs");
+  const calcInfo = document.getElementById("calcInfo");
+  const btn = document.getElementById("galiBtn");
+  
+  if (isGaliMode) {
+    block.style.display = "block";
+    calcInfo.style.display = "block";
+    btn.classList.add("active");
+  } else {
+    block.style.display = "none";
+    calcInfo.style.display = "none";
+    btn.classList.remove("active");
+    }
+  }
 function updateMaps() {
 
   const location = localStorage.getItem("location");
@@ -223,26 +241,7 @@ function add() {
   let avgLength = null;
 
   // ✅ GALI režīms
-
-  let isGaliMode = false;
   
-  function toggleGali() {
-    isGaliMode = !isGaliMode;
-  
-  const block = document.getElementById("galiInputs");
-  const calcInfo = document.getElementById("calcInfo");
-  const btn = document.getElementById("galiBtn");
-  
-  if (isGaliMode) {
-    block.style.display = "block";
-    calcInfo.style.display = "block";
-    btn.classList.add("active");
-  } else {
-    block.style.display = "none";
-    calcInfo.style.display = "none";
-    btn.classList.remove("active");
-    }
-  }
   if (lengthVal === "gali") {
 
     packWidth = Number(document.getElementById("packWidth").value);
