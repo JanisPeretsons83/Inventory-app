@@ -37,23 +37,6 @@ body {
 }
 
 /*Gali komentārs*/
-#galiBtn {
-width: 120px;
-flex-shrink: 0;
-margin-left: 8px;
-}
-#length {
-flex: 1;
-}
-
-label {
-display: block;
-font-size: 6px;
-font-weight: 600;
-color: #333;
-margin-left: 10px;
-margin-bottom: 3px;
-}
 
 .calcInfo {
   font-size: 12px;
