@@ -61,15 +61,21 @@ function showMessage(text) {
   const block = document.getElementById("galiInputs");
   const calcInfo = document.getElementById("calcInfo");
   const btn = document.getElementById("galiBtn");
+  const lengthInput = document.getElementById("length");
   
   if (isGaliMode) {
     block.style.display = "block";
     calcInfo.style.display = "block";
     btn.classList.add("active");
+    // ✅ Garums nav rediģējams
+    lengthInput.disabled = true;
+    lengthInput.value = "";
   } else {
     block.style.display = "none";
     calcInfo.style.display = "none";
     btn.classList.remove("active");
+    // ✅ Atkal ļauj ievadīt garumu
+    lengthInput.disabled = false;
     }
   }
 function updateMaps() {
