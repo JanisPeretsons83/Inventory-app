@@ -50,28 +50,36 @@
 </div>
 
 
-<input id="packages" type="number" placeholder="Paku skaits *">
+<input id="packages" type="number" inputmode="numeric" min="0" step="1" placeholder="Paku skaits *">
 
 <!-- Izmēri -->
 <div class="row">
-  <input id="thickness" type="number" placeholder="Biezums(mm) *">
-  <input id="width" type="number" placeholder="Platums(mm) *">
-  <input id="length" placeholder="Garums (mm)/ gali">
+  <input id="thickness" type="number" inputmode="numeric" min="0" step="1" placeholder="Biezums(mm) *">
+  <input id="width" type="number" inputmode="numeric" min="0" step="1" placeholder="Platums(mm) *">
+  <div class="row">
+    <input id="length" type="number" inputmode="numeric" min="0" step="1" placeholder="Garums(mm)">
+      <button
+        type="button"
+        id="galiBtn"
+        onclick="toggleGali()">
+        🪵 Gali
+      </button>
+  </div>
 </div>
 
 <!-- GALI (pakas izmēri) -->
 <div id="galiInputs" class="row" style="display:none">
-  <input id="packWidth" type="number" placeholder="Pakas platums(mm)">
-  <input id="packLength" type="number" placeholder="Pakas garums(mm)">
-  <input id="packHeight" type="number" placeholder="Pakas augstums(mm)">
-  <input id="avgLength" type="number" placeholder="Vidējais detaļas garums(mm)">
+  <input id="packWidth" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas platums(mm)">
+  <input id="packLength" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas garums(mm)">
+  <input id="packHeight" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas augstums(mm)">
+  <input id="avgLength" type="number" inputmode="numeric" min="0" step="1" placeholder="Vidējais detaļas garums(mm)">
 </div>
 
 <!-- Gabali -->
  
 <div class="piecesRow">
 
-  <input id="pieces" type="text" placeholder="Gabali pakā">
+  <input id="pieces" type="text" inputmode="numeric" min="0" step="1" placeholder="Gabali pakā">
 
   <div id="calcInfo" class="calcInfo">
     * Aprēķini veikti ar 95% aizpildījuma efektivitāti
@@ -81,10 +89,10 @@
 
   <!-- Pakas + datums -->
 <div class="row">
-  <input id="month" type="number" placeholder="Mēnesis *">
-  <input id="year" type="number" placeholder="Gads *">
+  <input id="month" type="number" inputmode="numeric" min="1" max="12" placeholder="Mēnesis *">
+  <input id="year" type="number" inputmode="numeric" min="20" max="99" placeholder="Gads *">
 </div>
-
+  
   <!-- Nosaukums + kods -->
 <div class="row">
   <input id="name" placeholder="Detaļas nosaukums">
