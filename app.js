@@ -205,6 +205,11 @@ function add() {
     return error("Gads obligāts");
 
   let rawLength = document.getElementById("length").value.trim();
+  
+  if (isGaliMode) {
+    rawLength = "gali";
+  }
+    
   let lengthVal = rawLength.toLowerCase();
 
   let totalM3 = 0;
