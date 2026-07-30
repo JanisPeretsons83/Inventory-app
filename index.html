@@ -48,19 +48,23 @@
   <div id="mapLinks"></div>
 
 </div>
-
-<Label>Paku skaits</Label>
-<input id="packages" type="number" inputmode="numeric" min="0" step="1" placeholder="Paku skaits *">
-
+<div class="row PakasRow">
+  <div class="inputGroup">
+    <Label class="fieldLabel">
+      Paku skaits
+    </Label>
+  </div>
+    <input id="packages" type="number" inputmode="numeric" min="0" step="1" placeholder="Paku skaits *">
+</div>
 <!-- Izmēri -->
 <div class="row">
-  <label>Biezums(mm)</label>
+  
   <input id="thickness" type="number" inputmode="numeric" min="0" step="1" placeholder="Biezums(mm) *">
-  <label>Platums(mm)</label>
+  
   <input id="width" type="number" inputmode="numeric" min="0" step="1" placeholder="Platums(mm) *">
 </div>  
   <div class="row">
-    <label>Garums(mm)</label>
+    
     <input id="length" type="number" inputmode="numeric" min="0" step="1" placeholder="Garums(mm)">
       <button
         type="button"
