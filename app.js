@@ -257,6 +257,12 @@ gradeBtn.addEventListener("click", () => {
         menu.style.display = "none";
   });
 });
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".dropdown")) {
+    menu.style.display = "none";
+  }
+});
 // ✅ PIEVIENO IERAKSTU
 
 function add() {
@@ -285,6 +291,9 @@ function add() {
 
   if (!yearVal)
     return error("Gads obligāts");
+  
+  if (!document.getElementById("grade").value)
+      return error("Izvēlies šķiru");
 
   let rawLength = document.getElementById("length").value.trim();
   
@@ -348,7 +357,7 @@ piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
 
     if (piecesVal <= 0 || isNaN(piecesVal))
       return error("Gabali pakā obligāti");
-
+    
     piecesPerPack = piecesVal;
 
     m3PerPack =
@@ -523,6 +532,14 @@ function edit(i) {
   document.getElementById("name").value = e.name;
   document.getElementById("productCode").value = e.code;
   document.getElementById("grade").value = e.grade;
+  const selectedItem =
+    document.querySelector(
+      `.item[data-value="${e.grade}"]`
+      );
+  if (selectedItem) {
+    document.getElementById("gradeBtn").innerHTML =
+      selectedItem.innerHTML + " ▼";
+    }
   document.getElementById("comment").value = e.comment;
 
   if ((e.length || "").toLowerCase() === "gali") {
@@ -628,6 +645,8 @@ function clearForm() {
   document.getElementById("name").value = "";
   document.getElementById("productCode").value = "";
   document.getElementById("grade").value = "";
+  document.getElementById("gradeBtn").innerHTML =
+"Izvēlies šķiru ▼";
   document.getElementById("comment").value = "";
 
   document.getElementById("pieces").value = "";
