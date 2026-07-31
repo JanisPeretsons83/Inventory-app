@@ -74,7 +74,8 @@ z-index: 1000;
 
 .group {
 background: transparent;
-color: white;
+color: #1f4e79;
+font-weight: bold;
 padding: 8px 12px;
 font-size: 12px;
 font-weight: bold;
