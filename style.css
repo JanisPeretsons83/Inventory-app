@@ -72,6 +72,49 @@ overflow-y: auto;
 z-index: 1000;
 }
 
+.group {
+background: #444;
+color: white;
+padding: 8px 12px;
+font-size: 12px;
+font-weight: bold;
+text-transform: uppercase;
+position: sticky;
+top: 0;
+}
+
+.grade-k {
+background: #C6EFCE;
+}
+.grade-a {
+background: #FFEB9C;
+}
+.grade-1 {
+background: #E2EFDA;
+}
+.grade-2 {
+background: #BDD7EE;
+}
+.grade-pal {
+background: #FCE4D6;
+}
+
+.item {
+padding: 12px;
+cursor: pointer;
+transition: all .15s ease;
+}
+
+.item:hover {
+transform: scale(1.02);
+filter: brightness(0.92);
+}
+
+
+
+
+
+
 .calcInfo {
   font-size: 12px;
   color: gray;
