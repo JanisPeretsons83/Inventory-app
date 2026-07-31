@@ -44,15 +44,18 @@ function updateAreas() {
 }
 
 function showMessage(text) {
-
-  const msg = document.getElementById("message");
-
-  msg.innerText = text;
-  msg.style.display = "block";
-
-  setTimeout(() => {
-    msg.style.display = "none";
-  }, 1500);
+const msg = document.getElementById("message");
+const packages = document.getElementById("packages");
+msg.innerText = text;
+msg.style.display = "block";
+setTimeout(() => {
+msg.style.display = "none";
+packages.scrollIntoView({
+behavior: "smooth",
+block: "center"
+});
+packages.focus();
+}, 1500);
 }
 
   function toggleGali() {
