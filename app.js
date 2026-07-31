@@ -302,9 +302,7 @@ function add() {
 
     m3PerPack =
       (packWidth * packLength * packHeight) / 1000000000;
-if (avgLength > packLength / 2) {
-return error("Vidējais garums nevar būt lielāks par pusi no pakas garuma");
-}
+
 let piecesAcrossWidth = Math.floor(packWidth / widthVal);
 let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
 let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
