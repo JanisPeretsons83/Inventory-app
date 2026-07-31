@@ -56,7 +56,7 @@ behavior: "smooth",
 block: "center"
 });
 packages.focus();
-}, 1500);
+}, 1000);
 }
 
 function updateGradeColor() {
