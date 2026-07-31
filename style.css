@@ -73,7 +73,7 @@ z-index: 1000;
 }
 
 .group {
-background: #444;
+background: transparent;
 color: white;
 padding: 8px 12px;
 font-size: 12px;
