@@ -398,7 +398,10 @@ function render() {
   let totalM3 = 0;
 
   
-data.forEach((e, i) => {
+[...data]
+.map((e, i) => ({ e, i }))
+.reverse()
+.forEach(({ e, i }) => {
 
   totalPackages += e.packages || 0;
   totalM3 += e.total || 0;
