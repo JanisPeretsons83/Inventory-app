@@ -57,20 +57,19 @@ flex-shrink: 0;
 }
 
 /*Izvēlnes krāsojums*/
-.grade-k {
-background: #C6EFCE;
+.dropdown {
+position: relative;
 }
-.grade-a {
-background: #FFEB9C;
-}
-.grade-1 {
-background: #E2EFDA;
-}
-.grade-2 {
-background: #BDD7EE;
-}
-.grade-pal {
-background: #FCE4D6;
+.menu {
+display: none;
+position: absolute;
+left: 0;
+right: 0;
+background: white;
+border: 1px solid #ccc;
+max-height: 300px;
+overflow-y: auto;
+z-index: 1000;
 }
 
 .calcInfo {
