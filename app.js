@@ -487,7 +487,8 @@ function remove(i) {
 function edit(i) {
 
   const e = data[i];
-
+  updateGradeColor();
+  
   // ✅ atceramies kuru ierakstu labo
   editIndex = i;
 
