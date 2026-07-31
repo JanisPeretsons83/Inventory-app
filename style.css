@@ -52,7 +52,22 @@ height: 48px;
 flex-shrink: 0;
 }
 
-/*Gali komentārs*/
+/*Izvēlnes krāsojums*/
+.grade-k {
+background: #C6EFCE;
+}
+.grade-a {
+background: #FFEB9C;
+}
+.grade-1 {
+background: #E2EFDA;
+}
+.grade-2 {
+background: #BDD7EE;
+}
+.grade-pal {
+background: #FCE4D6;
+}
 
 .calcInfo {
   font-size: 12px;
