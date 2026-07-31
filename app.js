@@ -235,6 +235,28 @@ function safeFileName(text) {
     .replace(/[^a-zA-Z0-9]/g, "_");
 }
 
+// ✅ IZVĒLNE
+
+const gradeBtn = document.getElementById("gradeBtn");
+const menu = document.querySelector(".menu");
+const gradeInput = document.getElementById("grade");
+
+gradeBtn.addEventListener("click", () => {
+  menu.style.display =
+    menu.style.display === "block"
+    ? "none"
+    : "block";
+    });
+  document.querySelectorAll(".menu .item")
+    .forEach(item => {
+      item.addEventListener("click", () => {
+        gradeInput.value =
+      item.dataset.value;
+        gradeBtn.innerHTML =
+      item.innerHTML + " ▼";
+        menu.style.display = "none";
+  });
+});
 // ✅ PIEVIENO IERAKSTU
 
 function add() {
