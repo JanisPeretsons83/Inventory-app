@@ -59,6 +59,38 @@ packages.focus();
 }, 1500);
 }
 
+function updateGradeColor() {
+const grade = document.getElementById("grade");
+grade.classList.remove(
+"grade-k",
+"grade-a",
+"grade-1",
+"grade-2",
+"grade-pal"
+);
+switch (grade.value) {
+case "K":
+grade.classList.add("grade-k");
+break;
+case "A":
+grade.classList.add("grade-a");
+break;
+case "1a":
+case "1b":
+case "1c":
+case "1d":
+grade.classList.add("grade-1");
+break;
+case "2a":
+case "2b":
+case "2c":
+grade.classList.add("grade-2");
+break;
+case "PAL":
+  grade.classList.add("grade-pal");
+  break;
+  }
+}
   function toggleGali() {
     isGaliMode = !isGaliMode;
   
