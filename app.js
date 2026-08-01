@@ -20,7 +20,7 @@ const areasByLocation = {
 
   "Cecīļu": [
     "3-1", "4-1", "4-2", "4-3", "ZM", "B-L", "D-L", "N-1", "N-2", "N-3",
-    "N-4", "N-5", "N-6", "N-7", "N-8", "N-9", "8-1", "8-1", "8-2", "8-3",
+    "N-4", "N-5", "N-6", "N-7", "N-8", "N-9", "8-1", "8-2", "8-3",
     "8-4", "8-5", "8-6", "8-7", "9-5", "9-6", "9-7", "9-8", "9-9", "9-10",
     "9-11", "11-6", "11-7", "11-8", "11-9", "11-10", "11-11", "11-12",
     "11-13", "11-14",
@@ -544,16 +544,21 @@ function edit(i) {
   document.getElementById("comment").value = e.comment;
 
   if ((e.length || "").toLowerCase() === "gali") {
+    isGaliMode = true;
+      document.getElementById("length").disabled = true;
+      document.getElementById("galiBtn").classList.add("active");
+      document.getElementById("galiInputs").style.display = "block";
 
-    document.getElementById("galiInputs").style.display = "block";
-
-    document.getElementById("packWidth").value = e.packWidth;
-    document.getElementById("packLength").value = e.packLength;
-    document.getElementById("packHeight").value = e.packHeight;
-    document.getElementById("avgLength").value = e.avgLength || "";
+      document.getElementById("packWidth").value = e.packWidth;
+      document.getElementById("packLength").value = e.packLength;
+      document.getElementById("packHeight").value = e.packHeight;
+      document.getElementById("avgLength").value = e.avgLength || "";
   }  
   else {
-    document.getElementById("galiInputs").style.display = "none";
+    isGaliMode = false;
+      document.getElementById("length").disabled = false;
+      document.getElementById("galiBtn").classList.remove("active");
+      document.getElementById("galiInputs").style.display = "none";
   }
 
 
@@ -684,8 +689,10 @@ let columns = Math.floor(packLength / avgLength);
   // ✅ MAINĪJUMS ŠEIT
   let efficiency = 0.95;
 
-  let piecesPerPack =
-    Math.max(1, Math.floor(piecesInLayer * layers * efficiency));
+  let piecesPerPack = Math.max( 1, Math.floor(
+    piecesFront * columns * efficiency
+  )
+);
 
   // ✅ PARĀDA AR ≈
   document.getElementById("pieces").value =
