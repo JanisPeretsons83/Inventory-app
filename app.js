@@ -95,7 +95,8 @@ function showSizeSuggestions() {
   }
   const matches = dimensionsLibrary.filter(size =>
     size.startsWith(thickness + "x")
-    );
+    )
+    .slice(0, 5);
   if (matches.length === 0) {
     container.style.display = "none";
   return;
@@ -110,9 +111,10 @@ function showSizeSuggestions() {
       parts[0];
     document.getElementById("width").value =
       parts[1];
-    container.style.display = "none";
+        container.innerHTML = "";
+        container.style.display = "none";
     document.getElementById("length").focus();
-    };
+};
     container.appendChild(div);
   });
     container.style.display = "block";
@@ -528,6 +530,13 @@ window.onload = () => {
 
       document.getElementById("thickness")
         .addEventListener("input", showSizeSuggestions);
+      document.getElementById("width")
+        .addEventListener("focus", () => {
+  const container =
+      document.getElementById("sizeSuggestions");
+        container.innerHTML = "";
+        container.style.display = "none";
+      });
       document.getElementById("commentPreset")
         .addEventListener("change", 
     function() {
