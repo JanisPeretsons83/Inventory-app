@@ -488,6 +488,18 @@ window.onload = () => {
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
+  // ✅ KOMENTĀRU IZVĒLNE
+
+      document.getElementById("commentPreset")
+        .addEventListener("change", 
+    function() {
+      if (this.value === "Cits") {
+        document.getElementById("comment").focus();
+      } else {
+        document.getElementById("comment").value =
+      this.value;
+      }
+    });
   const savedLibrary = localStorage.getItem("dimensionsLibrary");
 
 //  ✅ DIMENSIJU BIB IELĀDE
