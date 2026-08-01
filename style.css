@@ -5,22 +5,22 @@ body {
   margin: 0;
 }
 
-#sizeSuggestion* {
+#sizeSuggestions {
   display: none;
-  margin: 5px *;
+  margin: 5px 0;
   border-radius: 8px;
-overflow* hidden;
+  overflow: hidden;
   max-height: 250px;
   overflow-y: auto;
 }
 .sizeOption {
-  backgr*und: white;
-    border: 1px solid #d*d;
+  background: white;
+    border: 1px solid #ddd;
     padding: 12px;
-    cursor: poin*er;
+    cursor: pointer;
     font-size: 18px;
 }
-.sizeOpt*on:hover {
+.sizeOption:hover {
   background: #f2f4f7;
 }
 
@@ -55,7 +55,7 @@ overflow* hidden;
   font-size: 16px;
 }
 
-#galiContainer {
+#GaliContainer {
   display: flex;
   align-items: center;
   gap: 8px;
