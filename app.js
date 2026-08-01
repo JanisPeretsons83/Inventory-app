@@ -556,7 +556,9 @@ window.onload = () => {
   }  
 //  ✅ MĒNESIS - GADS
   document.getElementById("month")
-.addEventListener("change", updateYearFromMonth);
+    .addEventListener("input", updateYearFromMonth);
+  document.getElementById("month")
+    .addEventListener("change", updateYearFromMonth);;
 // ✅ IZVĒLNE
 
 const gradeBtn = document.getElementById("gradeBtn");
