@@ -149,11 +149,14 @@
 </div>
 
 <!-- Komentārs -->
-<input list="commentList" id="comment" placeholder="Komentārs">
-<datalist id="commentList">
-  <option value="Lapegle">
-  <option value="Termokoks">
-</datalist>
+<select id="commentPreset">
+  <option value="">Komentārs</option>
+  <option value="Lapegle">Lapegle</option>
+  <option value="Termokoks">Termokoks</option>
+  <option value="Cits">Cits...</option>
+</select>
+  
+<input id="comment" placeholder="Komentārs">
 <div id="message"></div>
   
 <!-- Pogas -->
