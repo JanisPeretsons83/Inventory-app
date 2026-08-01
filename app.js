@@ -976,7 +976,7 @@ function doLogout() {
   localStorage.removeItem("location");
 
   data = [];
-
+  
   document.getElementById("appContent").style.display = "none";
   document.getElementById("locationSelect").style.display = "block";
 
