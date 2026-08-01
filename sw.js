@@ -5,6 +5,7 @@ const BASE = "/Inventory-app";
 const urlsToCache = [
 `${BASE}/`,
 `${BASE}/index.html`,
+`${BASE}/manifest.json`,
 `${BASE}/style.css`,
 `${BASE}/app.js`,
 `${BASE}/dardu_map1.jpeg`,
