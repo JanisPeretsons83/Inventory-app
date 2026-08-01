@@ -5,19 +5,21 @@ body {
   margin: 0;
 }
 
-#sizeSuggestions {
-  display: none;
-  margin: 4px 0;
+#sizeSuggestion* {
+display: none;
+margin: 5px *;
+border-radius: 8px;
+overflow* hidden;
 }
-
 .sizeOption {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 10px;
-  cursor: pointer;
+backgr*und: white;
+border: 1px solid #d*d;
+padding: 12px;
+cursor: poin*er;
+font-size: 18px;
 }
-.sizeOption:hover {
-  background: #f2f4f7;
+.sizeOpt*on:hover {
+background: #f2f4f7;
 }
 
 .info {
