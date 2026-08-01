@@ -187,6 +187,22 @@ function safeFileName(text) {
     .replace(/[^a-zA-Z0-9]/g, "_");
 }
 
+// ✅ AUTOMĀTISKI GADS
+
+function updateYearFromMonth() {
+    const month =
+      Number(document.getElementById("month").value);
+  if (!month) return;
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    const year =
+      month > currentMonth
+      ? currentYear - 1
+      : currentYear;
+    document.getElementById("year").value = year;
+}
+
 // ✅ PIEVIENO IERAKSTU
 
 function add() {
@@ -212,7 +228,6 @@ function add() {
       return error("Gads obligāts");
     if (!document.getElementById("grade").value)
       return error("Izvēlies šķiru");
-
   let rawLength = document.getElementById("length").value.trim();
     if (isGaliMode) {
       rawLength = "gali";
@@ -463,6 +478,9 @@ window.onload = () => {
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
+//  ✅ MĒNESIS - GADS
+  document.getElementById("month")
+.addEventListener("change", updateYearFromMonth);
 // ✅ IZVĒLNE
 
 const gradeBtn = document.getElementById("gradeBtn");
@@ -509,6 +527,12 @@ document.addEventListener("click", (e) => {
     } catch (e) {
       console.warn("Neizdevās ielādēt datus", e);
     }
+    
+    // ✅ Ja gads tukšs, ieliek aktuālo
+  if (!document.getElementById("year").value) {
+        document.getElementById("year").value =
+      new Date().getFullYear();
+    }
   }
   // ✅ LIVE APRĒĶINS
     document.getElementById("avgLength").addEventListener("input", calculateGali);
@@ -535,9 +559,6 @@ function clearForm() {
   document.getElementById("year").value = "";
   document.getElementById("name").value = "";
   document.getElementById("productCode").value = "";
-  document.getElementById("grade").value = "";
-  document.getElementById("gradeBtn").innerHTML =
-    "Izvēlies šķiru ▼";
   document.getElementById("comment").value = "";
   document.getElementById("pieces").value = "";
   document.getElementById("packWidth").value = "";
