@@ -527,13 +527,12 @@ document.addEventListener("click", (e) => {
     } catch (e) {
       console.warn("Neizdevās ielādēt datus", e);
     }
-    
+  }
     // ✅ Ja gads tukšs, ieliek aktuālo
   if (!document.getElementById("year").value) {
         document.getElementById("year").value =
       new Date().getFullYear();
     }
-  }
   // ✅ LIVE APRĒĶINS
     document.getElementById("avgLength").addEventListener("input", calculateGali);
     document.getElementById("packWidth").addEventListener("input", calculateGali);
@@ -556,7 +555,6 @@ function clearForm() {
   document.getElementById("width").value = "";
   document.getElementById("length").value = "";
   document.getElementById("month").value = "";
-  document.getElementById("year").value = "";
   document.getElementById("name").value = "";
   document.getElementById("productCode").value = "";
   document.getElementById("comment").value = "";
