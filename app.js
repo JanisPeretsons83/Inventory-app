@@ -2,6 +2,7 @@ let data = [];
 let editIndex = null;
 let currentLocation = null;
 let isGaliMode = false;
+let dimensionsLibrary = [];
 
 // ✅ Login
 
@@ -211,9 +212,17 @@ function add() {
   const packagesVal = Number(document.getElementById("packages").value);
   const thicknessVal = Number(document.getElementById("thickness").value);
   const widthVal = Number(document.getElementById("width").value);
-
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
+  const size = `${thicknessVal}x${widthVal}`;
+  
+    if (!dimensionsLibrary.includes(size)) {
+      dimensionsLibrary.push(size);
+      localStorage.setItem(
+      "dimensionsLibrary",
+    JSON.stringify(dimensionsLibrary)
+      );
+    }
 
     if (!areaVal) return error("Apgabals obligāts");
     if (packagesVal <= 0 || isNaN(packagesVal))
@@ -478,6 +487,13 @@ window.onload = () => {
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
+  const savedLibrary = localStorage.getItem("dimensionsLibrary");
+
+//  ✅ DIMENSIJU BIB IELĀDE
+  if (savedLibrary) {
+    dimensionsLibrary =
+    JSON.parse(savedLibrary);
+  }  
 //  ✅ MĒNESIS - GADS
   document.getElementById("month")
 .addEventListener("change", updateYearFromMonth);
