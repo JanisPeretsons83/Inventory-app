@@ -632,6 +632,8 @@ function clearForm() {
   document.getElementById("packHeight").value = "";
   document.getElementById("avgLength").value = "";
   document.getElementById("galiInputs").style.display = "none";
+  document.getElementById("sizeSuggestions").innerHTML = "";
+  document.getElementById("sizeSuggestions").style.display = "none";
 const calcInfo = document.getElementById("calcInfo");
 if (calcInfo) {
     calcInfo.style.display = "none";
