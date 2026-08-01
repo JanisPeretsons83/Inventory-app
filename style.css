@@ -6,20 +6,22 @@ body {
 }
 
 #sizeSuggestion* {
-display: none;
-margin: 5px *;
-border-radius: 8px;
+  display: none;
+  margin: 5px *;
+  border-radius: 8px;
 overflow* hidden;
+  max-height: 250px;
+  overflow-y: auto;
 }
 .sizeOption {
-backgr*und: white;
-border: 1px solid #d*d;
-padding: 12px;
-cursor: poin*er;
-font-size: 18px;
+  backgr*und: white;
+    border: 1px solid #d*d;
+    padding: 12px;
+    cursor: poin*er;
+    font-size: 18px;
 }
 .sizeOpt*on:hover {
-background: #f2f4f7;
+  background: #f2f4f7;
 }
 
 .info {
@@ -54,73 +56,73 @@ background: #f2f4f7;
 }
 
 #galiContainer {
-display: flex;
-align-items: center;
-gap: 8px;
-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 #length {
-flex: 1 1 auto;
-min-width: 150px;
+  flex: 1 1 auto;
+  min-width: 150px;
 }
 #galiBtn {
-width: 90px;
-height: 48px;
-flex-shrink: 0;
+  width: 90px;
+  height: 48px;
+  flex-shrink: 0;
 }
 
 /*Izvēlnes krāsojums*/
 .dropdown {
-position: relative;
+  position: relative;
 }
 .menu {
-display: none;
-position: absolute;
-left: 0;
-right: 0;
-background: white;
-border: 1px solid #ccc;
-max-height: 300px;
-overflow-y: auto;
-z-index: 1000;
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
 }
 
 .group {
-background: transparent;
-color: #1f4e79;
-font-weight: bold;
-padding: 8px 12px;
-font-size: 12px;
-text-transform: uppercase;
-position: sticky;
-top: 0;
+  background: transparent;
+  color: #1f4e79;
+  font-weight: bold;
+  padding: 8px 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
 }
 
 .grade-k {
-background: #C6EFCE;
+  background: #C6EFCE;
 }
 .grade-a {
-background: #FFEB9C;
+  background: #FFEB9C;
 }
 .grade-1 {
-background: #E2EFDA;
+  background: #E2EFDA;
 }
 .grade-2 {
-background: #BDD7EE;
+  background: #BDD7EE;
 }
 .grade-pal {
-background: #FCE4D6;
+  background: #FCE4D6;
 }
 
 .item {
-padding: 12px;
-cursor: pointer;
-transition: all .15s ease;
+  padding: 12px;
+  cursor: pointer;
+  transition: all .15s ease;
 }
 
 .item:hover {
-transform: scale(1.02);
-filter: brightness(0.92);
+  transform: scale(1.02);
+  filter: brightness(0.92);
 }
 
 .calcInfo {
@@ -159,14 +161,14 @@ h2 {
 
 input,
 select {
-transition: all 0.2s ease;
+  transition: all 0.2s ease;
 }
 input:focus,
 select:focus {
-transform: scale(1.03);
-border: 2px solid #2e7d32;
-box-shadow: 0 0 10px rgba(46,125,50,.25);
-outline: none;
+  transform: scale(1.03);
+  border: 2px solid #2e7d32;
+  box-shadow: 0 0 10px rgba(46,125,50,.25);
+  outline: none;
 }
 
 input, select {
