@@ -587,6 +587,7 @@ function clearForm() {
   document.getElementById("name").value = "";
   document.getElementById("productCode").value = "";
   document.getElementById("comment").value = "";
+  document.getElementById("commentPreset").value = "";
   document.getElementById("pieces").value = "";
   document.getElementById("packWidth").value = "";
   document.getElementById("packLength").value = "";
