@@ -19,10 +19,6 @@ body {
   margin-top: 10px;
 }
 
-#grade {
--webkit-appearance: none;
-appearance: none;
-}
 .danger {
   background: #c62828;
   color: white;
@@ -78,7 +74,6 @@ color: #1f4e79;
 font-weight: bold;
 padding: 8px 12px;
 font-size: 12px;
-font-weight: bold;
 text-transform: uppercase;
 position: sticky;
 top: 0;
@@ -111,11 +106,6 @@ transform: scale(1.02);
 filter: brightness(0.92);
 }
 
-
-
-
-
-
 .calcInfo {
   font-size: 12px;
   color: gray;
@@ -127,12 +117,6 @@ filter: brightness(0.92);
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.calcInfo {
-  font-size: 12px;
-  color: gray;
-  white-space: nowrap;
 }
 
 /*Lokācijas izvēlne*/
@@ -234,8 +218,3 @@ th {
   gap: 12px;
 }
 
-@media (max-width: 500px) {
-  .row {
-    grid-template-columns: 1fr 1fr;
-  }
-}
