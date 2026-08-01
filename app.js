@@ -134,14 +134,12 @@ function updateMaps() {
       </a>
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map2.jpeg'); return false;">
         📍 Karte 2
-      </a>
-    `;
+      </a>;
   } else if (location === "Cecīļu") {
     container.innerHTML = `
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
         📍 Karte
-      </a>
-    `;
+      </a>;
   }
 }
 
@@ -195,14 +193,12 @@ function setHeaderInfo() {
 function saveUser() {
   const name = document.getElementById("userNameInput").value.trim();
   const location = localStorage.getItem("location");
-
-  if (!location) {
-    alert("Izvēlies ražotni!");
-    return;
-  }
-
-  if (!name) {
-    alert("Ievadi vārdu!");
+    if (!location) {
+      alert("Izvēlies ražotni!");
+      return;
+    }
+    if (!name) {
+      alert("Ievadi vārdu!");
     return;
   }
 
@@ -319,7 +315,6 @@ function add() {
 
     // ✅ parāda ar ≈
     document.getElementById("pieces").value = "≈ " + piecesPerPack;
-
     totalM3 = m3PerPack * packagesVal;
 
   } else {
@@ -330,7 +325,6 @@ function add() {
       return error("Garums nav pareizs");
     if (piecesVal <= 0 || isNaN(piecesVal))
       return error("Gabali pakā obligāti");
-   
     piecesPerPack = piecesVal;
     m3PerPack =
       (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
@@ -345,24 +339,19 @@ function add() {
     length: rawLength,
     month: monthVal,
     year: yearVal,
-
     packWidth,
     packLength,
     packHeight,
-
     pieces: piecesPerPack,
     avgLength,
-
     name: document.getElementById("name").value,
     code: document.getElementById("productCode").value,
     grade: document.getElementById("grade").value,
     comment: document.getElementById("comment").value,
-
     m3Pack: m3PerPack,
     total: totalM3
   };
 
-  
 if (editIndex !== null) {
   data[editIndex] = entry;
   editIndex = null;
@@ -376,13 +365,11 @@ if (editIndex !== null) {
       showMessage("✅ Ieraksts pievienots");
 }
     localStorage.setItem("data", JSON.stringify(data));
-
   clearError();
   render();
-
+  
   // ✅ tīrīšana
   clearForm();
-  
     document.getElementById("galiInputs").style.display = "none";
 }
 
@@ -418,11 +405,9 @@ function render() {
 .reverse()
 .forEach(({ e, i }) => {
 
-  totalPackages += e.packages || 0;
-  totalM3 += e.total || 0;
-
+    totalPackages += e.packages || 0;
+    totalM3 += e.total || 0;
   let size;
-
   if ((e.length || "").trim().toLowerCase() === "gali") {
     size = `${e.packWidth}×${e.packLength}×${e.packHeight}`;
   } else {
@@ -451,11 +436,9 @@ html += `
   <td></td>
   <td></td>
   <td>${totalM3.toFixed(4)}</td>
-</tr>`;
-  
+</tr>`;  
   document.getElementById("table").innerHTML = html;
 }
-
 
 // ✅ DELETE
 function remove(i) {
@@ -650,9 +633,8 @@ if (calcInfo) {
     calcInfo.style.display = "none";
   }
   isGaliMode = false;
-  
-  document.getElementById("length").disabled = false;
-  document.getElementById("galiBtn").classList.remove("active");
+    document.getElementById("length").disabled = false;
+    document.getElementById("galiBtn").classList.remove("active");
   }
 
 // ✅ TABULAS SLĒPŠANA
@@ -692,12 +674,6 @@ if (
   document.getElementById("calcInfo").style.display = "block";
 }
 
-
-
-
-
-
-
  //✅ Border
 function borderAll() {
   return {
@@ -720,9 +696,7 @@ function fillGray() {
 //✅ Row style
 
 function applyRowStyle(row, type) {
-
   let color;
-
   switch (type) {
     case "lightGreen":
       color = "FFC6EFCE";
@@ -745,15 +719,12 @@ function applyRowStyle(row, type) {
 
   // ✅ palielina rindas augstumu (vizuāls "padding")
   row.height = 22;
-
   row.eachCell((cell, colNumber) => {
-
     cell.fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: color }
     };
-
     cell.border = borderAll();
 
     // ✅ centrē tekstu visur
@@ -763,10 +734,8 @@ function applyRowStyle(row, type) {
       wrapText: true,
       indent: colNumber === 2 ? 1 : 0
     };
-
   });
 }
-
 
   //✅ Export Excel
 
@@ -806,17 +775,13 @@ async function exportExcel() {
   ws.getCell("A1").value = "Nepabeigtas Ražošanas Inventarizācijas protokols";
   ws.getCell("A1").alignment = { horizontal: "center" };
   ws.getCell("A1").font = { bold: true, size: 14 };
-
   ws.addRow([]);
-
 
 //✅ SKAIDROJUMU BLOKS
 
 function addLegendRow(values, color) {
   let row = ws.addRow(values);
-
-  applyRowStyle(row, color);
-
+    applyRowStyle(row, color);
   let r = row.number;
 
   // ✅ merge Skaidrojums (B → L)
@@ -870,7 +835,6 @@ addLegendRow(
     "softGreen"
   );
 });
-
 // ✅ 2. šķira
 [
   ["2. šķira", "Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma", "2a"],
@@ -888,11 +852,9 @@ addLegendRow(
   ["Paletes", "Paletes gatavai produkcijai", "", "", "", "", "", "", "", "", "", "", "", "PAL"],
   "beige"
 );
-
 ws.addRow([]);
 ws.addRow([]);
-
-
+  
   //✅ INFO
 
   ws.addRow([
@@ -902,9 +864,8 @@ ws.addRow([]);
     "", "",
     "Ražotne:", location
   ]);
-
   ws.addRow([]);
-
+  
   //✅ TABULAS HEADER
 
   const headers = [
@@ -927,35 +888,27 @@ ws.addRow([]);
   ];
 
   const tableHeader = ws.addRow(headers);
-
   tableHeader.eachCell(cell => {
     cell.font = { bold: true };
     cell.alignment = { horizontal: "center" };
     cell.border = borderAll();
     cell.fill = fillGray();
   });
-
   const startRow = tableHeader.number + 1;
 
  //✅ DATA
 
   let totalPackages = 0;
-
-  data.forEach(e => {
-
+    data.forEach(e => {
     totalPackages += e.packages || 0;
-
-    let pieceM3 = 0;
-
-    if ((e.length || "").toLowerCase() === "gali") {
+  let pieceM3 = 0;
+  if ((e.length || "").toLowerCase() === "gali") {
       pieceM3 = (e.thickness * e.width * e.avgLength) / 1000000000;
-    } else {
+  } else {
       pieceM3 = (e.thickness * e.width * Number(e.length)) / 1000000000;
     }
-
-    const rowIndex = ws.rowCount + 1;
-
-    const row = ws.addRow([
+  const rowIndex = ws.rowCount + 1;
+  const row = ws.addRow([
       e.area,
       e.packages,
       e.name,
@@ -985,12 +938,10 @@ ws.addRow([]);
 
   //✅ SUM
   ws.addRow([]);
-
   ws.addRow([
-    "Pakas kopā:",
-    { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
-  ]);
-
+      "Pakas kopā:",
+      { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
+    ]);
   ws.addRow([
     "m3 kopā:",
     { formula: `SUM(P${startRow}:P${lastRow})` }
@@ -1014,27 +965,20 @@ ws.addRow([]);
   saveAs(
   new Blob([buf]),
   `inv_${safeLocation}_${safeName}_${fileDate}_${timeStr}.xlsx`
-);
+  );
 }
-
-
 
   // ✅ LOG OUT
 
 function doLogout() {
-
   localStorage.removeItem("data");
   localStorage.removeItem("userName");
   localStorage.removeItem("location");
-
-  data = [];
-  
+    data = [];
   document.getElementById("appContent").style.display = "none";
   document.getElementById("locationSelect").style.display = "block";
-
   render();
 }
-
 
 function endSession() {
 
@@ -1048,48 +992,39 @@ function endSession() {
   const choice = confirm(
     "Tev ir ievadīti dati.\n\nOK = Saglabāt Excel un iziet\nCancel = Vēl neiziet"
   );
-
   if (choice) {
     // ✅ saglabā Excel
     exportExcel();
-
     // ✅ iziet
     doLogout();
   }
-
   // ❌ ja Cancel → neko nedara
 }
 
 // ✅ SERVICE WORKER
 
 if ("serviceWorker" in navigator) {
-
   navigator.serviceWorker.register("/Inventory-app/sw.js")
     .then(reg => {
-
       console.log("SW registered");
-
       // ✅ pārbauda update
       setInterval(() => {
         reg.update();
       }, 60000); // ik 60 sekundes
-
     })
     .catch(err => console.log("SW error", err));
 }
 
-
 // ✅ INSTALL PROMPT (Android)
 let deferredPrompt;
-
-window.addEventListener("beforeinstallprompt", (e) => {
+  window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
   console.log("Install pieejams");
 });
 
 // ✅ AUTO REFRESH JA IR JAUNA VERSIJA
-navigator.serviceWorker.addEventListener("controllerchange", () => {
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
   console.log("New version loaded → reload");
   window.location.reload();
 });
