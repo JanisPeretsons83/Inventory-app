@@ -206,12 +206,6 @@ th {
   background: #f0f0f0;
 }
 
-.action-btn {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
