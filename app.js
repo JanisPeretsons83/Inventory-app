@@ -139,7 +139,8 @@ function updateMaps() {
     container.innerHTML = `
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
         📍 Karte
-      </a>;
+      </a>
+      `;
   }
 }
 
