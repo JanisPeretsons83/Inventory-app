@@ -58,7 +58,7 @@ block: "center"
 packages.focus();
 }, 1000);
 }
-
+/*
 function updateGradeColor() {
 const grade = document.getElementById("grade");
 grade.classList.remove(
@@ -91,6 +91,7 @@ case "PAL":
   break;
   }
 }
+*/
   function toggleGali() {
     isGaliMode = !isGaliMode;
   
@@ -516,7 +517,7 @@ function remove(i) {
 function edit(i) {
 
   const e = data[i];
-  updateGradeColor();
+  /*updateGradeColor();*/
   
   // ✅ atceramies kuru ierakstu labo
   editIndex = i;
@@ -594,25 +595,6 @@ window.onload = () => {
       console.warn("Neizdevās ielādēt datus", e);
     }
   }
-  
-// ✅ GALI toggle
-
-const lengthInput = document.getElementById("length");
-const block = document.getElementById("galiInputs");
-const calcInfo = document.getElementById("calcInfo");
-
-if (lengthInput && block) {
-  lengthInput.addEventListener("input", (e) => {
-    const val = (e.target.value || "").trim().toLowerCase();
-    const isGali = val === "gali";
-
-    block.style.display = isGali ? "block" : "none";
-    calcInfo.style.display = isGali ? "block" : "none";
-
-    if (isGali) calculateGali();
-  });
-}
-
   // ✅ LIVE APRĒĶINS
   document.getElementById("avgLength").addEventListener("input", calculateGali);
   document.getElementById("packWidth").addEventListener("input", calculateGali);
@@ -662,6 +644,9 @@ function clearForm() {
   if (calcInfo) {
     calcInfo.style.display = "none";
   }
+  isGaliMode = false;
+document.getElementById("length").disabled = false;
+document.getElementById("galiBtn").classList.remove("active");
 }
 
 
@@ -691,11 +676,10 @@ function calculateGali() {
     avgLength <= 0
   ) return;
 
-  let crossSection = thicknessVal * widthVal;
-  let packSection = packWidth * packHeight;
-
-  let piecesInLayer = Math.floor(packSection / crossSection);
-  let layers = Math.floor(packLength / avgLength);
+  let piecesAcrossWidth = Math.floor(packWidth / widthVal);
+let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
+let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
+let columns = Math.floor(packLength / avgLength);
 
   // ✅ MAINĪJUMS ŠEIT
   let efficiency = 0.95;
@@ -709,6 +693,12 @@ function calculateGali() {
   document.getElementById("calcInfo").style.display = "block";
   
 }
+
+
+
+
+
+
 
  //✅ Border
 function borderAll() {
