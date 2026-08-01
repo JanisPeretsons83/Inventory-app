@@ -82,6 +82,42 @@ function showMessage(text) {
     lengthInput.disabled = false;
     }
   }
+
+function showSizeSuggestions() {
+  const thickness =
+    document.getElementById("thickness").value.trim();
+  const container =
+    document.getElementById("sizeSuggestions");
+    container.innerHTML = "";
+  if (!thickness) {
+    container.style.display = "none";
+  return;
+  }
+  const matches = dimensionsLibrary.filter(size =>
+    size.startsWith(thickness + "x")
+    );
+  if (matches.length === 0) {
+    container.style.display = "none";
+  return;
+    }
+    matches.forEach(size => {
+  const div = document.createElement("div");
+    div.className = "sizeOption";
+    div.textContent = size;
+    div.onclick = () => {
+  const parts = size.split("x");
+    document.getElementById("thickness").value =
+      parts[0];
+    document.getElementById("width").value =
+      parts[1];
+    container.style.display = "none";
+    document.getElementById("length").focus();
+    };
+    container.appendChild(div);
+  });
+    container.style.display = "block";
+}
+
 function updateMaps() {
   const location = localStorage.getItem("location");
   const container = document.getElementById("mapLinks");
