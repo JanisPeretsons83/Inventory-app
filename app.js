@@ -134,13 +134,12 @@ function updateMaps() {
       </a>
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map2.jpeg'); return false;">
         📍 Karte 2
-      </a>;
+      </a> `;
   } else if (location === "Cecīļu") {
     container.innerHTML = `
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
         📍 Karte
-      </a>
-      `;
+      </a> `;
   }
 }
 
