@@ -214,16 +214,7 @@ function add() {
   const widthVal = Number(document.getElementById("width").value);
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
-  const size = `${thicknessVal}x${widthVal}`;
   
-    if (!dimensionsLibrary.includes(size)) {
-      dimensionsLibrary.push(size);
-      localStorage.setItem(
-      "dimensionsLibrary",
-    JSON.stringify(dimensionsLibrary)
-      );
-    }
-
     if (!areaVal) return error("Apgabals obligāts");
     if (packagesVal <= 0 || isNaN(packagesVal))
       return error("Pakas obligātas");
@@ -231,6 +222,16 @@ function add() {
       return error("Biezums obligāts");
     if (widthVal <= 0 || isNaN(widthVal))
       return error("Platums obligāts");
+    const size = `${thicknessVal}x${widthVal}`;
+  
+    if (!dimensionsLibrary.includes(size)) {
+        dimensionsLibrary.push(size);
+        localStorage.setItem(
+          "dimensionsLibrary",
+      JSON.stringify(dimensionsLibrary)
+        );
+      }
+  
     if (!monthVal || monthVal < 1 || monthVal > 12)
       return error("Mēnesis 1–12");
     if (!yearVal)
