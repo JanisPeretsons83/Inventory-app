@@ -6,7 +6,6 @@ let isGaliMode = false;
 // ✅ Login
 
 let selectedBtn = null;
-
 const areasByLocation = {
 
   "Dārdu": [
@@ -30,7 +29,6 @@ const areasByLocation = {
 };
 
 function updateAreas() {
-
   const location = localStorage.getItem("location");
   const select = document.getElementById("area");
 
@@ -45,60 +43,28 @@ function updateAreas() {
 }
 
 function showMessage(text) {
-const msg = document.getElementById("message");
-const packages = document.getElementById("packages");
-msg.innerText = text;
-msg.style.display = "block";
-setTimeout(() => {
-msg.style.display = "none";
-packages.scrollIntoView({
-behavior: "smooth",
-block: "center"
-});
-packages.focus();
-}, 1000);
+  const msg = document.getElementById("message");
+  const packages = document.getElementById("packages");
+
+    msg.innerText = text;
+    msg.style.display = "block";
+      setTimeout(() => {
+    msg.style.display = "none";
+    packages.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+    packages.focus();
+    }, 1000);
 }
-/*
-function updateGradeColor() {
-const grade = document.getElementById("grade");
-grade.classList.remove(
-"grade-k",
-"grade-a",
-"grade-1",
-"grade-2",
-"grade-pal"
-);
-switch (grade.value) {
-case "K":
-grade.classList.add("grade-k");
-break;
-case "A":
-grade.classList.add("grade-a");
-break;
-case "1a":
-case "1b":
-case "1c":
-case "1d":
-grade.classList.add("grade-1");
-break;
-case "2a":
-case "2b":
-case "2c":
-grade.classList.add("grade-2");
-break;
-case "PAL":
-  grade.classList.add("grade-pal");
-  break;
-  }
-}
-*/
+
   function toggleGali() {
     isGaliMode = !isGaliMode;
   
-  const block = document.getElementById("galiInputs");
-  const calcInfo = document.getElementById("calcInfo");
-  const btn = document.getElementById("galiBtn");
-  const lengthInput = document.getElementById("length");
+    const block = document.getElementById("galiInputs");
+    const calcInfo = document.getElementById("calcInfo");
+    const btn = document.getElementById("galiBtn");
+    const lengthInput = document.getElementById("length");
   
   if (isGaliMode) {
     block.style.display = "block";
@@ -116,7 +82,6 @@ case "PAL":
     }
   }
 function updateMaps() {
-
   const location = localStorage.getItem("location");
   const container = document.getElementById("mapLinks");
   const BASE_PATH = "/Inventory-app";
@@ -124,19 +89,15 @@ function updateMaps() {
   container.innerHTML = ""; // notīra iepriekšējo
 
   if (location === "Dārdu") {
-
     container.innerHTML = `
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map1.jpeg'); return false;">
         📍 Karte 1
       </a>
-
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map2.jpeg'); return false;">
         📍 Karte 2
       </a>
     `;
-
   } else if (location === "Cecīļu") {
-
     container.innerHTML = `
       <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
         📍 Karte
@@ -145,36 +106,30 @@ function updateMaps() {
   }
 }
 
-
 function openImageFromSrc(src) {
-
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImg");
-
-  modal.style.display = "block";
-  modalImg.src = src;
+    modal.style.display = "block";
+    modalImg.src = src;
 }
 
-// ✅ aizver uz klikšķa
+    // ✅ aizver uz klikšķa
 
-document.getElementById("imageModal").onclick = function () {
-  this.style.display = "none";
+    document.getElementById("imageModal").onclick = function () {
+      this.style.display = "none";
 };
 
-
 function setLocation(loc, btn) {
-
-  currentLocation = loc;
-  localStorage.setItem("location", loc);
-
-  // ✅ noņem highlight no iepriekšējās
+      currentLocation = loc;
+      localStorage.setItem("location", loc);
+      // ✅ noņem highlight no iepriekšējās
   if (selectedBtn) {
-    selectedBtn.classList.remove("activeLocation");
+      selectedBtn.classList.remove("activeLocation");
   }
 
-  // ✅ uzliek highlight jaunajai
-  btn.classList.add("activeLocation");
-  selectedBtn = btn;
+      // ✅ uzliek highlight jaunajai
+      btn.classList.add("activeLocation");
+      selectedBtn = btn;
 }
 
 function openImage(img) {
@@ -186,12 +141,9 @@ function openImage(img) {
 }
 
 function setHeaderInfo() {
-
   const name = localStorage.getItem("userName") || "";
   const location = localStorage.getItem("location") || "";
-
   const d = new Date();
-
   const date =
     String(d.getDate()).padStart(2, "0") + "." +
     String(d.getMonth() + 1).padStart(2, "0") + "." +
@@ -202,7 +154,6 @@ function setHeaderInfo() {
 }
 
 function saveUser() {
-
   const name = document.getElementById("userNameInput").value.trim();
   const location = localStorage.getItem("location");
 
@@ -236,7 +187,6 @@ function safeFileName(text) {
     .replace(/[^a-zA-Z0-9]/g, "_");
 }
 
-
 // ✅ PIEVIENO IERAKSTU
 
 function add() {
@@ -249,41 +199,30 @@ function add() {
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
 
-  if (!areaVal) return error("Apgabals obligāts");
-
-  if (packagesVal <= 0 || isNaN(packagesVal))
-    return error("Pakas obligātas");
-
-  if (thicknessVal <= 0 || isNaN(thicknessVal))
-    return error("Biezums obligāts");
-
-  if (widthVal <= 0 || isNaN(widthVal))
-    return error("Platums obligāts");
-
-  if (!monthVal || monthVal < 1 || monthVal > 12)
-    return error("Mēnesis 1–12");
-
-  if (!yearVal)
-    return error("Gads obligāts");
-  
-  if (!document.getElementById("grade").value)
+    if (!areaVal) return error("Apgabals obligāts");
+    if (packagesVal <= 0 || isNaN(packagesVal))
+      return error("Pakas obligātas");
+    if (thicknessVal <= 0 || isNaN(thicknessVal))
+      return error("Biezums obligāts");
+    if (widthVal <= 0 || isNaN(widthVal))
+      return error("Platums obligāts");
+    if (!monthVal || monthVal < 1 || monthVal > 12)
+      return error("Mēnesis 1–12");
+    if (!yearVal)
+      return error("Gads obligāts");
+    if (!document.getElementById("grade").value)
       return error("Izvēlies šķiru");
 
   let rawLength = document.getElementById("length").value.trim();
-  
-  if (isGaliMode) {
-    rawLength = "gali";
-  }
-    
+    if (isGaliMode) {
+      rawLength = "gali";
+    }
   let lengthVal = rawLength.toLowerCase();
-
   let totalM3 = 0;
   let m3PerPack = 0;
-
   let packWidth = null;
   let packLength = null;
   let packHeight = null;
-
   let piecesPerPack = null;
   let avgLength = null;
 
@@ -296,25 +235,24 @@ function add() {
     packHeight = Number(document.getElementById("packHeight").value);
     avgLength = Number(document.getElementById("avgLength").value);
 
-    if (
-      packWidth <= 0 || isNaN(packWidth) ||
-      packLength <= 0 || isNaN(packLength) ||
-      packHeight <= 0 || isNaN(packHeight) ||
-      avgLength <= 0 || isNaN(avgLength)
+  if (
+    packWidth <= 0 || isNaN(packWidth) ||
+    packLength <= 0 || isNaN(packLength) ||
+    packHeight <= 0 || isNaN(packHeight) ||
+    avgLength <= 0 || isNaN(avgLength)
     ) {
-      return error("Aizpildi pakas izmērus + vidējo garumu");
+  return error("Aizpildi pakas izmērus + vidējo garumu");
     }
-
     m3PerPack =
       (packWidth * packLength * packHeight) / 1000000000;
 
-let piecesAcrossWidth = Math.floor(packWidth / widthVal);
-let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
-let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
-let columns = Math.floor(packLength / avgLength);
-let efficiency = 0.95;
-piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
-);
+  let piecesAcrossWidth = Math.floor(packWidth / widthVal);
+  let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
+  let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
+  let columns = Math.floor(packLength / avgLength);
+  let efficiency = 0.95;
+    piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
+    );
 
     // ✅ parāda ar ≈
     document.getElementById("pieces").value = "≈ " + piecesPerPack;
@@ -325,18 +263,14 @@ piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
 
     let lengthNum = Number(rawLength);
     let piecesVal = Number(document.getElementById("pieces").value);
-
     if (lengthNum <= 0 || isNaN(lengthNum))
       return error("Garums nav pareizs");
-
     if (piecesVal <= 0 || isNaN(piecesVal))
       return error("Gabali pakā obligāti");
-    
+   
     piecesPerPack = piecesVal;
-
     m3PerPack =
       (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
-
     totalM3 = m3PerPack * packagesVal;
   }
 
@@ -367,28 +301,18 @@ piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
 
   
 if (editIndex !== null) {
-
   data[editIndex] = entry;
-
   editIndex = null;
-
-document.getElementById("addBtn").innerText =
-    "➕ Pievienot";
-
-  document.getElementById("cancelEditBtn").style.display =
-    "none";
-
+    document.getElementById("addBtn").innerText =
+      "➕ Pievienot";
+    document.getElementById("cancelEditBtn").style.display =
+      "none";
   showMessage("✅ Labojums saglabāts");
-
 } else {
-
-  data.push(entry);
-
-  showMessage("✅ Ieraksts pievienots");
+    data.push(entry);
+      showMessage("✅ Ieraksts pievienots");
 }
-
-localStorage.setItem("data", JSON.stringify(data));
-
+    localStorage.setItem("data", JSON.stringify(data));
 
   clearError();
   render();
@@ -396,42 +320,35 @@ localStorage.setItem("data", JSON.stringify(data));
   // ✅ tīrīšana
   clearForm();
   
-  document.getElementById("galiInputs").style.display = "none";
+    document.getElementById("galiInputs").style.display = "none";
 }
 
 // ✅ Atcelt
 function cancelEdit() {
-
   editIndex = null;
-
   document.getElementById("addBtn").innerText =
     "➕ Pievienot";
-
   document.getElementById("cancelEditBtn").style.display =
     "none";
-
   clearForm();
   clearError();
-
   showMessage("Labošana atcelta");
 }
 
 // ✅ TABULA
 function render() {
-
   let html = `
-  <tr>
-    <th>Apgabals</th>
-    <th>Pakas</th>
-    <th>Izmērs</th>
-    <th>Gabali</th>
-    <th>m3</th>
-    <th>Darbības</th>
-  </tr>`;
+    <tr>
+      <th>Apgabals</th>
+      <th>Pakas</th>
+      <th>Izmērs</th>
+      <th>Gabali</th>
+      <th>m3</th>
+      <th>Darbības</th>
+    </tr>`;
   
   let totalPackages = 0;
   let totalM3 = 0;
-
   
 [...data]
 .map((e, i) => ({ e, i }))
@@ -495,17 +412,17 @@ function edit(i) {
   // ✅ atceramies kuru ierakstu labo
   editIndex = i;
 
-  document.getElementById("area").value = e.area;
-  document.getElementById("packages").value = e.packages;
-  document.getElementById("thickness").value = e.thickness;
-  document.getElementById("width").value = e.width;
-  document.getElementById("length").value = e.length;
-  document.getElementById("month").value = e.month;
-  document.getElementById("year").value = e.year;
-  document.getElementById("pieces").value = e.pieces;
-  document.getElementById("name").value = e.name;
-  document.getElementById("productCode").value = e.code;
-  document.getElementById("grade").value = e.grade;
+    document.getElementById("area").value = e.area;
+    document.getElementById("packages").value = e.packages;
+    document.getElementById("thickness").value = e.thickness;
+    document.getElementById("width").value = e.width;
+    document.getElementById("length").value = e.length;
+    document.getElementById("month").value = e.month;
+    document.getElementById("year").value = e.year;
+    document.getElementById("pieces").value = e.pieces;
+    document.getElementById("name").value = e.name;
+    document.getElementById("productCode").value = e.code;
+    document.getElementById("grade").value = e.grade;
   const selectedItem =
     document.querySelector(
       `.item[data-value="${e.grade}"]`
@@ -514,7 +431,7 @@ function edit(i) {
     document.getElementById("gradeBtn").innerHTML =
       selectedItem.innerHTML + " ▼";
     }
-  document.getElementById("comment").value = e.comment;
+    document.getElementById("comment").value = e.comment;
 
   if ((e.length || "").toLowerCase() === "gali") {
     isGaliMode = true;
@@ -526,14 +443,12 @@ function edit(i) {
       document.getElementById("packLength").value = e.packLength;
       document.getElementById("packHeight").value = e.packHeight;
       document.getElementById("avgLength").value = e.avgLength || "";
-  }  
-  else {
+    } else {
     isGaliMode = false;
       document.getElementById("length").disabled = false;
       document.getElementById("galiBtn").classList.remove("active");
       document.getElementById("galiInputs").style.display = "none";
   }
-
 
   // ✅ poga pāriet labošanas režīmā 
 document.getElementById("addBtn").innerText =
@@ -541,9 +456,7 @@ document.getElementById("addBtn").innerText =
 
 document.getElementById("cancelEditBtn").style.display =
   "inline-block";
-
 }
-
 
 window.onload = () => {
 
@@ -556,8 +469,8 @@ const gradeBtn = document.getElementById("gradeBtn");
 const menu = document.querySelector(".menu");
 const gradeInput = document.getElementById("grade");
 
-gradeBtn.addEventListener("click", () => {
-  menu.style.display =
+  gradeBtn.addEventListener("click", () => {
+    menu.style.display =
     menu.style.display === "block"
     ? "none"
     : "block";
@@ -581,14 +494,11 @@ document.addEventListener("click", (e) => {
   //✅ LOGIN CHECK
   if (location && name) {
     currentLocation = location;
-
     document.getElementById("locationSelect").style.display = "none";
     document.getElementById("appContent").style.display = "block";
-
     setHeaderInfo();    
     updateAreas();
     updateMaps(); 
-
   }
 
   // LOAD DATA
@@ -601,94 +511,76 @@ document.addEventListener("click", (e) => {
     }
   }
   // ✅ LIVE APRĒĶINS
-  document.getElementById("avgLength").addEventListener("input", calculateGali);
-  document.getElementById("packWidth").addEventListener("input", calculateGali);
-  document.getElementById("packLength").addEventListener("input", calculateGali);
-  document.getElementById("packHeight").addEventListener("input", calculateGali);
-  document.getElementById("thickness").addEventListener("input", calculateGali);
-  document.getElementById("width").addEventListener("input", calculateGali);
-
-};
+    document.getElementById("avgLength").addEventListener("input", calculateGali);
+    document.getElementById("packWidth").addEventListener("input", calculateGali);
+    document.getElementById("packLength").addEventListener("input", calculateGali);
+    document.getElementById("packHeight").addEventListener("input", calculateGali);
+    document.getElementById("thickness").addEventListener("input", calculateGali);
+    document.getElementById("width").addEventListener("input", calculateGali);
+  };
 
 // ✅ ERROR
 function error(msg) {
   document.getElementById("error").innerText = msg;
 }
-
 function clearError() {
   document.getElementById("error").innerText = "";
 }
-
 function clearForm() {
-
   document.getElementById("packages").value = "";
   document.getElementById("thickness").value = "";
   document.getElementById("width").value = "";
   document.getElementById("length").value = "";
-
   document.getElementById("month").value = "";
   document.getElementById("year").value = "";
-
   document.getElementById("name").value = "";
   document.getElementById("productCode").value = "";
   document.getElementById("grade").value = "";
   document.getElementById("gradeBtn").innerHTML =
-"Izvēlies šķiru ▼";
+    "Izvēlies šķiru ▼";
   document.getElementById("comment").value = "";
-
   document.getElementById("pieces").value = "";
-
   document.getElementById("packWidth").value = "";
   document.getElementById("packLength").value = "";
   document.getElementById("packHeight").value = "";
   document.getElementById("avgLength").value = "";
-
   document.getElementById("galiInputs").style.display = "none";
-
-  const calcInfo = document.getElementById("calcInfo");
-  if (calcInfo) {
+const calcInfo = document.getElementById("calcInfo");
+if (calcInfo) {
     calcInfo.style.display = "none";
   }
   isGaliMode = false;
-document.getElementById("length").disabled = false;
-document.getElementById("galiBtn").classList.remove("active");
-}
-
+  
+  document.getElementById("length").disabled = false;
+  document.getElementById("galiBtn").classList.remove("active");
+  }
 
 // ✅ TABULAS SLĒPŠANA
-let tableVisible = true;
-
+  let tableVisible = true;
 function toggleTable() {
   const t = document.getElementById("table");
-  tableVisible = !tableVisible;
-  t.style.display = tableVisible ? "table" : "none";
-}
-
+    tableVisible = !tableVisible;
+    t.style.display = tableVisible ? "table" : "none";
+  }
 
 function calculateGali() {
-
   const thicknessVal = Number(document.getElementById("thickness").value);
   const widthVal = Number(document.getElementById("width").value);
-
   const packWidth = Number(document.getElementById("packWidth").value);
   const packLength = Number(document.getElementById("packLength").value);
   const packHeight = Number(document.getElementById("packHeight").value);
   const avgLength = Number(document.getElementById("avgLength").value);
-
-  if (
+if (
     thicknessVal <= 0 || widthVal <= 0 ||
     packWidth <= 0 || packLength <= 0 || packHeight <= 0 ||
     avgLength <= 0
-  ) return;
-
+) return;
   let piecesAcrossWidth = Math.floor(packWidth / widthVal);
-let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
-let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
-let columns = Math.floor(packLength / avgLength);
-
+  let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
+  let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
+  let columns = Math.floor(packLength / avgLength);
   // ✅ MAINĪJUMS ŠEIT
   let efficiency = 0.95;
-
   let piecesPerPack = Math.max( 1, Math.floor(
     piecesFront * columns * efficiency
   )
@@ -698,7 +590,6 @@ let columns = Math.floor(packLength / avgLength);
   document.getElementById("pieces").value =
     "≈ " + piecesPerPack;
   document.getElementById("calcInfo").style.display = "block";
-  
 }
 
 
