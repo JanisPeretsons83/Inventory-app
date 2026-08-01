@@ -526,6 +526,8 @@ window.onload = () => {
   const savedData = localStorage.getItem("data");
   // ✅ KOMENTĀRU IZVĒLNE
 
+      document.getElementById("thickness")
+        .addEventListener("input", showSizeSuggestions);
       document.getElementById("commentPreset")
         .addEventListener("change", 
     function() {
