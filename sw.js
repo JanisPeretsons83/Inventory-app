@@ -11,7 +11,7 @@ const urlsToCache = [
 `${BASE}/dardu_map1.jpeg`,
 `${BASE}/dardu_map2.jpeg`,
 `${BASE}/cecilu_map.jpeg`,
-`${BASE}/icons/worklog-192.png`
+`${BASE}/Icons/worklog-192.png`
 ];
 
 // ✅ INSTALL (kešo failus)
