@@ -400,7 +400,6 @@ if (editIndex !== null) {
         "success"
         );
       }
-    }
     localStorage.setItem("data", JSON.stringify(data));
       saveBackup();
   clearError();
@@ -409,7 +408,7 @@ if (editIndex !== null) {
   // ✅ tīrīšana
   clearForm();
     document.getElementById("galiInputs").style.display = "none";
-
+}
 // ✅ Atcelt
 function cancelEdit() {
   editIndex = null;
