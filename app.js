@@ -1146,7 +1146,8 @@ function restoreBackup() {
   document.getElementById("restoreModal")
     .style.display = "none";
       showNotice(
-`      ✅ Atjaunoti ${data.length} ieraksti`,
+`      ✅ Atjaunoti ${data.length} 
+          ieraksti`,
         "success"
       );
 }
