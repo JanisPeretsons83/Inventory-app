@@ -676,8 +676,14 @@ if (calcInfo) {
     document.getElementById("length").disabled = false;
     document.getElementById("galiBtn").classList.remove("active");
   setTimeout(() => {
-    document.getElementById("packages").focus();
-    }, 100);
+    document.getElementById("packages")
+      .scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+        });
+    document.getElementById("packages")
+      .focus();
+    }, 1200);
   }
 
 // ✅ TABULAS SLĒPŠANA
