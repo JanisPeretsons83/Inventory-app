@@ -60,30 +60,33 @@ function showMessage(text) {
 }
 
 function showNotice(message, type = "info", fieldId = null) {
-  const notice =
-    document.getElementById("notice");
-      notice.className = "";
-      notice.id = "notice";
-      notice.classList.add("notice-" + type);
-      notice.innerText = message;
-      notice.style.display = "block";
-        clearTimeout(notice.timer);
-      notice.timer = setTimeout(() => {
-      notice.style.display = "none";
+  const notice = document.getElementById("notice");
+    notice.className = "";
+    notice.classList.add("notice-" + type);
+    notice.innerText = message;
+    notice.style.display = "block";
+      setTimeout(() => {
+    notice.classList.add("show");
+      }, 10);
+      clearTimeout(notice.timer);
+    notice.timer = setTimeout(() => {
+    notice.classList.remove("show");
+      setTimeout(() => {
+    notice.style.display = "none";
   if (fieldId) {
-    const field =
-      document.getElementById(fieldId);
+  const field =
+    document.getElementById(fieldId);
   if (field) {
-    field.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-      });
-      field.focus();
+        field.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+            });
+          field.focus();
+            }
       }
-    }
+    }, 250);
   }, 1000);
 }
-
   function toggleGali() {
     isGaliMode = !isGaliMode;
   
