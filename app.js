@@ -409,7 +409,6 @@ if (editIndex !== null) {
   // ✅ tīrīšana
   clearForm();
     document.getElementById("galiInputs").style.display = "none";
-}
 
 // ✅ Atcelt
 function cancelEdit() {
