@@ -735,6 +735,7 @@ function toggleTable() {
   }
 
 function calculateGali() {
+  console.log("GALI CALC");
   const thicknessVal = Number(document.getElementById("thickness").value);
   const widthVal = Number(document.getElementById("width").value);
   const packWidth = Number(document.getElementById("packWidth").value);
