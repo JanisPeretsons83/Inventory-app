@@ -59,6 +59,31 @@ function showMessage(text) {
     }, 1000);
 }
 
+function showNotice(message, type = "info", fieldId = null) {
+  const notice =
+    document.getElementById("notice");
+      notice.className = "";
+      notice.id = "notice";
+      notice.classList.add("notice-" + type);
+      notice.innerText = message;
+      notice.style.display = "block";
+        clearTimeout(notice.timer);
+      notice.timer = setTimeout(() => {
+      notice.style.display = "none";
+  if (fieldId) {
+    const field =
+      document.getElementById(fieldId);
+  if (field) {
+    field.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+      });
+      field.focus();
+      }
+    }
+  }, 1000);
+}
+
   function toggleGali() {
     isGaliMode = !isGaliMode;
   
@@ -251,13 +276,18 @@ function add() {
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
   
-    if (!areaVal) return error("Apgabals obligāts");
+    if (!areaVal)
+      return error("Apgabals obligāts", "area");
+  
     if (packagesVal <= 0 || isNaN(packagesVal))
-      return error("Pakas obligātas");
+      return error("Pakas obligātas", "packages");
+  
     if (thicknessVal <= 0 || isNaN(thicknessVal))
-      return error("Biezums obligāts");
+      return error("Biezums obligāts", "thickness");
+  
     if (widthVal <= 0 || isNaN(widthVal))
-      return error("Platums obligāts");
+      return error("Platums obligāts", "width");
+  
     const size = `${thicknessVal}x${widthVal}`;
   
     if (!dimensionsLibrary.includes(size)) {
@@ -269,11 +299,14 @@ function add() {
       }
   
     if (!monthVal || monthVal < 1 || monthVal > 12)
-      return error("Mēnesis 1–12");
+      return error("Mēnesis 1–12", "month");
+  
     if (!yearVal)
-      return error("Gads obligāts");
+      return error("Gads obligāts", "year");
+  
     if (!document.getElementById("grade").value)
-      return error("Izvēlies šķiru");
+      return error("Izvēlies šķiru", "gradeBtn");
+  
   let rawLength = document.getElementById("length").value.trim();
     if (isGaliMode) {
       rawLength = "gali";
@@ -297,13 +330,15 @@ function add() {
     avgLength = Number(document.getElementById("avgLength").value);
 
   if (
-    packWidth <= 0 || isNaN(packWidth) ||
-    packLength <= 0 || isNaN(packLength) ||
-    packHeight <= 0 || isNaN(packHeight) ||
-    avgLength <= 0 || isNaN(avgLength)
-    ) {
-  return error("Aizpildi pakas izmērus + vidējo garumu");
-    }
+    if (packWidth <= 0 || isNaN(packWidth))
+      return error("Pakas platums obligāts", "packWidth");
+    if (packLength <= 0 || isNaN(packLength))
+      return error("Pakas garums obligāts", "packLength");
+    if (packHeight <= 0 || isNaN(packHeight))
+      return error("Pakas augstums obligāts", "packHeight");
+    if (avgLength <= 0 || isNaN(avgLength))
+      return error("Vidējais garums obligāts", "avgLength")
+    
     m3PerPack =
       (packWidth * packLength * packHeight) / 1000000000;
 
@@ -324,9 +359,9 @@ function add() {
     let lengthNum = Number(rawLength);
     let piecesVal = Number(document.getElementById("pieces").value);
     if (lengthNum <= 0 || isNaN(lengthNum))
-      return error("Garums nav pareizs");
+      return error("Garums nav pareizs", "length");
     if (piecesVal <= 0 || isNaN(piecesVal))
-      return error("Gabali pakā obligāti");
+      return error("Gabali pakā obligāti", "pieces");
     piecesPerPack = piecesVal;
     m3PerPack =
       (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
@@ -361,11 +396,17 @@ if (editIndex !== null) {
       "➕ Pievienot";
     document.getElementById("cancelEditBtn").style.display =
       "none";
-  showMessage("✅ Labojums saglabāts");
+  showNotice(
+      "✅ Labojums saglabāts",
+      "success"
+    );
 } else {
     data.push(entry);
-      showMessage("✅ Ieraksts pievienots");
-}
+      showNotice(
+        "✅ Ieraksts pievienots",
+        "success"
+        );
+    }
     localStorage.setItem("data", JSON.stringify(data));
   clearError();
   render();
@@ -384,7 +425,10 @@ function cancelEdit() {
     "none";
   clearForm();
   clearError();
-  showMessage("Labošana atcelta");
+  showNotice(
+      "ℹ️ Labošana atcelta",
+      "info"
+      );
 }
 
 // ✅ TABULA
@@ -606,12 +650,19 @@ document.addEventListener("click", (e) => {
   };
 
 // ✅ ERROR
-function error(msg) {
+function error(msg, fieldId = null) {
   document.getElementById("error").innerText = msg;
+    showNotice(
+      "⚠️ " + msg,
+        "error",
+    fieldId
+  );
 }
+
 function clearError() {
   document.getElementById("error").innerText = "";
 }
+
 function clearForm() {
   document.getElementById("packages").value = "";
   document.getElementById("thickness").value = "";
@@ -744,8 +795,10 @@ function applyRowStyle(row, type) {
 async function exportExcel() {
 
   if (data.length === 0) {
-    alert("Nav datu eksportam!");
-    return;
+    return showNotice(
+      "⚠️ Nav datu eksportam",
+      "error"
+    );
   }
 
   const location = localStorage.getItem("location") || "";
