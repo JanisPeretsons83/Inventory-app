@@ -31,6 +31,33 @@ body {
   margin-bottom: 10px;
 }
 
+#notice {
+position: fixed;
+top: 20px;
+left: 50%;
+transform: translateX(-50%);
+min-width: 260px;
+max-width: 90%;
+padding: 14px 18px;
+border-radius: 12px;
+color: white;
+font-weight: bold;
+text-align: center;
+box-shadow: 0 6px 20px rgba(0,0,0,.25);
+display: none;
+z-index: 99999;
+}
+.notice-success {
+background: #2e7d32;
+}
+.notice-error {
+background: #c62828;
+}
+.notice-info {
+background: #1976d2;
+}
+
+//--------------------------------
 #message {
   display: none;
   color: green;
