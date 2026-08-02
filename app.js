@@ -1077,14 +1077,27 @@ function doLogout() {
 }
 
 function endSession() {
-  // ✅ JA NAV DATU → vienkārši iziet
-    if (data.length === 0) {
-  doLogout();
-return;
-}
-  // ✅ Parāda moderno dialogu
-    document.getElementById("confirmModal")
-  .style.display = "block";
+  if (data.length === 0) {
+    doLogout();
+  return;
+  }
+    const totalPackages =
+      data.reduce(
+      (sum, e) => sum + (e.packages || 0), 0);
+    const totalM3 =
+      data.reduce(
+        (sum, e) => sum + (e.total || 0), 0);
+      document.getElementById("logoutSummary")
+        .innerHTML = `
+          Ražotne: ${localStorage.getItem("location")}<br>
+          Lietotājs: ${localStorage.getItem("userName")}<br><br>
+          📊 Inventarizācija<br>
+          Ieraksti: ${data.length}<br>
+          Pakas: ${totalPackages}<br>
+          m³: ${totalM3.toFixed(4)}
+        `;
+      document.getElementById("confirmModal")
+    .style.display = "block";
 }
 
 function closeConfirmModal() {
