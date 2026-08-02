@@ -329,7 +329,6 @@ function add() {
     packHeight = Number(document.getElementById("packHeight").value);
     avgLength = Number(document.getElementById("avgLength").value);
 
-  if (
     if (packWidth <= 0 || isNaN(packWidth))
       return error("Pakas platums obligāts", "packWidth");
     if (packLength <= 0 || isNaN(packLength))
