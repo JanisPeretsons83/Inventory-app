@@ -210,20 +210,23 @@
 
     <div id="confirmModal" class="modal">
     <div class="modalContent">
-      <h3>🛑 Beigt darbu</h3>
-        <p> Ir ievadīti dati.<br>
-            Saglabāt Excel un iziet?
-        </p>
-      <button class="secondary"
-        onclick="closeConfirmModal()">
-        Turpināt darbu
-      </button>
-      <button class="danger"
-        onclick="saveAndExit()">
-        📤 Saglabāt un iziet
-      </button>
+        <h3>🛑 Beigt darbu</h3>
+            <p id="logoutSummary"></p>
+            <p>
+                📤 Tiks saglabāts Excel fails<br>
+                💾 Tiks izveidota rezerves kopija
+            </p>
+            <button class="secondary"
+                onclick="closeConfirmModal()">
+                Turpināt darbu
+            </button>
+            <button class="danger"
+                onclick="saveAndExit()">
+                📤 Saglabāt un iziet
+            </button>
     </div>
-  </div>
+</div>
+    
     <div id="restoreModal" class="modal">
         <div class="modalContent">
             <h3>💾 Atrasta rezerves kopija</h3>
