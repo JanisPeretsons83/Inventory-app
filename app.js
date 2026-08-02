@@ -1114,7 +1114,6 @@ async function saveAndExit() {
       );
   closeConfirmModal();
   doLogout();
-  }, 2000);
   }
 
 // ✅ SERVICE WORKER
