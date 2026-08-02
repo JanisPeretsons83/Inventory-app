@@ -25,7 +25,9 @@
 
 <body>
   <!-- Login -->
+<div id="notice"></div>
 <div id="locationSelect">
+    
   <h3>Izvēlies ražotni</h3>
   
 <button onclick="setLocation('Cecīļu', this)">Cecīļu ražotne</button>
@@ -86,7 +88,7 @@
  
 <div class="piecesRow">
 
-  <input id="pieces" type="text" inputmode="numeric" min="0" step="1" placeholder="Gabali pakā">
+  <input id="pieces" type="number" inputmode="numeric" min="0" step="1" placeholder="Gabali pakā">
 
   <div id="calcInfo" class="calcInfo">
     * Aprēķini veikti ar 95% aizpildījuma efektivitāti
@@ -186,9 +188,6 @@
 <button onclick="endSession()" class="danger">
   🛑 Beigt darbu
 </button>
-
-<div id="error"></div>
-
 <table id="table"></table>
 </div>
   <div id="imageModal" style="
@@ -208,11 +207,8 @@
               max-height:95%;
               margin-top:20px;">
 </div>
-<script src="app.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
-  <div id="confirmModal" class="modal">
+    <div id="confirmModal" class="modal">
     <div class="modalContent">
       <h3>🛑 Beigt darbu</h3>
         <p> Ir ievadīti dati.<br>
@@ -228,5 +224,24 @@
       </button>
     </div>
   </div>
+    <div id="restoreModal" class="modal">
+        <div class="modalContent">
+            <h3>💾 Atrasta rezerves kopija</h3>
+                <p id="restoreInfo"></p>
+                    <button class="primary"
+                        onclick="restoreBackup()">
+                        ✅ Ielādēt datus
+                    </button>
+                    <button class="secondary"
+                        onclick="discardBackup()">
+                        🆕 Sākt jaunu inventarizāciju
+                    </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
+    <script src="app.js"></script>
+    
 </body>
 </html>
