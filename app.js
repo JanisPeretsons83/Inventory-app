@@ -1036,25 +1036,26 @@ function doLogout() {
 }
 
 function endSession() {
-
   // ✅ JA NAV DATU → vienkārši iziet
-  if (data.length === 0) {
-    doLogout();
-    return;
-  }
-
-  // ✅ IR DATI → gudrais dialogs
-  const choice = confirm(
-    "Tev ir ievadīti dati.\n\nOK = Saglabāt Excel un iziet\nCancel = Vēl neiziet"
-  );
-  if (choice) {
-    // ✅ saglabā Excel
-    exportExcel();
-    // ✅ iziet
-    doLogout();
-  }
-  // ❌ ja Cancel → neko nedara
+    if (data.length === 0) {
+  doLogout();
+return;
 }
+  // ✅ Parāda moderno dialogu
+    document.getElementById("confirmModal")
+  .style.display = "block";
+}
+
+function closeConfirmModal() {
+  document.getElementById("confirmModal")
+    .style.display = "none";
+    }
+
+function saveAndExit() {
+  exportExcel();
+  closeConfirmModal();
+  doLogout();
+  }
 
 // ✅ SERVICE WORKER
 
