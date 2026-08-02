@@ -1094,6 +1094,7 @@ async function saveAndExit() {
       "✅ Excel saglabāts",
       "success"
       );
+  exportBackupFile();
   closeConfirmModal();
   doLogout();
   }
@@ -1170,6 +1171,35 @@ function discardBackup() {
     showNotice(
     "ℹ️ Sākta jauna inventarizācija",
     "info"
+    );
+}
+
+function exportBackupFile() {
+  const backup =
+    JSON.parse(
+    localStorage.getItem("backupData")
+    );
+  if (!backup) return;
+  const location =
+    safeFileName(backup.location);
+  const user =
+    safeFileName(backup.user);
+  const d = new Date();
+  const fileDate =
+    String(d.getDate()).padStart(2, "0") + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      d.getFullYear();
+  const timeStr =
+    String(d.getHours()).padStart(2, "0") +
+    String(d.getMinutes()).padStart(2, "0") +
+    String(d.getSeconds()).padStart(2, "0");
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+    );
+    saveAs(
+      blob,
+      `inv_${location}_${user}_${fileDate}_${timeStr}_backup.json`
     );
 }
 
