@@ -209,11 +209,17 @@ function saveUser() {
   const name = document.getElementById("userNameInput").value.trim();
   const location = localStorage.getItem("location");
     if (!location) {
-      alert("Izvēlies ražotni!");
+      showNotice(
+        "⚠️ Izvēlies ražotni",
+        "error"
+        );
       return;
     }
     if (!name) {
-      alert("Ievadi vārdu!");
+      showNotice(
+        "⚠️ Ievadi vārdu",
+        "error"
+        );
     return;
   }
 
@@ -398,6 +404,7 @@ if (editIndex !== null) {
       }
     }
     localStorage.setItem("data", JSON.stringify(data));
+      saveBackup();
   clearError();
   render();
   
@@ -545,25 +552,8 @@ window.onload = () => {
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
-  const backupData = localStorage.getItem("backupData");
-  const backup = localStorage.getItem("backupData");
   const backupRaw = localStorage.getItem("backupData");
 
-  if (backup && !savedData) {
-    const restore = confirm(
-      "Atrasta rezerves kopija. Atjaunot?"
-      );
-    if (restore) {
-    const b =
-      JSON.parse(backup);
-        data = b.entries || [];
-        localStorage.setItem(
-          "data",
-        JSON.stringify(data)
-        );
-      render();
-      }
-    }
   if (backupData) {
     const backup =
       JSON.parse(backupData);
@@ -582,16 +572,29 @@ window.onload = () => {
   if (backupRaw) {
     const backup =
       JSON.parse(backupRaw);
-    const age =
-      Date.now() - backup.timestamp;
+    const age = Date.now() -
+      new Date(backup.timestamp).getTime();
     const sevenDays =
       7 * 24 * 60 * 60 * 1000;
     if (age > sevenDays) {
       localStorage.removeItem(
-      "backupData"
-      );
+        "backupData"
+        );
+    } else {
+      document.getElementById("restoreInfo")
+        .innerHTML = `
+          Ražotne: ${backup.location}<br>
+          Lietotājs: ${backup.user}<br>
+          Ieraksti: ${backup.entries.length}<br>
+          Datums: ${new Date(
+      backup.timestamp
+      ).toLocaleString()}
+      `;
+    document.getElementById(
+      "restoreModal"
+      ).style.display = "block";
     }
-  }
+}
   // ✅ KOMENTĀRU IZVĒLNE
 
       document.getElementById("thickness")
@@ -1111,6 +1114,7 @@ async function saveAndExit() {
       );
   closeConfirmModal();
   doLogout();
+  }, 2000);
   }
 
 // ✅ SERVICE WORKER
@@ -1139,6 +1143,11 @@ function saveBackup() {
     "backupData",
   JSON.stringify(backup)
   );
+}
+
+function closeRestoreModal() {
+document.getElementById("restoreModal")
+.style.display = "none";
 }
 
 function restoreBackup() {
