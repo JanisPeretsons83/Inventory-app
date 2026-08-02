@@ -1114,15 +1114,28 @@ if ("serviceWorker" in navigator) {
 
 // ✅ BACKUP
 function saveBackup() {
-  const backup = {
-    timestamp: new Date().toISOString(),
-    user: localStorage.getItem("userName") || "",
-    location: localStorage.getItem("location") || "",
-    entries: data
-    };
-  localStorage.setItem(
-    "backupData",
-  JSON.stringify(backup)
+    const totalPackages =
+      data.reduce((sum, e) =>
+      sum + (e.packages || 0), 0);
+    const totalM3 =
+      data.reduce((sum, e) =>
+      sum + (e.total || 0), 0);
+    const backup = {
+      timestamp: new Date().toISOString(),
+      user:
+        localStorage.getItem("userName") || "",
+      location:
+        localStorage.getItem("location") || "",
+      summary: {
+      entries: data.length,
+      packages: totalPackages,
+      totalM3: Number(totalM3.toFixed(4))
+        },
+      entries: data
+      };
+    localStorage.setItem(
+      "backupData",
+    JSON.stringify(backup)
   );
 }
 
