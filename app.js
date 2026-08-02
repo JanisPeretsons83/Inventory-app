@@ -566,12 +566,16 @@ window.onload = () => {
       document.getElementById("restoreInfo")
         .innerHTML = `
           Ražotne: ${backup.location}<br>
-          Lietotājs: ${backup.user}<br>
-          Ieraksti: ${backup.entries.length}<br>
-          Datums: ${new Date(
-      backup.timestamp
-      ).toLocaleString()}
-      `;
+          Lietotājs: ${backup.user}<br><br>
+          📊 Inventarizācija<br>
+          Ieraksti: ${backup.summary.entries}<br>
+          Pakas: ${backup.summary.packages}<br>
+          m³: ${backup.summary.totalM3}<br><br>
+          Datums:<br>
+          ${new Date(
+            backup.timestamp
+            ).toLocaleString()}
+        `;
     document.getElementById(
       "restoreModal"
       ).style.display = "block";
