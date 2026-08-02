@@ -51,7 +51,7 @@ function showNotice(message, type = "info", fieldId = null) {
     notice.style.display = "block";
       setTimeout(() => {
     notice.classList.add("show");
-      }, 10);
+    }, 10);
       clearTimeout(notice.timer);
     notice.timer = setTimeout(() => {
     notice.classList.remove("show");
@@ -61,16 +61,17 @@ function showNotice(message, type = "info", fieldId = null) {
   const field =
     document.getElementById(fieldId);
   if (field) {
-        field.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-            });
-          field.focus();
+    field.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+      });
+    field.focus();
             }
-      }
-    }, 250);
-  }, 1000);
+          }
+        }, 250);
+      }, 1000);
 }
+
   function toggleGali() {
     isGaliMode = !isGaliMode;
   
