@@ -393,6 +393,9 @@ if (editIndex !== null) {
         "✅ Ieraksts pievienots",
         "success"
         );
+    if (data.length % 10 === 0) {
+      saveBackup();
+      }
     }
     localStorage.setItem("data", JSON.stringify(data));
   clearError();
@@ -542,6 +545,53 @@ window.onload = () => {
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
+  const backupData = localStorage.getItem("backupData");
+  const backup = localStorage.getItem("backupData");
+  const backupRaw = localStorage.getItem("backupData");
+
+  if (backup && !savedData) {
+    const restore = confirm(
+      "Atrasta rezerves kopija. Atjaunot?"
+      );
+    if (restore) {
+    const b =
+      JSON.parse(backup);
+        data = b.entries || [];
+        localStorage.setItem(
+          "data",
+        JSON.stringify(data)
+        );
+      render();
+      }
+    }
+  if (backupData) {
+    const backup =
+      JSON.parse(backupData);
+        document.getElementById("restoreInfo")
+          .innerHTML = `
+            Ražotne: ${backup.location}<br>
+            Lietotājs: ${backup.user}<br>
+            Ieraksti: ${backup.entries.length}<br>
+            Datums: ${new Date(
+        backup.timestamp
+      ).toLocaleString()}
+    `;
+    document.getElementById("restoreModal")
+      .style.display = "block";
+}
+  if (backupRaw) {
+    const backup =
+      JSON.parse(backupRaw);
+    const age =
+      Date.now() - backup.timestamp;
+    const sevenDays =
+      7 * 24 * 60 * 60 * 1000;
+    if (age > sevenDays) {
+      localStorage.removeItem(
+      "backupData"
+      );
+    }
+  }
   // ✅ KOMENTĀRU IZVĒLNE
 
       document.getElementById("thickness")
@@ -1052,8 +1102,13 @@ function closeConfirmModal() {
     .style.display = "none";
     }
 
-function saveAndExit() {
-  exportExcel();
+async function saveAndExit() {
+  saveBackup();
+  await exportExcel();
+    showNotice(
+      "✅ Excel saglabāts",
+      "success"
+      );
   closeConfirmModal();
   doLogout();
   }
@@ -1070,6 +1125,48 @@ if ("serviceWorker" in navigator) {
       }, 60000); // ik 60 sekundes
     })
     .catch(err => console.log("SW error", err));
+}
+
+// ✅ BACKUP
+function saveBackup() {
+  const backup = {
+    timestamp: new Date().toISOString(),
+    user: localStorage.getItem("userName") || "",
+    location: localStorage.getItem("location") || "",
+    entries: data
+    };
+  localStorage.setItem(
+    "backupData",
+  JSON.stringify(backup)
+  );
+}
+
+function restoreBackup() {
+  const backup =
+    JSON.parse(localStorage.getItem("backupData")
+      );
+    data = backup.entries || [];
+      localStorage.setItem("data",
+    JSON.stringify(data)
+      );
+    render();
+    closeRestoreModal();
+  document.getElementById("restoreModal")
+    .style.display = "none";
+      showNotice(
+`      ✅ Atjaunoti ${data.length} ieraksti`,
+        "success"
+      );
+}
+function discardBackup() {
+    localStorage.removeItem("backupData");
+  closeRestoreModal();
+    document.getElementById("restoreModal")
+  .style.display = "none";
+    showNotice(
+    "ℹ️ Sākta jauna inventarizācija",
+    "info"
+    );
 }
 
 // ✅ INSTALL PROMPT (Android)
