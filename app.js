@@ -399,8 +399,6 @@ if (editIndex !== null) {
         "✅ Ieraksts pievienots",
         "success"
         );
-    if (data.length % 10 === 0) {
-      saveBackup();
       }
     }
     localStorage.setItem("data", JSON.stringify(data));
