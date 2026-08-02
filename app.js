@@ -554,21 +554,7 @@ window.onload = () => {
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
 
-  if (backupData) {
-    const backup =
-      JSON.parse(backupData);
-        document.getElementById("restoreInfo")
-          .innerHTML = `
-            Ražotne: ${backup.location}<br>
-            Lietotājs: ${backup.user}<br>
-            Ieraksti: ${backup.entries.length}<br>
-            Datums: ${new Date(
-        backup.timestamp
-      ).toLocaleString()}
-    `;
-    document.getElementById("restoreModal")
-      .style.display = "block";
-}
+  
   if (backupRaw) {
     const backup =
       JSON.parse(backupRaw);
