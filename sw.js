@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "inventory-app-v1-48"; // 🔥 MAINI ŠO katru update!
+const CACHE_NAME = "inventory-app-v1-49"; // 🔥 MAINI ŠO katru update!
 
 const BASE = "/Inventory-app";
 const urlsToCache = [
@@ -8,10 +8,15 @@ const urlsToCache = [
 `${BASE}/manifest.json`,
 `${BASE}/style.css`,
 `${BASE}/app.js`,
+
+`${BASE}/Icons/favicon-16.png`,
+`${BASE}/Icons/favicon-32.png`,
+`${BASE}/Icons/worklog-192.png`,
+`${BASE}/Icons/worklog-512.png`,
+
 `${BASE}/dardu_map1.jpeg`,
 `${BASE}/dardu_map2.jpeg`,
 `${BASE}/cecilu_map.jpeg`,
-`${BASE}/Icons/worklog-192.png`
 ];
 
 // ✅ INSTALL (kešo failus)
