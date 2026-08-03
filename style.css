@@ -31,11 +31,13 @@ body {
   margin-bottom: 10px;
 }
 
-#importModal .modalContent {
-max-height: 80vh;
+.modal {
 overflow-y: auto;
 }
-
+.modalContent {
+max-height: 90vh;
+overflow-y: auto;
+}
 #areaList {
 max-height: 40vh;
 overflow-y: auto;
