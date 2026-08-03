@@ -3,6 +3,8 @@ let editIndex = null;
 let currentLocation = null;
 let isGaliMode = false;
 let dimensionsLibrary = [];
+let importedBackup = null;
+let importedAreaSummary = null;
 
 // ✅ Login
 
@@ -549,7 +551,9 @@ window.onload = () => {
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
-
+  
+document.getElementById("backupFile")
+          .addEventListener("change", importBackupFile);
   
   if (backupRaw) {
     const backup =
@@ -563,8 +567,6 @@ window.onload = () => {
         "backupData"
         );
     } else {
-      document.getElementById("backupFile")
-          .addEventListener("change", importBackupFile);
       document.getElementById("restoreInfo")
         .innerHTML = `
           Ražotne: ${backup.location}<br>
@@ -1223,6 +1225,25 @@ function exportBackupFile() {
     );
 }
 
+function buildAreaSummary(entries) {
+  const summary = {};
+    entries.forEach(entry => {
+  if (!summary[entry.area]) {
+    summary[entry.area] = {
+      entries: 0,
+      packages: 0,
+      totalM3: 0
+      };
+    }
+    summary[entry.area].entries++;
+    summary[entry.area].packages +=
+      entry.packages || 0;
+    summary[entry.area].totalM3 +=
+      entry.total || 0;
+    });
+  return summary;
+}
+
 function importBackupFile(event) {
   const file = event.target.files[0];
     if (!file) return;
@@ -1231,16 +1252,48 @@ function importBackupFile(event) {
     try {
   const backup =
     JSON.parse(e.target.result);
-      data = backup.entries || [];
-      localStorage.setItem(
-        "data",
-      JSON.stringify(data)
-        );
-      render();
-    showNotice(
-    `✅ Atjaunoti ${data.length} ieraksti`,
-      "success"
+      importedBackup = backup;
+        const areas = [
+          ...new Set(
+            backup.entries.map(
+              e => e.area
+              )
+            )
+          ].sort();
+        const areaSummary =
+      buildAreaSummary(
+        importedBackup.entries
       );
+      importedAreaSummary = areaSummary;
+      document.getElementById("importInfo")
+        .innerHTML = `
+          Ražotne: ${backup.location}<br>
+          Lietotājs: ${backup.user}<br><br>
+          📊 Inventarizācija<br>
+          Ieraksti: ${backup.summary.entries}<br>
+          Pakas: ${backup.summary.packages}<br>
+          m³: ${backup.summary.totalM3}
+          `;
+      document.getElementById("importModal")
+        .style.display = "block";
+          let areaHtml = "";
+            Object.entries(areaSummary)
+              .forEach(([area, info]) => {
+                areaHtml += `
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="${area}">
+                      <strong>${area}</strong><br>
+                      ${info.entries} ieraksti<br>
+                      ${info.packages} pakas<br>
+                      ${info.totalM3.toFixed(4)} m³
+                  </label>
+                <hr>
+              `;
+            });
+        document.getElementById("areaList")
+          .innerHTML = areaHtml;
     } catch {
     showNotice(
       "⚠️ Nederīgs backup fails",
@@ -1249,6 +1302,55 @@ function importBackupFile(event) {
     }
   };
   reader.readAsText(file);
+}
+
+function closeImportModal() {
+document.getElementById("importModal")
+.style.display = "none";
+}
+
+function openBackupFile() {
+document.getElementById("backupFile")
+.click();
+}
+
+function restoreImportedBackup() {
+  data = importedBackup.entries || [];
+  localStorage.setItem(
+    "data",
+  JSON.stringify(data)
+    );
+  render();
+  saveBackup();
+  closeImportModal();
+  showNotice(
+  `✅ Atjaunoti ${data.length} ieraksti`,
+  "success"
+  );
+}
+
+function restoreSelectedAreas() {
+  const selectedAreas =
+    [...document.querySelectorAll(
+      "#areaList input:checked"
+      )]
+    .map(cb => cb.value);
+  const selectedData =
+    importedBackup.entries.filter(
+    e => selectedAreas.includes(e.area)
+    );
+    data.push(...selectedData);
+      localStorage.setItem(
+        "data",
+    JSON.stringify(data)
+      );
+      render();
+      saveBackup();
+      closeImportModal();
+      showNotice(
+      `✅ Atjaunoti ${selectedData.length} ieraksti`,
+      "success"
+  );
 }
 
 // ✅ INSTALL PROMPT (Android)
