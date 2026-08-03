@@ -250,6 +250,24 @@
         </div>
     </div>
 
+    <div id="importModal" class="modal">
+        <div class="modalContent">
+            <h3>📂 Atrasts backup</h3>
+            <div id="importInfo"></div>
+                <hr>
+            <div id="areaList"></div>
+            <button onclick="restoreImportedBackup()">
+                ✅ Atjaunot visu
+            </button>
+            <button onclick="restoreSelectedAreas()">
+            📍 Atjaunot izvēlētos apgabalus
+            </button>
+            <button onclick="closeImportModal()">
+            ❌ Atcelt
+            </button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
     <script src="app.js"></script>
