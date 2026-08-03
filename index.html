@@ -34,7 +34,13 @@
 <button onclick="setLocation('Dārdu', this)">Dārdu ražotne</button>
   
 <input id="userNameInput" placeholder="Vārds Uzvārds">
-
+<input type="file"
+        id="backupFile"
+        accept=".json"
+        style="display:none">
+    <button onclick="document.getElementById('backupFile').click()">
+    📂 Ielādēt backup
+    </button>
 <button onclick="saveUser()">Turpināt</button>
 
 </div>
