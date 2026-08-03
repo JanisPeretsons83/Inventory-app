@@ -563,6 +563,8 @@ window.onload = () => {
         "backupData"
         );
     } else {
+      document.getElementById("backupFile")
+          .addEventListener("change", importBackupFile);
       document.getElementById("restoreInfo")
         .innerHTML = `
           Ražotne: ${backup.location}<br>
@@ -1219,6 +1221,34 @@ function exportBackupFile() {
       blob,
       `inv_${location}_${user}_${fileDate}_${timeStr}_backup.json`
     );
+}
+
+function importBackupFile(event) {
+  const file = event.target.files[0];
+    if (!file) return;
+  const reader = new FileReader();
+      reader.onload = (e) => {
+    try {
+  const backup =
+    JSON.parse(e.target.result);
+      data = backup.entries || [];
+      localStorage.setItem(
+        "data",
+      JSON.stringify(data)
+        );
+      render();
+    showNotice(
+    `✅ Atjaunoti ${data.length} ieraksti`,
+      "success"
+      );
+    } catch {
+    showNotice(
+      "⚠️ Nederīgs backup fails",
+      "error"
+      );
+    }
+  };
+  reader.readAsText(file);
 }
 
 // ✅ INSTALL PROMPT (Android)
