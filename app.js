@@ -1109,13 +1109,8 @@ function closeConfirmModal() {
     .style.display = "none";
     }
 
-async function saveAndExit() {
+function saveAndExit() {
   saveBackup();
-  await exportExcel();
-    showNotice(
-      "✅ Excel saglabāts",
-      "success"
-      );
   exportBackupFile();
   closeConfirmModal();
   doLogout();
