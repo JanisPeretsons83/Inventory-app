@@ -5,6 +5,7 @@ let isGaliMode = false;
 let dimensionsLibrary = [];
 let importedBackup = null;
 let importedAreaSummary = null;
+let dataChanged = false;
 
 // ✅ Login
 
@@ -270,7 +271,7 @@ function add() {
   const widthVal = Number(document.getElementById("width").value);
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
-  
+ 
     if (!areaVal)
       return error("Apgabals obligāts", "area");
   
@@ -385,17 +386,20 @@ function add() {
 
 if (editIndex !== null) {
   data[editIndex] = entry;
+  dataChanged = true;
   editIndex = null;
     document.getElementById("addBtn").innerText =
       "➕ Pievienot";
     document.getElementById("cancelEditBtn").style.display =
-      "none";
+      "none";      
   showNotice(
       "✅ Labojums saglabāts",
       "success"
     );
 } else {
     data.push(entry);
+   
+  dataChanged = true;
       showNotice(
         "✅ Ieraksts pievienots",
         "success"
@@ -483,6 +487,7 @@ html += `
 // ✅ DELETE
 function remove(i) {
   data.splice(i, 1);
+  dataChanged = true;
   localStorage.setItem("data", JSON.stringify(data));
   render();
 }
@@ -539,7 +544,7 @@ function edit(i) {
   // ✅ poga pāriet labošanas režīmā 
 document.getElementById("addBtn").innerText =
   "💾 Saglabāt labojumu";
-
+  
 document.getElementById("cancelEditBtn").style.display =
   "inline-block";
 }
@@ -1109,8 +1114,20 @@ function closeConfirmModal() {
     }
 
 function saveAndExit() {
-  saveBackup();
-  exportBackupFile();
+  if (dataChanged) {
+    saveBackup();
+    exportBackupFile();
+    dataChanged = false;
+      showNotice(
+        "✅ Izveidota rezerves kopija",
+        "success"
+        );
+  } else {
+    showNotice(
+      "ℹ️ Izmaiņu nav, rezerves kopija netika veidota",
+      "info"
+      );
+    }
   closeConfirmModal();
   doLogout();
   }
@@ -1169,6 +1186,7 @@ function restoreBackup() {
       localStorage.setItem("data",
     JSON.stringify(data)
       );
+    dataChanged = false;
     render();
     closeRestoreModal();
   document.getElementById("restoreModal")
@@ -1217,6 +1235,7 @@ function exportBackupFile() {
       blob,
       `inv_${location}_${user}_${fileDate}_${timeStr}_backup.json`
     );
+  dataChanged = false;
 }
 
 function buildAreaSummary(entries) {
@@ -1314,6 +1333,7 @@ function restoreImportedBackup() {
     "data",
   JSON.stringify(data)
     );
+  dataChanged = false;
   render();
   saveBackup();
   closeImportModal();
@@ -1338,6 +1358,7 @@ function restoreSelectedAreas() {
         "data",
     JSON.stringify(data)
       );
+    dataChanged = false;
       render();
       saveBackup();
       closeImportModal();
