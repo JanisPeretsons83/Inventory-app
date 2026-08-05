@@ -1079,6 +1079,7 @@ function doLogout() {
   localStorage.removeItem("userName");
   localStorage.removeItem("location");
     data = [];
+    document.getElementById("userNameInput").value = "";
       currentLocation = null;
     if (selectedBtn) {
       selectedBtn.classList.remove("activeLocation");
