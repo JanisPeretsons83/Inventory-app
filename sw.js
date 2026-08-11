@@ -9,10 +9,10 @@ const urlsToCache = [
 `${BASE}/style.css`,
 `${BASE}/app.js`,
 
-`${BASE}/Icons/favicon-16.png`,
-`${BASE}/Icons/favicon-32.png`,
-`${BASE}/Icons/worklog-192.png`,
-`${BASE}/Icons/worklog-512.png`,
+`${BASE}/Icons/favicon-16-v2.PNG`,
+`${BASE}/Icons/favicon-32-v2.PNG`,
+`${BASE}/Icons/worklog-192-v2.PNG`,
+`${BASE}/Icons/worklog-512-v2.PNG`,
 
 `${BASE}/dardu_map1.jpeg`,
 `${BASE}/dardu_map2.jpeg`,
