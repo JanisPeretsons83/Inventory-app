@@ -120,8 +120,8 @@ async function importAnalysisBackup(event) {
     <h3>📊 Kopsavilkums</h3>
     Ražotne:
       ${baseLocation}<br>
-    Lietotājs: 
-      ${backup.user}<br>
+    Lietotāji:
+      ${users.join(", ")}<br>
     Periods:
       ${basePeriod}<br>
     Faili:
