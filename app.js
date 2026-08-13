@@ -52,6 +52,20 @@ function startDataViewMode() {
     .style.display = "block";
 }
 
+function closeDataViewMode() {
+  document.getElementById("analyticsContent")
+    .style.display = "none";
+  document.getElementById("appContent")
+    .style.display = "block";
+}
+
+function startDataViewMode() {
+  document.getElementById("appContent")
+    .style.display = "none";
+  document.getElementById("analyticsContent")
+    .style.display = "block";
+}
+
 function showNotice(message, type = "info", fieldId = null) {
   const notice = document.getElementById("notice");
     notice.className = "";
