@@ -56,8 +56,11 @@ function startDataViewMode() {
 
 function closeDataViewMode() {
   analysisData = [];
-    document.getElementById("analyticsTable")
-      .innerHTML = "";
+    const table =
+      document.getElementById("analyticsTable");
+    if (table) {
+      table.innerHTML = "";
+      }
     document.getElementById("analyticsContent")
       .style.display = "none";
     document.getElementById("appContent")
