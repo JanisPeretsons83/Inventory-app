@@ -89,11 +89,16 @@ async function importAnalysisBackup(event) {
   const registrationDate =
     new Date(backups[0].timestamp)
       .toLocaleDateString("lv-LV");
+  const baseMonth =
+    backups[0].inventoryMonth;
+  const baseYear =
+    backups[0].inventoryYear;
   const invalidFile =
     backups.find(b =>
       b.location !== baseLocation ||
-      b.inventoryPeriod !== basePeriod
-      );
+      b.inventoryMonth !== baseMonth ||
+      b.inventoryYear !== baseYear
+    );;
     if (invalidFile) {
     alert(
       "Izvēlētie faili ir no dažādām ražotnēm vai periodiem!"
