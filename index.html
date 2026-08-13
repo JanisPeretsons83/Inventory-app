@@ -53,12 +53,16 @@
 <div id="analyticsContent" style="display:none;">
     <h2>📊 Inventarizācijas analītikas skats</h2>
         <button onclick="closeDataViewMode()">
-        ← Atpakaļ
+            ← Atpakaļ
         </button>
-    <p>
-    Šeit būs backup analīze un kopsavilkumi.
-    </p>
+    <hr>
+        <button onclick="openAnalysisBackupFile()">
+            📂 Ielādēt backup
+        </button>
+    <div id="analysisInfo"></div>
+    <div id="analysisView"></div>
 </div>
+    
     <!-- DARBA REŽĪMS -->
 <div id="appContent" style="display:none">
 <h2>Inventarizācija</h2>
