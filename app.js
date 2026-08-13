@@ -65,7 +65,7 @@ function closeDataViewMode() {
       }
     document.getElementById("analyticsContent")
       .style.display = "none";
-    document.getElementById("appContent")
+    document.getElementById("locationSelect")
       .style.display = "block";
 }
 
