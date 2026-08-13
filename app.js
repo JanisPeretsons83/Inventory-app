@@ -95,9 +95,13 @@ async function importAnalysisBackup(event) {
       );
     return;
     }
-  console.log(
-    "Validācija veiksmīga"
-  );
+  analysisData = [];
+    backups.forEach(backup => {
+    analysisData.push(
+    ...backup.entries
+    );
+  });
+console.log("AnalysisData:", analysisData);
 }
 
 function closeDataViewMode() {
