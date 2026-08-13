@@ -82,6 +82,10 @@ async function importAnalysisBackup(event) {
     }
   const baseLocation =
     backups[0].location;
+  const users =
+    [...new Set(
+      backups.map(b => b.user)
+    )];
   const basePeriod =
     backups[0].inventoryPeriod;
   const invalidFile =
@@ -116,6 +120,8 @@ async function importAnalysisBackup(event) {
     <h3>📊 Kopsavilkums</h3>
     Ražotne:
       ${baseLocation}<br>
+    Lietotājs: 
+      ${backup.user}<br>
     Periods:
       ${basePeriod}<br>
     Faili:
