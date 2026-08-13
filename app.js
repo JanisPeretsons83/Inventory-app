@@ -48,6 +48,8 @@ function updateAreas() {
 
 function startDataViewMode() {
   analysisData = [];
+    document.getElementById("locationSelect")
+      .style.display = "none";
     document.getElementById("appContent")
       .style.display = "none";
     document.getElementById("analyticsContent")
