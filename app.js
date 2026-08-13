@@ -1,4 +1,5 @@
 let data = [];
+let analysisData = [];
 let editIndex = null;
 let currentLocation = null;
 let isGaliMode = false;
@@ -46,17 +47,21 @@ function updateAreas() {
 }
 
 function startDataViewMode() {
-  document.getElementById("appContent")
-    .style.display = "none";
-  document.getElementById("analyticsContent")
-    .style.display = "block";
+  analysisData = [];
+    document.getElementById("appContent")
+      .style.display = "none";
+    document.getElementById("analyticsContent")
+      .style.display = "block";
 }
 
 function closeDataViewMode() {
-  document.getElementById("analyticsContent")
-    .style.display = "none";
-  document.getElementById("appContent")
-    .style.display = "block";
+  analysisData = [];
+    document.getElementById("analyticsTable")
+      .innerHTML = "";
+    document.getElementById("analyticsContent")
+      .style.display = "none";
+    document.getElementById("appContent")
+      .style.display = "block";
 }
 
 function startDataViewMode() {
@@ -1175,28 +1180,37 @@ if ("serviceWorker" in navigator) {
 
 // ✅ BACKUP
 function saveBackup() {
-    const totalPackages =
-      data.reduce((sum, e) =>
+  const totalPackages =
+    data.reduce((sum, e) =>
       sum + (e.packages || 0), 0);
-    const totalM3 =
-      data.reduce((sum, e) =>
+  const totalM3 =
+    data.reduce((sum, e) =>
       sum + (e.total || 0), 0);
-    const backup = {
-      timestamp: new Date().toISOString(),
-      user:
-        localStorage.getItem("userName") || "",
-      location:
-        localStorage.getItem("location") || "",
+  const firstEntry = data[0];
+  const backup = {
+    timestamp: new Date().toISOString(),
+    user:
+      localStorage.getItem("userName") || "",
+    location:
+      localStorage.getItem("location") || "",
+    inventoryMonth:
+      firstEntry?.month || null,
+    inventoryYear:
+      firstEntry?.year || null,
+    inventoryPeriod:
+      firstEntry
+        ? `${String(firstEntry.month).padStart(2, "0")}.${firstEntry.year}`
+        : null,
       summary: {
-      entries: data.length,
-      packages: totalPackages,
-      totalM3: Number(totalM3.toFixed(4))
+        entries: data.length,
+        packages: totalPackages,
+        totalM3: Number(totalM3.toFixed(4))
         },
       entries: data
-      };
-    localStorage.setItem(
-      "backupData",
-    JSON.stringify(backup)
+    };
+  localStorage.setItem(
+    "backupData",
+  JSON.stringify(backup)
   );
 }
 
