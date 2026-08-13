@@ -25,29 +25,29 @@
 
 <body>
   <!-- Login -->
-<div id="notice"></div>
-<div id="locationSelect">
-<div id="error"></div>    
-  <h3>Izvēlies ražotni</h3>
+    <div id="notice"></div>
+        <div id="locationSelect">
+            <div id="error"></div>    
+              <h3>Izvēlies ražotni</h3>
   
-<button onclick="setLocation('Cecīļu', this)">Cecīļu ražotne</button>
-<button onclick="setLocation('Dārdu', this)">Dārdu ražotne</button>
+                <button onclick="setLocation('Cecīļu', this)">Cecīļu ražotne</button>
+                <button onclick="setLocation('Dārdu', this)">Dārdu ražotne</button>
   
-<input id="userNameInput" placeholder="Vārds Uzvārds">
+                <input id="userNameInput" placeholder="Vārds Uzvārds">
 
-    <button onclick="document.getElementById('backupFile').click()">
-    📂 Ielādēt backup
-    </button>
-        <input type="file"
-            id="backupFile"
-            accept=".json"
-            style="display:none">
-    <button onclick="saveUser()">Turpināt</button>
+                    <button onclick="document.getElementById('backupFile').click()">
+                        📂 Ielādēt backup
+                    </button>
+                <input type="file"
+                    id="backupFile"
+                    accept=".json"
+                    style="display:none">
+                <button onclick="saveUser()">Turpināt</button>
     
-    <button onclick="startDataViewMode()">
-        📊 Inventarizācijas analītikas skats
-    </button>
-</div>
+                <button onclick="startDataViewMode()">
+                    📊 Inventarizācijas analītikas skats
+                </button>
+        </div>
 
     <!-- ANALĪTIKAS SKATS -->
 <div id="analyticsContent" style="display:none;">
