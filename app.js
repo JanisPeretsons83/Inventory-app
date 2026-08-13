@@ -80,7 +80,24 @@ async function importAnalysisBackup(event) {
     JSON.parse(text);
       backups.push(backup);
     }
-  console.log(backups);
+  const baseLocation =
+    backups[0].location;
+  const basePeriod =
+    backups[0].inventoryPeriod;
+  const invalidFile =
+    backups.find(b =>
+      b.location !== baseLocation ||
+      b.inventoryPeriod !== basePeriod
+      );
+    if (invalidFile) {
+    alert(
+      "Izvēlētie faili ir no dažādām ražotnēm vai periodiem!"
+      );
+    return;
+    }
+  console.log(
+    "Validācija veiksmīga"
+  );
 }
 
 function closeDataViewMode() {
