@@ -70,6 +70,19 @@ function importAnalysisBackup(event) {
   );
 }
 
+async function importAnalysisBackup(event) {
+  const files = [...event.target.files];
+  const backups = [];
+    for (const file of files) {
+  const text =
+    await file.text();
+  const backup =
+    JSON.parse(text);
+      backups.push(backup);
+    }
+  console.log(backups);
+}
+
 function closeDataViewMode() {
   analysisData = [];
     const table =
