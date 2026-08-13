@@ -101,7 +101,32 @@ async function importAnalysisBackup(event) {
     ...backup.entries
     );
   });
-console.log("AnalysisData:", analysisData);
+  const totalPackages =
+    analysisData.reduce(
+      (sum, e) => sum + (e.packages || 0),
+      0
+    );
+  const totalM3 =
+    analysisData.reduce(
+      (sum, e) => sum + (e.total || 0),
+      0
+    );
+    document.getElementById("analysisInfo")
+      .innerHTML = `
+    <h3>📊 Kopsavilkums</h3>
+    Ražotne:
+      ${baseLocation}<br>
+    Periods:
+      ${basePeriod}<br>
+    Faili:
+      ${backups.length}<br>
+    Ieraksti:
+      ${analysisData.length}<br>
+    Pakas:
+      ${totalPackages}<br>
+    m³:
+      ${totalM3.toFixed(4)}
+    `;
 }
 
 function closeDataViewMode() {
