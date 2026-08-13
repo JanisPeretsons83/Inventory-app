@@ -53,12 +53,19 @@
 <div id="analyticsContent" style="display:none;">
     <h2>📊 Inventarizācijas analītikas skats</h2>
         <button onclick="closeDataViewMode()">
-            ← Atpakaļ
+            ← Beigt un atgriezties Login 
         </button>
     <hr>
         <button onclick="openAnalysisBackupFile()">
             📂 Ielādēt backup
         </button>
+            <input
+                type="file"
+                id="analysisBackupFile"
+                accept=".json"
+                multiple
+                style="display:none"
+                onchange="importAnalysisBackup(event)">
     <div id="analysisInfo"></div>
     <div id="analysisView"></div>
 </div>
