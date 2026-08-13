@@ -56,6 +56,20 @@ function startDataViewMode() {
       .style.display = "block";
 }
 
+function openAnalysisBackupFile() {
+  document
+    .getElementById("analysisBackupFile")
+    .click();
+}
+
+function importAnalysisBackup(event) {
+  const files = [...event.target.files];
+    console.log(
+      "Analītikai izvēlēti faili:",
+    files.length
+  );
+}
+
 function closeDataViewMode() {
   analysisData = [];
     const table =
