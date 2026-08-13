@@ -86,8 +86,9 @@ async function importAnalysisBackup(event) {
     [...new Set(
       backups.map(b => b.user)
     )];
-  const basePeriod =
-    backups[0].inventoryPeriod;
+  const registrationDate =
+    new Date(backups[0].timestamp)
+      .toLocaleDateString("lv-LV");
   const invalidFile =
     backups.find(b =>
       b.location !== baseLocation ||
@@ -122,8 +123,8 @@ async function importAnalysisBackup(event) {
       ${baseLocation}<br>
     Lietotāji:<br>
       ${users.join("<br>")}
-    Periods:<br>
-      ${basePeriod}<br>
+    Datu reģistrācija:
+      ${registrationDate}<br>
     Faili:
       ${backups.length}<br>
     Ieraksti:
