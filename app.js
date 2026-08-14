@@ -1,5 +1,6 @@
 let data = [];
 let analysisData = [];
+let analysisFiles = [];
 let editIndex = null;
 let currentLocation = null;
 let isGaliMode = false;
@@ -130,16 +131,27 @@ async function importAnalysisBackup(event) {
 }
 
 function closeDataViewMode() {
+  analysisFiles = [];
+  // Notīra analītikas datus
   analysisData = [];
     const table =
       document.getElementById("analyticsTable");
     if (table) {
       table.innerHTML = "";
       }
+    // Notīra kopsavilkumu
     document.getElementById("analysisInfo")
       .innerHTML = "";
+    // Notīra analītikas saturu
+    document.getElementById("analysisView")
+      .innerHTML = "";
+    // Notīra izvēlētos backup failus
+    document.getElementById("analysisBackupFile")
+      .value = "";
+    // Aizver analītikas skatu
     document.getElementById("analyticsContent")
       .style.display = "none";
+    // Atgriežas Login logā
     document.getElementById("locationSelect")
       .style.display = "block";
 }
