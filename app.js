@@ -204,7 +204,7 @@ function renderDimensionAnalysis() {
             ${lengthText} |
             ${row.packages} pal. |
             ${row.pieces} gab. |
-            ${String(row.month).padStart(2, "0")}.${row.year} |
+            ${productionDate} |
             ${row.total.toFixed(3)} m³
           </td>
         </tr>
