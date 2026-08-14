@@ -194,6 +194,8 @@ function renderDimensionAnalysis() {
       String(row.length).toLowerCase() === "gali"
         ? `≈${row.avgLength} mm`
         : `${row.length} mm`;
+    const productionDate =
+      `${String(row.month).padStart(2, "0")}.${String(row.year).slice(-2)}`;
       html += `
         <tr class="detailRow">
           <td colspan="3">
@@ -203,7 +205,7 @@ function renderDimensionAnalysis() {
             ${row.packages} pal. |
             ${row.pieces} gab. |
             ${String(row.month).padStart(2, "0")}.${row.year} |
-            ${row.total.toFixed(4)} m³
+            ${row.total.toFixed(3)} m³
           </td>
         </tr>
         `;
