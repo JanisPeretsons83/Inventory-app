@@ -67,10 +67,8 @@ async function importAnalysisBackup(event) {
     if (!files.length) return;
   const backups = [];
     for (const file of files) {
-  const text =
-    await file.text();
-  const backup =
-    JSON.parse(text);
+  const text = await file.text();
+  const backup = JSON.parse(text);
       backups.push(backup);
     }
   const baseLocation =
