@@ -35,6 +35,7 @@ body {
 display: flex;
 gap: 6px;
 margin: 10px 0;
+}
 
 .materialTabs button {
 flex: 1;
