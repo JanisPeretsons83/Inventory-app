@@ -3,8 +3,6 @@ let analysisData = [];
 let analysisFiles = [];
 let dimensionGroups = {};
 let selectedMaterial = "egle";
-let selectedMaterial = "lapegle";
-let selectedMaterial = "termokoks";
 let expandedDimension = null;
 let editIndex = null;
 let currentLocation = null;
@@ -150,7 +148,33 @@ async function importAnalysisBackup(event) {
     `;
 }
 
+function setMaterialFilter(type) {
+  selectedMaterial = type;
+  expandedDimension = null;
+  renderDimensionAnalysis();
+}
+
 function renderDimensionAnalysis() {
+  let filteredData = analysisData;
+  if (selectedMaterial === "egle") {
+    filteredData =
+      analysisData.filter(e =>
+        e.comment !== "Lapegle" &&
+        e.comment !== "Termokoks"
+      );
+    }
+  if (selectedMaterial === "lapegle") {
+    filteredData =
+      analysisData.filter(e =>
+        e.comment === "Lapegle"
+      );
+    }
+  if (selectedMaterial === "termokoks") {
+    filteredData =
+      analysisData.filter(e =>
+        e.comment === "Termokoks"
+      );
+    }
   const groups = {};
     analysisData.forEach(e => {
   const key =
