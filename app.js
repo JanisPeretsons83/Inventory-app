@@ -137,37 +137,40 @@ function renderDimensionAnalysis() {
     `${e.thickness}x${e.width}`;
     if (!groups[key]) {
       groups[key] = {
-        entries: 0,
         packages: 0,
         totalM3: 0
         };
       }
-      groups[key].entries++;
       groups[key].packages += e.packages || 0;
       groups[key].totalM3 += e.total || 0;
       });
   let html = `
     <table>
+      <thead>
+        <tr>
+          <th>Dimensija</th>
+          <th>Pakas</th>
+          <th>m³</th>
+        </tr>
+      </thead>
+    <tbody>
+    `;
+  Object.entries(groups)
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+    .forEach(([size, info]) => {
+  html += `
     <tr>
-      <th>Dimensija</th>
-      <th>Ieraksti</th>
-      <th>Pakas</th>
-      <th>m³</th>
+      <td>${size}</td>
+      <td>${info.packages}</td>
+      <td>${info.totalM3.toFixed(4)}</td>
     </tr>
     `;
-  Object.entries(groups).forEach(([size, info]) => {
-    html += `
-      <tr>
-        <td>${size}</td>
-        <td>${info.entries}</td>
-        <td>${info.packages}</td>
-        <td>${info.totalM3.toFixed(4)}</td>
-      </tr>
-      `;
   });
-  html += "</table>";
-    document.getElementById("analysisView")
-      .innerHTML = html;
+  html += `
+    </tbody>
+    </table>
+  `;
+document.getElementById("analysisView").innerHTML = html;
 }
 
 function closeDataViewMode() {
