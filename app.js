@@ -62,14 +62,6 @@ function openAnalysisBackupFile() {
     .click();
 }
 
-function importAnalysisBackup(event) {
-  const files = [...event.target.files];
-    console.log(
-      "Analītikai izvēlēti faili:",
-    files.length
-  );
-}
-
 async function importAnalysisBackup(event) {
   const files = [...event.target.files];
   const backups = [];
@@ -86,9 +78,6 @@ async function importAnalysisBackup(event) {
     [...new Set(
       backups.map(b => b.user)
     )];
-  const registrationDate =
-    new Date(backups[0].timestamp)
-      .toLocaleDateString("lv-LV");
   const baseMonth =
     backups[0].inventoryMonth;
   const baseYear =
@@ -129,7 +118,7 @@ async function importAnalysisBackup(event) {
     Lietotāji:<br>
       ${users.join("<br>")}
     Datu reģistrācija:
-      ${registrationDate}<br>
+      ${String(baseMonth).padStart(2, "0")}.${baseYear}<br>
     Faili:
       ${backups.length}<br>
     Ieraksti:
