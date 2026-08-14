@@ -64,6 +64,7 @@ function openAnalysisBackupFile() {
 
 async function importAnalysisBackup(event) {
   const files = [...event.target.files];
+    if (!files.length) return;
   const backups = [];
     for (const file of files) {
   const text =
@@ -87,7 +88,7 @@ async function importAnalysisBackup(event) {
       b.location !== baseLocation ||
       b.inventoryMonth !== baseMonth ||
       b.inventoryYear !== baseYear
-    );;
+    );
     if (invalidFile) {
     alert(
       "Izvēlētie faili ir no dažādām ražotnēm vai periodiem!"
@@ -116,7 +117,7 @@ async function importAnalysisBackup(event) {
     Ražotne:
       ${baseLocation}<br>
     Lietotāji:<br>
-      ${users.join("<br>")}
+      ${users.join("<br>")}<br><br>
     Datu reģistrācija:
       ${String(baseMonth).padStart(2, "0")}.${baseYear}<br>
     Faili:
@@ -137,6 +138,8 @@ function closeDataViewMode() {
     if (table) {
       table.innerHTML = "";
       }
+    document.getElementById("analysisInfo")
+      .innerHTML = "";
     document.getElementById("analyticsContent")
       .style.display = "none";
     document.getElementById("locationSelect")
