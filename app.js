@@ -1,6 +1,8 @@
 let data = [];
 let analysisData = [];
 let analysisFiles = [];
+let dimensionGroups = {};
+let expandedDimension = null;
 let editIndex = null;
 let currentLocation = null;
 let isGaliMode = false;
@@ -95,11 +97,26 @@ async function importAnalysisBackup(event) {
     return;
     }
   analysisData = [];
-    backups.forEach(backup => {
-    analysisData.push(
-    ...backup.entries
-    );
-  });
+      backups.forEach(backup => {
+        analysisData.push(
+        ...backup.entries
+        );
+      });
+    dimensionGroups = {};  
+      analysisData.forEach(e => {
+    const key =
+      `${e.thickness}x${e.width}`;
+    if (!dimensionGroups[key]) {
+      dimensionGroups[key] = {
+        packages: 0,
+        totalM3: 0,
+        rows: []
+        };
+      }
+      dimensionGroups[key].packages += e.packages || 0;
+      dimensionGroups[key].totalM3 += e.total || 0;
+      dimensionGroups[key].rows.push(e);
+  });  
   const totalPackages =
     analysisData.reduce(
       (sum, e) => sum + (e.packages || 0),
@@ -138,12 +155,15 @@ function renderDimensionAnalysis() {
     if (!groups[key]) {
       groups[key] = {
         packages: 0,
-        totalM3: 0
+        totalM3: 0,
+        rows: [] 
         };
       }
       groups[key].packages += e.packages || 0;
       groups[key].totalM3 += e.total || 0;
+      groups[key].rows.push(e);
       });
+   
   let html = `
     <table>
       <thead>
@@ -160,17 +180,50 @@ function renderDimensionAnalysis() {
     .forEach(([size, info]) => {
   html += `
     <tr>
-      <td>${size}</td>
+      <td onclick="toggleDimension('${size}')"
+        style="cursor:pointer;">
+        ${expandedDimension === size ? "▼" : "▶"} ${size}
+      </td>
       <td>${info.packages}</td>
       <td>${info.totalM3.toFixed(4)}</td>
     </tr>
     `;
+     if (expandedDimension === size) {
+      info.rows.forEach(row => {
+    const lengthText =
+      String(row.length).toLowerCase() === "gali"
+        ? `≈${row.avgLength} mm`
+        : `${row.length} mm`;
+      html += `
+        <tr class="detailRow">
+          <td colspan="3">
+            ${row.area} |
+            ${row.grade} |
+            ${lengthText} |
+            ${row.packages} pal. |
+            ${row.pieces} gab. |
+            ${String(row.month).padStart(2, "0")}.${row.year} |
+            ${row.total.toFixed(4)} m³
+          </td>
+        </tr>
+        `;
+      });
+    }
   });
   html += `
     </tbody>
     </table>
   `;
 document.getElementById("analysisView").innerHTML = html;
+}
+
+function toggleDimension(size) {
+  if (expandedDimension === size) {
+    expandedDimension = null;
+  } else {
+    expandedDimension = size;
+    }
+  renderDimensionAnalysis();
 }
 
 function closeDataViewMode() {
