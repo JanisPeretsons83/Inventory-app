@@ -70,14 +70,17 @@
             📏 Dimensijas
         </button>
             <div class="materialTabs">
-                <button onclick="setMaterialFilter('egle')">
-                    Egle & Priede
+                <button id="mat_egle" class="active"
+                    onclick="setMaterialFilter('egle')">
+                        Egle & Priede
                 </button>
-                <button onclick="setMaterialFilter('lapegle')">
-                    Lapegle
+                <button id="mat_lapegle"
+                    onclick="setMaterialFilter('lapegle')">
+                        Lapegle
                 </button>
-                <button onclick="setMaterialFilter('termokoks')">
-                    Termokoks
+                <button id="mat_termokoks"
+                    onclick="setMaterialFilter('termokoks')">
+                        Termokoks
                 </button>
             </div>
             <div id="analysisView"></div>
