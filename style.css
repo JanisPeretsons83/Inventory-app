@@ -31,6 +31,15 @@ body {
   margin-bottom: 10px;
 }
 
+.materialTabs {
+display: flex;
+gap: 6px;
+margin: 10px 0;
+}
+.materialTabs button {
+flex: 1;
+}
+
 .modal {
 overflow-y: auto;
 }
