@@ -36,10 +36,6 @@ display: flex;
 gap: 6px;
 margin: 10px 0;
 
-.materialTabs button.active {
-background: #4CAF50;
-color: white;
-}
 .materialTabs button {
 flex: 1;
 }
