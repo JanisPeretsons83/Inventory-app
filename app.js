@@ -361,7 +361,7 @@ function showSizeSuggestions() {
   const matches = dimensionsLibrary.filter(size =>
     size.startsWith(thickness + "x")
     )
-    .slice(0, 5);
+    .slice(0, 20);
   if (matches.length === 0) {
     container.style.display = "none";
   return;
