@@ -6,13 +6,14 @@ body {
 }
 
 #sizeSuggestions {
-  display: none;
-  margin: 5px 0;
-  border-radius: 8px;
-  overflow: hidden;
-  max-height: 250px;
-  overflow-y: auto;
+display: none;
+margin: 5px 0;
+border-radius: 8px;
+max-height: 250px;
+overflow-y: auto;
+overflow-x: hidden;
 }
+
 .sizeOption {
   background: white;
     border: 1px solid #ddd;
