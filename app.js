@@ -102,20 +102,20 @@ async function importAnalysisBackup(event) {
         ...backup.entries
         );
       });
-    dimensionGroups = {};  
+    groups = {};  
       analysisData.forEach(e => {
     const key =
       `${e.thickness}x${e.width}`;
-    if (!dimensionGroups[key]) {
-      dimensionGroups[key] = {
+    if (!groups[key]) {
+      groups[key] = {
         packages: 0,
         totalM3: 0,
         rows: []
         };
       }
-      dimensionGroups[key].packages += e.packages || 0;
-      dimensionGroups[key].totalM3 += e.total || 0;
-      dimensionGroups[key].rows.push(e);
+      groups[key].packages += e.packages || 0;
+      groups[key].totalM3 += e.total || 0;
+      groups[key].rows.push(e);
   });  
   const totalPackages =
     analysisData.reduce(
