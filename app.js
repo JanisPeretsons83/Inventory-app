@@ -165,7 +165,7 @@ function setMaterialFilter(type) {
 
 function renderDimensionAnalysis() {
   let filteredData = analysisData;
-
+    const groups = {};
   if (selectedMaterial === "egle") {
     filteredData = analysisData.filter(e =>
       e.comment !== "Lapegle" &&
@@ -183,17 +183,17 @@ function renderDimensionAnalysis() {
 
   filteredData.forEach(e => {
     const key = `${e.thickness}x${e.width}`;
-    if (!dimensionGroups[key]) {
-      dimensionGroups[key] = {
+    if (!groups[key]) {
+      groups[key] = {
         packages: 0,
         totalM3: 0,
         rows: []
       };
     }
 
-    dimensionGroups[key].packages += e.packages || 0;
-    dimensionGroups[key].totalM3 += e.total || 0;
-    dimensionGroups[key].rows.push(e);
+    groups[key].packages += e.packages || 0;
+    groups[key].totalM3 += e.total || 0;
+    groups[key].rows.push(e);
   });
 
   let html = `
@@ -208,7 +208,7 @@ function renderDimensionAnalysis() {
       <tbody>
   `;
 
-  Object.entries(dimensionGroups)
+  Object.entries(groups)
     .sort(([a], [b]) =>
       a.localeCompare(b, undefined, { numeric: true })
     )
