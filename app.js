@@ -165,41 +165,40 @@ function setMaterialFilter(type) {
 
 function renderDimensionAnalysis() {
   let filteredData = analysisData;
+
   if (selectedMaterial === "egle") {
-    filteredData =
-      analysisData.filter(e =>
-        e.comment !== "Lapegle" &&
-        e.comment !== "Termokoks"
-      );
-    }
+    filteredData = analysisData.filter(e =>
+      e.comment !== "Lapegle" &&
+      e.comment !== "Termokoks"
+    );
   } else if (selectedMaterial === "lapegle") {
-    filteredData =
-      analysisData.filter(e =>
-        e.comment === "Lapegle"
-      );
-    }
+    filteredData = analysisData.filter(e =>
+      e.comment === "Lapegle"
+    );
   } else if (selectedMaterial === "termokoks") {
-    filteredData =
-      analysisData.filter(e =>
-        e.comment === "Termokoks"
-      );
-    }
+    filteredData = analysisData.filter(e =>
+      e.comment === "Termokoks"
+    );
+  }
+
   const groups = {};
-    analysisData.forEach(e => {
-  const key =
-    `${e.thickness}x${e.width}`;
+
+  filteredData.forEach(e => {
+    const key = `${e.thickness}x${e.width}`;
+
     if (!groups[key]) {
       groups[key] = {
         packages: 0,
         totalM3: 0,
-        rows: [] 
-        };
-      }
-      groups[key].packages += e.packages || 0;
-      groups[key].totalM3 += e.total || 0;
-      groups[key].rows.push(e);
-      });
-   
+        rows: []
+      };
+    }
+
+    groups[key].packages += e.packages || 0;
+    groups[key].totalM3 += e.total || 0;
+    groups[key].rows.push(e);
+  });
+
   let html = `
     <table>
       <thead>
@@ -209,50 +208,60 @@ function renderDimensionAnalysis() {
           <th>m³</th>
         </tr>
       </thead>
-    <tbody>
-    `;
+      <tbody>
+  `;
+
   Object.entries(groups)
-    .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+    .sort(([a], [b]) =>
+      a.localeCompare(b, undefined, { numeric: true })
+    )
     .forEach(([size, info]) => {
-  html += `
-    <tr>
-      <td onclick="toggleDimension('${size}')"
-        style="cursor:pointer;">
-        ${expandedDimension === size ? "▼" : "▶"} ${size}
-      </td>
-      <td>${info.packages}</td>
-      <td>${info.totalM3.toFixed(4)}</td>
-    </tr>
-    `;
-     if (expandedDimension === size) {
-      info.rows.forEach(row => {
-    const lengthText =
-      String(row.length).toLowerCase() === "gali"
-        ? `≈${row.avgLength} mm`
-        : `${row.length} mm`;
-    const productionDate =
-      `${String(row.month).padStart(2, "0")}.${String(row.year).slice(-2)}`;
+
       html += `
-        <tr class="detailRow">
-          <td colspan="3">
-            ${row.area} |
-            ${row.grade} |
-            ${lengthText} |
-            ${row.packages} pal. |
-            ${row.pieces} gab. |
-            ${productionDate} |
-            ${row.total.toFixed(3)} m³
+        <tr>
+          <td onclick="toggleDimension('${size}')"
+              style="cursor:pointer;">
+            ${expandedDimension === size ? "▼" : "▶"} ${size}
           </td>
+          <td>${info.packages}</td>
+          <td>${info.totalM3.toFixed(4)}</td>
         </tr>
-        `;
-      });
-    }
-  });
+      `;
+
+      if (expandedDimension === size) {
+        info.rows.forEach(row => {
+
+          const lengthText =
+            String(row.length).toLowerCase() === "gali"
+              ? `≈${row.avgLength} mm`
+              : `${row.length} mm`;
+
+          const productionDate =
+            `${String(row.month).padStart(2, "0")}.${String(row.year).slice(-2)}`;
+
+          html += `
+            <tr class="detailRow">
+              <td colspan="3">
+                ${row.area} |
+                ${row.grade} |
+                ${lengthText} |
+                ${row.packages} pal. |
+                ${row.pieces} gab. |
+                ${productionDate} |
+                ${row.total.toFixed(3)} m³
+              </td>
+            </tr>
+          `;
+        });
+      }
+    });
+
   html += `
-    </tbody>
+      </tbody>
     </table>
   `;
-document.getElementById("analysisView").innerHTML = html;
+
+  document.getElementById("analysisView").innerHTML = html;
 }
 
 function toggleDimension(size) {
