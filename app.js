@@ -512,51 +512,45 @@ function updateYearFromMonth() {
 }
 
 // ✅ PIEVIENO IERAKSTU
-
 function add() {
-
   const areaVal = document.getElementById("area").value.trim();
   const packagesVal = Number(document.getElementById("packages").value);
   const thicknessVal = Number(document.getElementById("thickness").value);
   const widthVal = Number(document.getElementById("width").value);
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
- 
-    if (!areaVal)
-      return error("Apgabals obligāts", "area");
-  
-    if (packagesVal <= 0 || isNaN(packagesVal))
-      return error("Pakas obligātas", "packages");
-  
-    if (thicknessVal <= 0 || isNaN(thicknessVal))
-      return error("Biezums obligāts", "thickness");
-  
-    if (widthVal <= 0 || isNaN(widthVal))
-      return error("Platums obligāts", "width");
-  
-    const size = `${thicknessVal}x${widthVal}`;
-  
-    if (!dimensionsLibrary.includes(size)) {
-        dimensionsLibrary.push(size);
-        localStorage.setItem(
-          "dimensionsLibrary",
-      JSON.stringify(dimensionsLibrary)
-        );
-      }
-  
-    if (!monthVal || monthVal < 1 || monthVal > 12)
-      return error("Mēnesis 1–12", "month");
-  
-    if (!yearVal)
-      return error("Gads obligāts", "year");
-  
-    if (!document.getElementById("grade").value)
-      return error("Izvēlies šķiru", "gradeBtn");
-  
-  let rawLength = document.getElementById("length").value.trim();
-    if (isGaliMode) {
-      rawLength = "gali";
-    }
+  if (!areaVal)
+    return error("Apgabals obligāts", "area");
+  if (packagesVal <= 0 || isNaN(packagesVal))
+    return error("Pakas obligātas", "packages");
+  if (thicknessVal <= 0 || isNaN(thicknessVal))
+    return error("Biezums obligāts", "thickness");
+  if (widthVal <= 0 || isNaN(widthVal))
+    return error("Platums obligāts", "width");
+  const size = `${thicknessVal}x${widthVal}`;
+  // Izmēru saglabāšana bibliotēkā
+  dimensionsLibrary = Array.isArray(dimensionsLibrary)
+    ? dimensionsLibrary
+    : [];
+  dimensionsLibrary = dimensionsLibrary.filter(
+    s => s !== size
+  );
+  dimensionsLibrary.unshift(size);
+  localStorage.setItem(
+    "dimensionsLibrary",
+    JSON.stringify(dimensionsLibrary)
+  );
+  if (!monthVal || monthVal < 1 || monthVal > 12)
+    return error("Mēnesis 1–12", "month");
+  if (!yearVal)
+    return error("Gads obligāts", "year");
+  if (!document.getElementById("grade").value)
+    return error("Izvēlies šķiru", "gradeBtn");
+  let rawLength =
+    document.getElementById("length").value.trim();
+  if (isGaliMode) {
+    rawLength = "gali";
+  }
   let lengthVal = rawLength.toLowerCase();
   let totalM3 = 0;
   let m3PerPack = 0;
@@ -565,54 +559,97 @@ function add() {
   let packHeight = null;
   let piecesPerPack = null;
   let avgLength = null;
-
-  // ✅ GALI režīms
-  
+  // ==========================================
+  // GALI REŽĪMS
+  // ==========================================
   if (lengthVal === "gali") {
-
-    packWidth = Number(document.getElementById("packWidth").value);
-    packLength = Number(document.getElementById("packLength").value);
-    packHeight = Number(document.getElementById("packHeight").value);
-    avgLength = Number(document.getElementById("avgLength").value);
-
+    packWidth =
+      Number(document.getElementById("packWidth").value);
+    packLength =
+      Number(document.getElementById("packLength").value);
+    packHeight =
+      Number(document.getElementById("packHeight").value);
+    avgLength =
+      Number(document.getElementById("avgLength").value);
     if (packWidth <= 0 || isNaN(packWidth))
-      return error("Pakas platums obligāts", "packWidth");
+      return error(
+        "Pakas platums obligāts",
+        "packWidth"
+      );
     if (packLength <= 0 || isNaN(packLength))
-      return error("Pakas garums obligāts", "packLength");
+      return error(
+        "Pakas garums obligāts",
+        "packLength"
+      );
     if (packHeight <= 0 || isNaN(packHeight))
-      return error("Pakas augstums obligāts", "packHeight");
+      return error(
+        "Pakas augstums obligāts",
+        "packHeight"
+      );
     if (avgLength <= 0 || isNaN(avgLength))
-      return error("Vidējais garums obligāts", "avgLength")
-    
+      return error(
+        "Vidējais garums obligāts",
+        "avgLength"
+      );
+    // Pakas tilpums m³
     m3PerPack =
-      (packWidth * packLength * packHeight) / 1000000000;
-
-  let piecesAcrossWidth = Math.floor(packWidth / widthVal);
-  let piecesAcrossHeight = Math.floor(packHeight / thicknessVal);
-  let piecesFront = piecesAcrossWidth * piecesAcrossHeight;
-  let columns = Math.floor(packLength / avgLength);
-  let efficiency = 0.95;
-    piecesPerPack = Math.max(1, Math.floor(piecesFront * columns * efficiency)
+      (packWidth * packLength * packHeight) /
+      1000000000;
+    const piecesAcrossWidth =
+      Math.floor(packWidth / widthVal);
+    const piecesAcrossHeight =
+      Math.floor(packHeight / thicknessVal);
+    const piecesFront =
+      piecesAcrossWidth * piecesAcrossHeight;
+    const columns =
+      Math.floor(packLength / avgLength);
+    const efficiency = 0.95;
+    piecesPerPack = Math.max(
+      1,
+      Math.floor(
+        piecesFront *
+        columns *
+        efficiency
+      )
     );
-
-    // ✅ parāda ar ≈
-    document.getElementById("pieces").value = "≈ " + piecesPerPack;
-    totalM3 = m3PerPack * packagesVal;
-
+    // Parāda ar ≈
+    document.getElementById("pieces").value =
+      "≈ " + piecesPerPack;
+    totalM3 =
+      m3PerPack * packagesVal;
   } else {
-
-    let lengthNum = Number(rawLength);
-    let piecesVal = Number(document.getElementById("pieces").value);
+    // ==========================================
+    // PARASTAIS REŽĪMS
+    // ==========================================
+    const lengthNum = Number(rawLength);
+    const piecesVal =
+      Number(
+        document.getElementById("pieces").value
+      );
     if (lengthNum <= 0 || isNaN(lengthNum))
-      return error("Garums nav pareizs", "length");
+      return error(
+        "Garums nav pareizs",
+        "length"
+      );
     if (piecesVal <= 0 || isNaN(piecesVal))
-      return error("Gabali pakā obligāti", "pieces");
+      return error(
+        "Gabali pakā obligāti",
+        "pieces"
+      );
     piecesPerPack = piecesVal;
     m3PerPack =
-      (thicknessVal * widthVal * lengthNum * piecesVal) / 1000000000;
-    totalM3 = m3PerPack * packagesVal;
+      (
+        thicknessVal *
+        widthVal *
+        lengthNum *
+        piecesVal
+      ) / 1000000000;
+    totalM3 =
+      m3PerPack * packagesVal;
   }
-
+  // ==========================================
+  // JAUNAIS IERAKSTS
+  // ==========================================
   const entry = {
     area: areaVal,
     packages: packagesVal,
@@ -621,48 +658,61 @@ function add() {
     length: rawLength,
     month: monthVal,
     year: yearVal,
-    packWidth,
-    packLength,
-    packHeight,
+    packWidth: packWidth,
+    packLength: packLength,
+    packHeight: packHeight,
     pieces: piecesPerPack,
-    avgLength,
-    name: document.getElementById("name").value,
-    code: document.getElementById("productCode").value,
-    grade: document.getElementById("grade").value,
-    comment: document.getElementById("comment").value,
+    avgLength: avgLength,
+    name:
+      document.getElementById("name").value,
+    code:
+      document.getElementById("productCode").value,
+    grade:
+      document.getElementById("grade").value,
+    comment:
+      document.getElementById("comment").value,
     m3Pack: m3PerPack,
     total: totalM3
   };
-
-if (editIndex !== null) {
-  data[editIndex] = entry;
-  dataChanged = true;
-  editIndex = null;
+  // ==========================================
+  // LABOŠANA / JAUNS IERAKSTS
+  // ==========================================
+  if (editIndex !== null) {
+    data[editIndex] = entry;
+    dataChanged = true;
+    editIndex = null;
     document.getElementById("addBtn").innerText =
       "➕ Pievienot";
     document.getElementById("cancelEditBtn").style.display =
-      "none";      
-  showNotice(
+      "none";
+    showNotice(
       "✅ Labojums saglabāts",
       "success"
     );
-} else {
+  } else {
     data.push(entry);
-   
-  dataChanged = true;
-      showNotice(
-        "✅ Ieraksts pievienots",
-        "success"
-        );
-      }
-    localStorage.setItem("data", JSON.stringify(data));
-      saveBackup();
+    dataChanged = true;
+    showNotice(
+      "✅ Ieraksts pievienots",
+      "success"
+    );
+  }
+  // ==========================================
+  // SAGLABĀŠANA
+  // ==========================================
+  localStorage.setItem(
+    "data",
+    JSON.stringify(data)
+  );
+  saveBackup();
+  // ==========================================
+  // FORMAS ATTĪRĪŠANA
+  // ==========================================
   clearError();
   render();
-  
-  // ✅ tīrīšana
   clearForm();
-    document.getElementById("galiInputs").style.display = "none";
+  document.getElementById("galiInputs").style.display =
+    "none";
 }
 // ✅ Atcelt
 function cancelEdit() {
