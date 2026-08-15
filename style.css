@@ -46,6 +46,16 @@ background: #4CAF50;
 color: white;
 }
 
+.tableScroll {
+overflow-x: auto;
+width: 100%;
+}
+
+#analysisView {
+max-height: 70vh;
+overflow: auto
+}
+
 .modal {
 overflow-y: auto;
 }
