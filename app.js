@@ -1523,6 +1523,7 @@ function buildAreaSummary(entries) {
 }
 
 function importBackupFile(event) {
+  
   const file = event.target.files[0];
     if (!file) return;
   const reader = new FileReader();
@@ -1530,6 +1531,35 @@ function importBackupFile(event) {
     try {
   const backup =
     JSON.parse(e.target.result);
+  const currentLocation =
+    localStorage.getItem("location");
+      if (backup.location !== currentLocation) {
+        alert(`
+          Nevar ielādēt backup!
+          Aktīvā ražotne:
+            ${currentLocation}
+          Backup ražotne:
+            ${backup.location}
+          `);
+        return;
+      }
+      const today = new Date();
+      const limitDate = new Date(
+        today.getFullYear(),
+        today.getMonth() - 1,
+          15
+        );
+      const backupDate = new Date(
+        backup.inventoryYear,
+        backup.inventoryMonth - 1,
+          15
+        );
+      if (backupDate < limitDate) {
+      alert(
+        "Backup ir pārāk vecs un to nevar ielādēt."
+        );
+      return;
+      }
       importedBackup = backup;
         const areas = [
           ...new Set(
