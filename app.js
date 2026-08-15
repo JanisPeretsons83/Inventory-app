@@ -183,17 +183,17 @@ function renderDimensionAnalysis() {
 
   filteredData.forEach(e => {
     const key = `${e.thickness}x${e.width}`;
-    if (!groups[key]) {
-      groups[key] = {
+    if (!dimensionGroups[key]) {
+      dimensionGroups[key] = {
         packages: 0,
         totalM3: 0,
         rows: []
       };
     }
 
-    groups[key].packages += e.packages || 0;
-    groups[key].totalM3 += e.total || 0;
-    groups[key].rows.push(e);
+    dimensionGroups[key].packages += e.packages || 0;
+    dimensionGroups[key].totalM3 += e.total || 0;
+    dimensionGroups[key].rows.push(e);
   });
 
   let html = `
@@ -208,7 +208,7 @@ function renderDimensionAnalysis() {
       <tbody>
   `;
 
-  Object.entries(groups)
+  Object.entries(dimensionGroups)
     .sort(([a], [b]) =>
       a.localeCompare(b, undefined, { numeric: true })
     )
