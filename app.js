@@ -151,6 +151,14 @@ async function importAnalysisBackup(event) {
 function setMaterialFilter(type) {
   selectedMaterial = type;
   expandedDimension = null;
+  document
+    .querySelectorAll(".materialTabs button")
+    .forEach(btn =>
+  btn.classList.remove("active")
+    );
+  document
+    .getElementById(`mat_${type}`)
+    .classList.add("active");
   renderDimensionAnalysis();
 }
 
