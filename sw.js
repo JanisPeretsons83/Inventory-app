@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "inventory-app-v1-88"; // 🔥 MAINI ŠO katru update!
+const CACHE_NAME = "inventory-app-v1-89"; // 🔥 MAINI ŠO katru update!
 
 const BASE = "/Inventory-app";
 const urlsToCache = [
