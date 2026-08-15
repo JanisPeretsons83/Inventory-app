@@ -1404,37 +1404,47 @@ if ("serviceWorker" in navigator) {
 
 // ✅ BACKUP
 function saveBackup() {
-  const totalPackages =
-    data.reduce((sum, e) =>
-      sum + (e.packages || 0), 0);
-  const totalM3 =
-    data.reduce((sum, e) =>
-      sum + (e.total || 0), 0);
-  const firstEntry = data[0];
+  const totalPackages = data.reduce(
+    (sum, e) => sum + (Number(e.packages) || 0),
+    0
+  );
+
+  const totalM3 = data.reduce(
+    (sum, e) => sum + (Number(e.total) || 0),
+    0
+  );
+
+  const now = new Date();
+
+  const inventoryMonth = now.getMonth() + 1;
+  const inventoryYear = now.getFullYear();
+
   const backup = {
-    timestamp: new Date().toISOString(),
-    user:
-      localStorage.getItem("userName") || "",
-    location:
-      localStorage.getItem("location") || "",
-    inventoryMonth:
-      firstEntry?.month || null,
-    inventoryYear:
-      firstEntry?.year || null,
-    inventoryPeriod:
-      firstEntry
-        ? `${String(firstEntry.month).padStart(2, "0")}.${firstEntry.year}`
-        : null,
-      summary: {
-        entries: data.length,
-        packages: totalPackages,
-        totalM3: Number(totalM3.toFixed(4))
-        },
-      entries: data
-    };
+    timestamp: now.toISOString(),
+
+    user: localStorage.getItem("userName") || "",
+
+    location: localStorage.getItem("location") || "",
+
+    // Inventarizācijas periods
+    inventoryMonth: inventoryMonth,
+    inventoryYear: inventoryYear,
+    inventoryPeriod: `${String(inventoryMonth).padStart(2, "0")}.${inventoryYear}`,
+
+    // Kopsavilkums
+    summary: {
+      entries: data.length,
+      packages: totalPackages,
+      totalM3: Number(totalM3.toFixed(4)),
+    },
+
+    // Visi ieraksti ar saviem ražošanas datumiem
+    entries: data,
+  };
+
   localStorage.setItem(
     "backupData",
-  JSON.stringify(backup)
+    JSON.stringify(backup)
   );
 }
 
