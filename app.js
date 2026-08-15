@@ -1543,23 +1543,29 @@ function importBackupFile(event) {
           `);
         return;
       }
-      const today = new Date();
-      const limitDate = new Date(
-        today.getFullYear(),
-        today.getMonth() - 1,
-          15
+      const currentMonth = today.getMonth() + 1;
+      const currentYear = today.getFullYear();
+      const previousDate = new Date(
+        currentYear,
+        currentMonth - 2,
+          1
         );
-      const backupDate = new Date(
-        backup.inventoryYear,
-        backup.inventoryMonth - 1,
-          15
-        );
-      if (backupDate < limitDate) {
-      alert(
-        "Backup ir pārāk vecs un to nevar ielādēt."
-        );
-      return;
-      }
+      const previousMonth =
+        previousDate.getMonth() + 1;
+      const previousYear =
+        previousDate.getFullYear();
+      const validCurrent =
+        backup.inventoryMonth === currentMonth &&
+        backup.inventoryYear === currentYear;
+      const validPrevious =
+        backup.inventoryMonth === previousMonth &&
+        backup.inventoryYear === previousYear;
+      if (!validCurrent && !validPrevious) {
+        alert(
+      "Backup ir pārāk vecs un to nevar ielādēt."
+      );
+    return;
+  }
       importedBackup = backup;
         const areas = [
           ...new Set(
