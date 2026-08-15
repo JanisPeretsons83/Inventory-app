@@ -181,11 +181,8 @@ function renderDimensionAnalysis() {
     );
   }
 
-  const groups = {};
-
   filteredData.forEach(e => {
     const key = `${e.thickness}x${e.width}`;
-
     if (!groups[key]) {
       groups[key] = {
         packages: 0,
