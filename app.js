@@ -1,7 +1,6 @@
 let data = [];
 let analysisData = [];
 let analysisFiles = [];
-let dimensionGroups = {};
 let selectedMaterial = "egle";
 let expandedDimension = null;
 let editIndex = null;
