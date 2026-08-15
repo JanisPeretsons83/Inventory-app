@@ -146,6 +146,7 @@ async function importAnalysisBackup(event) {
     m³:
       ${totalM3.toFixed(4)}
     `;
+  renderDimensionAnalysis();
 }
 
 function setMaterialFilter(type) {
@@ -171,13 +172,13 @@ function renderDimensionAnalysis() {
         e.comment !== "Termokoks"
       );
     }
-  if (selectedMaterial === "lapegle") {
+  } else if (selectedMaterial === "lapegle") {
     filteredData =
       analysisData.filter(e =>
         e.comment === "Lapegle"
       );
     }
-  if (selectedMaterial === "termokoks") {
+  } else if (selectedMaterial === "termokoks") {
     filteredData =
       analysisData.filter(e =>
         e.comment === "Termokoks"
