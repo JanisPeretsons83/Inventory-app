@@ -1583,109 +1583,98 @@ function buildAreaSummary(entries) {
 }
 
 function importBackupFile(event) {
-  
   const file = event.target.files[0];
-    if (!file) return;
+  if (!file) return;
   const reader = new FileReader();
-      reader.onload = (e) => {
+  reader.onload = (e) => {
     try {
-  const backup =
-    JSON.parse(e.target.result);
-  const currentLocation =
-    localStorage.getItem("location");
-      if (backup.location !== currentLocation) {
-        alert(`
-          Nevar ielādēt backup!
-          Aktīvā ražotne:
-            ${currentLocation}
-          Backup ražotne:
-            ${backup.location}
-          `);
+      const backup = JSON.parse(e.target.result);
+      console.log("Ielādētais backup:", backup);
+      // Pārbauda backup struktūru
+      if (!backup.entries || !Array.isArray(backup.entries)) {
+        alert("Backup failā nav derīgu ierakstu!");
         return;
       }
-      const currentMonth = today.getMonth() + 1;
-      const currentYear = today.getFullYear();
+      if (!backup.summary) {
+        alert("Backup failā nav summary datu!");
+        return;
+      }
+      const currentLocation =
+        localStorage.getItem("location");
+      if (backup.location !== currentLocation) {
+        alert(`
+Nevar ielādēt backup!
+Aktīvā ražotne:
+${currentLocation}
+Backup ražotne:
+${backup.location}
+        `);
+        return;
+      }
+      const today = new Date();
+      const currentMonth =
+        today.getMonth() + 1;
+      const currentYear =
+        today.getFullYear();
       const previousDate = new Date(
         currentYear,
         currentMonth - 2,
-          1
-        );
+        1
+      );
       const previousMonth =
         previousDate.getMonth() + 1;
       const previousYear =
         previousDate.getFullYear();
       const validCurrent =
-        backup.inventoryMonth === currentMonth &&
-        backup.inventoryYear === currentYear;
+        Number(backup.inventoryMonth) === currentMonth &&
+        Number(backup.inventoryYear) === currentYear;
       const validPrevious =
-        backup.inventoryMonth === previousMonth &&
-        backup.inventoryYear === previousYear;
-console.log("backup", backup.inventoryMonth, backup.inventoryYear);
-console.log("current", currentMonth, currentYear);
-console.log("previous", previousMonth, previousYear);
-console.log("validCurrent", validCurrent);
-console.log("validPrevious", validPrevious);
-      alert(
-`Backup: ${backup.inventoryMonth}.${backup.inventoryYear}
-Current: ${currentMonth}.${currentYear}
-Previous: ${previousMonth}.${previousYear}
-validCurrent: ${validCurrent}
-validPrevious: ${validPrevious}`
-);
+        Number(backup.inventoryMonth) === previousMonth &&
+        Number(backup.inventoryYear) === previousYear;
       if (!validCurrent && !validPrevious) {
         alert(
-      "Backup ir pārāk vecs un to nevar ielādēt."
-      );
-    return;
-  }
+          `Backup periods ${backup.inventoryPeriod} nav atļauts.
+          Drīkst importēt tikai aktuālo vai iepriekšējo inventarizācijas periodu.`
+        );
+        return;
+      }
       importedBackup = backup;
-        const areas = [
-          ...new Set(
-            backup.entries.map(
-              e => e.area
-              )
-            )
-          ].sort();
-        const areaSummary =
-      buildAreaSummary(
-        importedBackup.entries
-      );
+      const areaSummary =
+        buildAreaSummary(importedBackup.entries);
       importedAreaSummary = areaSummary;
-      document.getElementById("importInfo")
-        .innerHTML = `
-          Ražotne: ${backup.location}<br>
-          Lietotājs: ${backup.user}<br><br>
-          📊 Inventarizācija<br>
-          Ieraksti: ${backup.summary.entries}<br>
-          Pakas: ${backup.summary.packages}<br>
-          m³: ${backup.summary.totalM3}
-          `;
+      document.getElementById("importInfo").innerHTML = `
+        Ražotne: ${backup.location}<br>
+        Lietotājs: ${backup.user}<br><br>
+        📊 Inventarizācija<br>
+        Ieraksti: ${backup.summary.entries}<br>
+        Pakas: ${backup.summary.packages}<br>
+        m³: ${backup.summary.totalM3}
+      `;
       document.getElementById("importModal")
         .style.display = "block";
-          let areaHtml = "";
-            Object.entries(areaSummary)
-              .forEach(([area, info]) => {
-                areaHtml += `
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="${area}">
-                      <strong>${area}</strong><br>
-                      ${info.entries} ieraksti<br>
-                      ${info.packages} pakas<br>
-                      ${info.totalM3.toFixed(4)} m³
-                  </label>
-                <hr>
-              `;
-            });
-        document.getElementById("areaList")
-          .innerHTML = areaHtml;
-    } catch {
-    showNotice(
-      "⚠️ Nederīgs backup fails",
-      "error"
+      let areaHtml = "";
+      Object.entries(areaSummary).forEach(
+        ([area, info]) => {
+          areaHtml += `
+            <label>
+              <input
+                type="checkbox"
+                value="${area}">
+              <strong>${area}</strong><br>
+              ${info.entries} ieraksti<br>
+              ${info.packages} pakas<br>
+              ${info.totalM3.toFixed(4)} m³
+            </label>
+            <hr>
+          `;
+        }
       );
-    }
+      document.getElementById("areaList")
+        .innerHTML = areaHtml;
+    } catch (error) {
+      console.error("Backup kļūda:", error);
+      showNotice("⚠️ Nederīgs backup fails", "error");
+    }  
   };
   reader.readAsText(file);
 }
