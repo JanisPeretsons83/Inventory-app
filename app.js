@@ -1810,7 +1810,6 @@ document.getElementById("backupFile").value = "";
 }
 
 function openBackupFile() {
-  alert("openBackupFile");
   const fileInput = document.getElementById("backupFile");
     fileInput.value = "";
   const backupInfo =
