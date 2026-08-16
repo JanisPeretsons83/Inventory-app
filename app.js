@@ -1374,9 +1374,7 @@ ws.addRow([]);
   // ✅ LOG OUT
 
 function doLogout() {
-document.getElementById("backupInfo").textContent = "";
-document.getElementById("backupInfo").style.display = "none";
-document.getElementById("backupFile").value = "";
+
   localStorage.removeItem("data");
   localStorage.removeItem("userName");
   localStorage.removeItem("location");
