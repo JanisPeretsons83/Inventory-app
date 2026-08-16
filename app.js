@@ -1522,8 +1522,11 @@ function restoreBackup() {
         "success"
       );
 }
+
 function discardBackup() {
-    localStorage.removeItem("backupData");
+  localStorage.removeItem("backupData");
+      data = [];
+  localStorage.removeItem("data");
     document.getElementById("backupFile").value = "";
     document.getElementById("backupInfo").textContent = "";
     document.getElementById("backupInfo").style.display = "none";
@@ -1823,10 +1826,10 @@ function restoreImportedBackup() {
     "data",
   JSON.stringify(data)
     );
+  dataChanged = true;
   document.getElementById("backupFile").value = "";
   document.getElementById("backupInfo").textContent = "";
   document.getElementById("backupInfo").style.display = "none";
-  dataChanged = false;
   render();
   saveBackup();
   closeImportModal();
@@ -1854,7 +1857,7 @@ function restoreSelectedAreas() {
   document.getElementById("backupFile").value = "";
   document.getElementById("backupInfo").textContent = "";
   document.getElementById("backupInfo").style.display = "none";
-    dataChanged = false;
+    dataChanged = true;
       render();
       saveBackup();
       closeImportModal();
