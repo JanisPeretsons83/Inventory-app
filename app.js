@@ -850,8 +850,6 @@ document.getElementById("cancelEditBtn").style.display =
 }
 
 window.onload = () => {
-document.getElementById("backupInfo").textContent = "";
-document.getElementById("backupInfo").style.display = "none";
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
@@ -1376,6 +1374,9 @@ ws.addRow([]);
   // ✅ LOG OUT
 
 function doLogout() {
+document.getElementById("backupInfo").textContent = "";
+document.getElementById("backupInfo").style.display = "none";
+document.getElementById("backupFile").value = "";
   localStorage.removeItem("data");
   localStorage.removeItem("userName");
   localStorage.removeItem("location");
@@ -1802,7 +1803,10 @@ ${backup.location}
 
 function closeImportModal() {
 document.getElementById("importModal")
-.style.display = "none";
+  .style.display = "none";
+document.getElementById("backupInfo").textContent = "";
+document.getElementById("backupInfo").style.display = "none";
+document.getElementById("backupFile").value = "";
 }
 
 function openBackupFile() {
