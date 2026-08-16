@@ -1620,6 +1620,11 @@ function importBackupFile(event) {
       const validPrevious =
         backup.inventoryMonth === previousMonth &&
         backup.inventoryYear === previousYear;
+console.log("backup", backup.inventoryMonth, backup.inventoryYear);
+console.log("current", currentMonth, currentYear);
+console.log("previous", previousMonth, previousYear);
+console.log("validCurrent", validCurrent);
+console.log("validPrevious", validPrevious);
       if (!validCurrent && !validPrevious) {
         alert(
       "Backup ir pārāk vecs un to nevar ielādēt."
