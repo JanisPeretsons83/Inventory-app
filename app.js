@@ -1625,6 +1625,13 @@ console.log("current", currentMonth, currentYear);
 console.log("previous", previousMonth, previousYear);
 console.log("validCurrent", validCurrent);
 console.log("validPrevious", validPrevious);
+      alert(
+`Backup: ${backup.inventoryMonth}.${backup.inventoryYear}
+Current: ${currentMonth}.${currentYear}
+Previous: ${previousMonth}.${previousYear}
+validCurrent: ${validCurrent}
+validPrevious: ${validPrevious}`
+);
       if (!validCurrent && !validPrevious) {
         alert(
       "Backup ir pārāk vecs un to nevar ielādēt."
