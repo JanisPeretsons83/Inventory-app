@@ -1584,6 +1584,18 @@ function buildAreaSummary(entries) {
 
 async function importBackupFile(event) {
   const files = Array.from(event.target.files);
+    const backupInfo = document.getElementById('backupInfo');
+
+    if (files.length === 0) {
+        backupInfo.style.display = 'none';
+        backupInfo.textContent = '';
+        return;
+    }
+
+    backupInfo.textContent =
+        `Pievienots ${files.length} Backup ${files.length === 1 ? 'fails' : 'faili'}`;
+    
+    backupInfo.style.display = 'inline-block';
   if (files.length === 0) return;
   try {
     const backups = [];
