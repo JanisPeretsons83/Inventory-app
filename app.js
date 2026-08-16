@@ -1812,6 +1812,15 @@ function openBackupFile() {
       backupInfo.style.display = "none";
       backupInfo.textContent = "";
       fileInput.click();
+  window.addEventListener(
+    "focus",
+      () => {
+  setTimeout(() => {
+    location.reload();
+    }, 300);
+  },
+  { once: true }
+  );
 }
 
 function restoreImportedBackup() {
