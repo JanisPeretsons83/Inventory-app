@@ -1805,8 +1805,13 @@ document.getElementById("importModal")
 }
 
 function openBackupFile() {
-document.getElementById("backupFile")
-.click();
+  const fileInput = document.getElementById("backupFile");
+    fileInput.value = "";
+  const backupInfo =
+    document.getElementById("backupInfo");
+      backupInfo.style.display = "none";
+      backupInfo.textContent = "";
+      fileInput.click();
 }
 
 function restoreImportedBackup() {
