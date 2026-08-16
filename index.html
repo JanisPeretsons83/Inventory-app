@@ -38,10 +38,12 @@
                     <button onclick="document.getElementById('backupFile').click()">
                         📂 Ielādēt backup
                     </button>
-                <input type="file"
-                    id="backupFile"
-                    accept=".json"
-                    style="display:none">
+                <input
+                  type="file"
+                  id="backupFile"
+                      multiple
+                      accept=".json"
+                  onchange="importBackupFile(event)">
                 <button onclick="saveUser()">Turpināt</button>
     
                 <button onclick="startDataViewMode()">
