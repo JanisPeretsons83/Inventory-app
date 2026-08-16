@@ -1582,25 +1582,50 @@ function buildAreaSummary(entries) {
   return summary;
 }
 
-function importBackupFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const backup = JSON.parse(e.target.result);
+async function importBackupFile(event) {
+  const files = Array.from(event.target.files);
+  if (files.length === 0) return;
+  try {
+    const backups = [];
+    const allEntries = [];
+    // ==========================================
+    // 1. Nolasa VISUS izvēlētos backup failus
+    // ==========================================
+    for (const file of files) {
+      const text = await file.text();
+      const backup = JSON.parse(text);
       console.log("Ielādētais backup:", backup);
+      // ------------------------------------------
       // Pārbauda backup struktūru
-      if (!backup.entries || !Array.isArray(backup.entries)) {
-        alert("Backup failā nav derīgu ierakstu!");
+      // ------------------------------------------
+      if (
+        !backup.entries ||
+        !Array.isArray(backup.entries)
+      ) {
+        alert(
+          `Backup failā "${file.name}" nav derīgu ierakstu!`
+        );
         return;
       }
       if (!backup.summary) {
-        alert("Backup failā nav summary datu!");
+        alert(
+          `Backup failā "${file.name}" nav summary datu!`
+        );
         return;
       }
-      const currentLocation =
-        localStorage.getItem("location");
+      backups.push(backup);
+      allEntries.push(...backup.entries);
+    }
+    // ==========================================
+    // 2. Aktīvā ražotne
+    // ==========================================
+    const currentLocation =
+      localStorage.getItem("location");
+    // ==========================================
+    // 3. Pārbauda, vai VISI backup ir no
+    //    tās pašas ražotnes
+    // ==========================================
+    for (const backup of backups) {
       if (backup.location !== currentLocation) {
         alert(`
 Nevar ielādēt backup!
@@ -1611,20 +1636,29 @@ ${backup.location}
         `);
         return;
       }
-      const today = new Date();
-      const currentMonth =
-        today.getMonth() + 1;
-      const currentYear =
-        today.getFullYear();
-      const previousDate = new Date(
-        currentYear,
-        currentMonth - 2,
-        1
-      );
-      const previousMonth =
-        previousDate.getMonth() + 1;
-      const previousYear =
-        previousDate.getFullYear();
+    }
+    // ==========================================
+    // 4. Datuma pārbaude
+    //    Atļauts pašreizējais vai iepriekšējais mēnesis
+    // ==========================================
+    const today = new Date();
+    const currentMonth =
+      today.getMonth() + 1;
+    const currentYear =
+      today.getFullYear();
+    const previousDate = new Date(
+      currentYear,
+      currentMonth - 2,
+      1
+    );
+    const previousMonth =
+      previousDate.getMonth() + 1;
+    const previousYear =
+      previousDate.getFullYear();
+    // ==========================================
+    // 5. Pārbauda katru backup
+    // ==========================================
+    for (const backup of backups) {
       const validCurrent =
         Number(backup.inventoryMonth) === currentMonth &&
         Number(backup.inventoryYear) === currentYear;
@@ -1633,50 +1667,124 @@ ${backup.location}
         Number(backup.inventoryYear) === previousYear;
       if (!validCurrent && !validPrevious) {
         alert(
-          `Backup periods ${backup.inventoryPeriod} nav atļauts.
-          Drīkst importēt tikai aktuālo vai iepriekšējo inventarizācijas periodu.`
+          `Backup no lietotāja "${backup.user}" ir pārāk vecs un to nevar ielādēt.`
         );
         return;
       }
-      importedBackup = backup;
-      const areaSummary =
-        buildAreaSummary(importedBackup.entries);
-      importedAreaSummary = areaSummary;
-      document.getElementById("importInfo").innerHTML = `
-        Ražotne: ${backup.location}<br>
-        Lietotājs: ${backup.user}<br><br>
+    }
+    // ==========================================
+    // 6. Apvieno lietotājus
+    // ==========================================
+    const users = [
+      ...new Set(
+        backups
+          .map(b => b.user)
+          .filter(Boolean)
+      )
+    ];
+    const combinedUser =
+      users.length === 1
+        ? users[0]
+        : users.join(", ");
+    // ==========================================
+    // 7. Izveido KOPĒJO summary
+    // ==========================================
+    const combinedSummary = {
+      entries:
+        allEntries.length,
+      packages:
+        backups.reduce(
+          (sum, backup) =>
+            sum + Number(backup.summary.packages || 0),
+          0
+        ),
+      totalM3:
+        backups.reduce(
+          (sum, backup) =>
+            sum + Number(backup.summary.totalM3 || 0),
+          0
+        )
+    };
+    // ==========================================
+    // 8. Izveido vienotu backup objektu
+    // ==========================================
+    importedBackup = {
+      ...backups[0],
+      user: combinedUser,
+      entries: allEntries,
+      summary: combinedSummary,
+      inventoryMonth:
+        backups[0].inventoryMonth,
+      inventoryYear:
+        backups[0].inventoryYear,
+      inventoryPeriod:
+        backups[0].inventoryPeriod
+    };
+    console.log(
+      "Apvienotais backup:",
+      importedBackup
+    );
+    console.log(
+      "Backup faili:",
+      backups.length
+    );
+    console.log(
+      "Kopā ieraksti:",
+      allEntries.length
+    );
+    // ==========================================
+    // 9. Izveido zonu kopsavilkumu no VISIEM
+    // ==========================================
+    const areaSummary =
+      buildAreaSummary(allEntries);
+    importedAreaSummary =
+      areaSummary;
+    // ==========================================
+    // 10. Parāda informāciju import logā
+    // ==========================================
+    document.getElementById("importInfo")
+      .innerHTML = `
+        Ražotne: ${currentLocation}<br>
+        Lietotājs: ${combinedUser}<br>
+        Backup faili: ${backups.length}<br><br>
         📊 Inventarizācija<br>
-        Ieraksti: ${backup.summary.entries}<br>
-        Pakas: ${backup.summary.packages}<br>
-        m³: ${backup.summary.totalM3}
+        Ieraksti: ${combinedSummary.entries}<br>
+        Pakas: ${combinedSummary.packages}<br>
+        m³: ${combinedSummary.totalM3}
       `;
-      document.getElementById("importModal")
-        .style.display = "block";
-      let areaHtml = "";
-      Object.entries(areaSummary).forEach(
-        ([area, info]) => {
-          areaHtml += `
-            <label>
-              <input
-                type="checkbox"
-                value="${area}">
-              <strong>${area}</strong><br>
-              ${info.entries} ieraksti<br>
-              ${info.packages} pakas<br>
-              ${info.totalM3.toFixed(4)} m³
-            </label>
-            <hr>
-          `;
-        }
-      );
-      document.getElementById("areaList")
-        .innerHTML = areaHtml;
-    } catch (error) {
-      console.error("Backup kļūda:", error);
-      showNotice("⚠️ Nederīgs backup fails", "error");
-    }  
-  };
-  reader.readAsText(file);
+    // ==========================================
+    // 11. Parāda zonas
+    // ==========================================
+    document.getElementById("importModal")
+      .style.display = "block";
+    let areaHtml = "";
+    Object.entries(areaSummary)
+      .forEach(([area, info]) => {
+        areaHtml += `
+          <label>
+            <input
+              type="checkbox"
+              value="${area}">
+            <strong>${area}</strong><br>
+            ${info.entries} ieraksti<br>
+            ${info.packages} pakas<br>
+            ${info.totalM3.toFixed(4)} m³
+          </label>
+          <hr>
+        `;
+      });
+    document.getElementById("areaList")
+      .innerHTML = areaHtml;
+  } catch (error) {
+    console.error(
+      "Backup importēšanas kļūda:",
+      error
+    );
+    showNotice(
+      "⚠️ Nederīgs backup fails",
+      "error"
+    );
+  }
 }
 
 function closeImportModal() {
