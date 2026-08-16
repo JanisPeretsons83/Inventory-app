@@ -850,7 +850,8 @@ document.getElementById("cancelEditBtn").style.display =
 }
 
 window.onload = () => {
-
+document.getElementById("backupInfo").textContent = "";
+document.getElementById("backupInfo").style.display = "none";
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
