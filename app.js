@@ -1684,14 +1684,16 @@ async function importBackupFile(event) {
                     entry.avgLength,
                     entry.packWidth,
                     entry.packLength,
-                    entry.packHeight
+                    entry.packHeight,
                     entry.month,
                     entry.year,
                     entry.pieces,
                     entry.name,
                     entry.code,
                     entry.grade,
-                    entry.comment
+                    entry.comment,
+                    entry.total,
+                    entry.m3Pack
                 ]);
 
                 if (seen.has(key)) {
