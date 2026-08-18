@@ -1605,13 +1605,18 @@ async function importBackupFile(event) {
   if (files.length === 0) return;
   try {
     const backups = [];
-    const allEntries = [];
+    const allEntries = uniqueEntries;
+    const uniqueEntries = [];
+    const seen = new Set();
+      let duplicates = 0;
     // ==========================================
     // 1. Nolasa VISUS izvēlētos backup failus
     // ==========================================
     for (const file of files) {
       const text = await file.text();
       const backup = JSON.parse(text);
+      const allEntries = uniqueEntries;
+      const seen = new Set();
       console.log("Ielādētais backup:", backup);
       // ------------------------------------------
       // Pārbauda backup struktūru
@@ -1632,8 +1637,31 @@ async function importBackupFile(event) {
         return;
       }
       backups.push(backup);
-      allEntries.push(...backup.entries);
+      backup.entries.forEach(entry => {
+        const key = [
+          entry.area,
+          entry.packages,
+          entry.thickness,
+          entry.width,
+          entry.length,
+          entry.month,
+          entry.year,
+          entry.pieces,
+          entry.name,
+          entry.code,
+          entry.grade,
+          entry.comment
+            ].join("|");
+                if (!seen.has(key)) {
+            seen.add(key);
+            uniqueEntries.push(entry);
+          } else {
+          duplicates++;
+        }
+      });
+      allEntries.push(...uniqueEntries);
     }
+    
     // ==========================================
     // 2. Aktīvā ražotne
     // ==========================================
@@ -1727,6 +1755,7 @@ ${backup.location}
     // 8. Izveido vienotu backup objektu
     // ==========================================
     importedBackup = {
+      importedBackup.duplicates = duplicates;
       ...backups[0],
       user: combinedUser,
       entries: allEntries,
@@ -1836,6 +1865,10 @@ function restoreImportedBackup() {
   showNotice(
   `✅ Atjaunoti ${data.length} ieraksti`,
   "success"
+  );
+  showNotice(
+    `✅ Atjaunoti ${data.length} ieraksti. Izlaisti ${importedBackup.duplicates || 0} dublikāti.`,
+    "success"
   );
 }
 
