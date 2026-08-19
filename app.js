@@ -881,7 +881,7 @@ window.onload = () => {
           📊 Inventarizācija<br>
           Ieraksti: ${backup.summary.entries}<br>
           Pakas: ${backup.summary.packages}<br>
-          m³: ${backup.summary.totalM3}<br><br>
+          m³: ${Number(backup.summary.totalM3.toFixed(4))}<br><br>
           Datums:<br>
           ${new Date(
             backup.timestamp
@@ -1467,20 +1467,6 @@ function saveAndExit() {
   closeConfirmModal();
   doLogout();
   }
-
-// ✅ SERVICE WORKER
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/Inventory-app/sw.js")
-    .then(reg => {
-      console.log("SW registered");
-      // ✅ pārbauda update
-      setInterval(() => {
-        reg.update();
-      }, 60000); // ik 60 sekundes
-    })
-    .catch(err => console.log("SW error", err));
-}
 
 // ✅ BACKUP
 function saveBackup() {
