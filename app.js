@@ -72,10 +72,24 @@ async function importAnalysisBackup(event) {
     if (!files.length) return;
   const backups = [];
     for (const file of files) {
-  const text = await file.text();
-  const backup = JSON.parse(text);
-      backups.push(backup);
+    let backup;
+    try {
+        const text = await file.text();
+        backup = JSON.parse(text);
+    } catch (error) {
+        alert(`Fails "${file.name}" nav derīgs JSON fails!`);
+        return;
     }
+    if (!backup || typeof backup !== "object") {
+        alert(`Fails "${file.name}" nav derīgs backup fails!`);
+        return;
+    }
+    if (!Array.isArray(backup.entries)) {
+        alert(`Failā "${file.name}" nav derīgu entries datu!`);
+        return;
+    }
+    backups.push(backup);
+}
   const baseLocation =
     backups[0].location;
   const users =
@@ -104,7 +118,7 @@ async function importAnalysisBackup(event) {
         ...backup.entries
         );
       });
-    groups = {};  
+    const groups = {};  
       analysisData.forEach(e => {
     const key =
       `${e.thickness}x${e.width}`;
