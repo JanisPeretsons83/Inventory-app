@@ -35,17 +35,6 @@
   
                 <input id="userNameInput" placeholder="Vārds Uzvārds">
 
-                    <button onclick="openBackupFile()">
-                        📂 Ielādēt backup
-                    </button>
-                <input
-                  type="file"
-                  id="backupFile"
-                      multiple
-                      accept=".json"
-                      onchange="importBackupFile(event)"
-                    style="display: none;">          
-            <span id="backupInfo" style="display: none;"></span>
                 <button onclick="saveUser()">Turpināt</button>
     
                 <button onclick="startDataViewMode()">
@@ -92,7 +81,6 @@
                 <div id="analysisView"></div>
             </div>
     <div id="analysisInfo"></div>
-    <div id="analysisView"></div>
 </div>
     
     <!-- DARBA REŽĪMS -->
@@ -220,7 +208,6 @@
 </select>
   
 <input id="comment" placeholder="Komentārs">
-  <div id="notice"></div>
   
 <!-- Pogas -->
 <button id="addBtn" 
@@ -239,12 +226,24 @@
 📋 Skatīt / Slēpt
 </button>
 
+<button onclick="openBackupFile()">
+    📂 Ielādēt backup
+</button>
+    <input
+        type="file"
+        id="backupFile"
+            multiple
+        accept=".json"
+        onchange="importBackupFile(event)"
+        style="display: none;">          
+    <span id="backupInfo" style="display: none;"></span>
+    
 <button class="primary" onclick="exportExcel()">
-📤 Saglabāt Excel
+    📤 Saglabāt Excel
 </button>
 
 <button onclick="endSession()" class="danger">
-  🛑 Beigt darbu
+    🛑 Beigt darbu
 </button>
 <table id="table"></table>
 </div>
@@ -322,6 +321,6 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
     <script src="app.js"></script>
-    <footer style="opacity:.45;font-size:12px;text-align:center">versija: v.2-0-5</footer>
+    <footer style="opacity:.45;font-size:12px;text-align:center">versija: v.2-0-6</footer>
 </body>
 </html>
