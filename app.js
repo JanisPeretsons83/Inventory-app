@@ -1359,7 +1359,6 @@ ws.addRow([]);
     // 🔢 3 cipari aiz komata
     row.getCell(5).numFmt = '0.000';   // E
     row.getCell(10).numFmt = '0.000';  // J
-    row.getCell(16).numFmt = '0.000';  // P
     row.eachCell(cell => {
       cell.border = borderAll();
     });
