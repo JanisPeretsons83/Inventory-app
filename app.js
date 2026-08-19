@@ -1981,6 +1981,27 @@ async function importBackupFile(event) {
     }
 }
 
+function getEntryKey(e) {
+    return JSON.stringify({
+        area: e.area,
+        packages: e.packages,
+        thickness: e.thickness,
+        width: e.width,
+        length: e.length,
+        month: e.month,
+        year: e.year,
+        packWidth: e.packWidth,
+        packLength: e.packLength,
+        packHeight: e.packHeight,
+        pieces: e.pieces,
+        avgLength: e.avgLength,
+        name: e.name,
+        code: e.code,
+        grade: e.grade,
+        comment: e.comment
+    });
+}
+
 function closeImportModal() {
 document.getElementById("importModal")
   .style.display = "none";
@@ -1997,11 +2018,12 @@ function openBackupFile() {
 }
 
 function restoreImportedBackup() {
-  data = importedBackup.entries || [];
-  localStorage.setItem(
-    "data",
-  JSON.stringify(data)
-    );
+    if (!importedBackup || !Array.isArray(importedBackup.entries)) {
+        showNotice("❌ Nav pieejami importētie backup dati!");
+        return;
+    }
+    data = [...importedBackup.entries];
+    localStorage.setItem("data", JSON.stringify(data));
   dataChanged = true;
   document.getElementById("backupFile").value = "";
   document.getElementById("backupInfo").textContent = "";
@@ -2016,31 +2038,53 @@ function restoreImportedBackup() {
 }
 
 function restoreSelectedAreas() {
-  const selectedAreas =
-    [...document.querySelectorAll(
-      "#areaList input:checked"
-      )]
-    .map(cb => cb.value);
-  const selectedData =
-    importedBackup.entries.filter(
-    e => selectedAreas.includes(e.area)
+    if (!importedBackup || !Array.isArray(importedBackup.entries)) {
+        showNotice("❌ Nav pieejami importētie backup dati!");
+        return;
+    }
+    const selectedAreas = [
+        ...document.querySelectorAll("#areaList input:checked")
+    ].map(cb => cb.value);
+    if (!selectedAreas.length) {
+        showNotice("⚠️ Izvēlies vismaz vienu apgabalu!");
+        return;
+    }
+    const selectedData = importedBackup.entries.filter(e =>
+        selectedAreas.includes(e.area)
     );
-    data.push(...selectedData);
-      localStorage.setItem(
-        "data",
-    JSON.stringify(data)
-      );
-  document.getElementById("backupFile").value = "";
-  document.getElementById("backupInfo").textContent = "";
-  document.getElementById("backupInfo").style.display = "none";
+    if (!selectedData.length) {
+        showNotice("⚠️ Izvēlētajos apgabalos backup failā dati nav atrasti!");
+        return;
+    }
+    // Esošo ierakstu atslēgas
+    const existingKeys = new Set(
+        data.map(getEntryKey)
+    );
+    // Pievieno tikai jaunus ierakstus
+    const newEntries = selectedData.filter(e => {
+        const key = getEntryKey(e);
+        if (existingKeys.has(key)) {
+            return false;
+        }
+        existingKeys.add(key);
+        return true;
+    });
+    if (!newEntries.length) {
+        showNotice(
+            "ℹ️ Izvēlētie dati jau atrodas darba režīmā. Nekas netika pievienots."
+        );
+        closeImportModal();
+        return;
+    }
+    data.push(...newEntries);
+    localStorage.setItem("data", JSON.stringify(data));
     dataChanged = true;
-      render();
-      saveBackup();
-      closeImportModal();
-      showNotice(
-      `✅ Atjaunoti ${selectedData.length} ieraksti`,
-      "success"
-  );
+    render();
+    saveBackup();
+    closeImportModal();
+    showNotice(
+        `✅ Pievienoti ${newEntries.length} jauni ieraksti no: ${selectedAreas.join(", ")}`
+    );
 }
 
 // ✅ INSTALL PROMPT (Android)
