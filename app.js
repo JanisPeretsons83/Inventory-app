@@ -1606,9 +1606,9 @@ function buildAreaSummary(entries) {
     }
     summary[entry.area].entries++;
     summary[entry.area].packages +=
-      entry.packages || 0;
+      Number(entry.packages) || 0;
     summary[entry.area].totalM3 +=
-      entry.total || 0;
+      Number(entry.total) || 0;
     });
   return summary;
 }
@@ -1962,24 +1962,26 @@ async function importBackupFile(event) {
 }
 
 function getEntryKey(e) {
-    return JSON.stringify({
-        area: e.area,
-        packages: e.packages,
-        thickness: e.thickness,
-        width: e.width,
-        length: e.length,
-        month: e.month,
-        year: e.year,
-        packWidth: e.packWidth,
-        packLength: e.packLength,
-        packHeight: e.packHeight,
-        pieces: e.pieces,
-        avgLength: e.avgLength,
-        name: e.name,
-        code: e.code,
-        grade: e.grade,
-        comment: e.comment
-    });
+    return JSON.stringify([
+        e.area,
+        e.packages,
+        e.thickness,
+        e.width,
+        e.length,
+        e.avgLength,
+        e.packWidth,
+        e.packLength,
+        e.packHeight,
+        e.month,
+        e.year,
+        e.pieces,
+        e.name,
+        e.code,
+        e.grade,
+        e.comment,
+        e.total,
+        e.m3Pack
+    ]);
 }
 
 function closeImportModal() {
@@ -2067,16 +2069,19 @@ function restoreSelectedAreas() {
     );
 }
 
-// ✅ INSTALL PROMPT (Android)
-let deferredPrompt;
-  window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  console.log("Install pieejams");
-});
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/Inventory-app/sw.js")
+        .then(reg => {
+            console.log("SW registered");
 
-// ✅ AUTO REFRESH JA IR JAUNA VERSIJA
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-  console.log("New version loaded → reload");
-  window.location.reload();
-});
+            setInterval(() => {
+                reg.update();
+            }, 60000);
+        })
+        .catch(err => console.log("SW error", err));
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+        console.log("New version loaded → reload");
+        window.location.reload();
+    });
+}
