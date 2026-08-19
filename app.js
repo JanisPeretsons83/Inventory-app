@@ -51,12 +51,14 @@ function updateAreas() {
 
 function startDataViewMode() {
   analysisData = [];
-    document.getElementById("locationSelect")
-      .style.display = "none";
-    document.getElementById("appContent")
-      .style.display = "none";
-    document.getElementById("analyticsContent")
-      .style.display = "block";
+  analysisFiles = [];
+  expandedDimension = null;
+    document.getElementById("analysisInfo").innerHTML = "";
+    document.getElementById("analysisView").innerHTML = "";
+    document.getElementById("analysisBackupFile").value = "";
+    document.getElementById("locationSelect").style.display = "none";
+    document.getElementById("appContent").style.display = "none";
+    document.getElementById("analyticsContent").style.display = "block";
 }
 
 function openAnalysisBackupFile() {
@@ -271,28 +273,19 @@ function toggleDimension(size) {
 
 function closeDataViewMode() {
   analysisFiles = [];
-  // Notīra analītikas datus
   analysisData = [];
-    const table =
-      document.getElementById("analyticsTable");
-    if (table) {
-      table.innerHTML = "";
-      }
+  expandedDimension = null;
+  selectedMaterial = "egle";
     // Notīra kopsavilkumu
-    document.getElementById("analysisInfo")
-      .innerHTML = "";
+    document.getElementById("analysisInfo").innerHTML = "";
     // Notīra analītikas saturu
-    document.getElementById("analysisView")
-      .innerHTML = "";
+    document.getElementById("analysisView").innerHTML = "";
     // Notīra izvēlētos backup failus
-    document.getElementById("analysisBackupFile")
-      .value = "";
+    document.getElementById("analysisBackupFile").value = "";
     // Aizver analītikas skatu
-    document.getElementById("analyticsContent")
-      .style.display = "none";
+    document.getElementById("analyticsContent").style.display = "none";
     // Atgriežas Login logā
-    document.getElementById("locationSelect")
-      .style.display = "block";
+    document.getElementById("locationSelect").style.display = "block";
 }
 
 function showNotice(message, type = "info", fieldId = null) {
@@ -854,9 +847,6 @@ window.onload = () => {
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
-  
-document.getElementById("backupFile")
-          .addEventListener("change", importBackupFile);
   
   if (backupRaw) {
     const backup =
