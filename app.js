@@ -881,7 +881,7 @@ window.onload = () => {
           📊 Inventarizācija<br>
           Ieraksti: ${backup.summary.entries}<br>
           Pakas: ${backup.summary.packages}<br>
-          m³: ${Number(backup.summary.totalM3.toFixed(4))}<br><br>
+          m³: ${backup.summary.totalM3.toFixed(4)}<br><br>
           Datums:<br>
           ${new Date(
             backup.timestamp
@@ -1895,7 +1895,7 @@ async function importBackupFile(event) {
             📊 Inventarizācija<br>
             Ieraksti: ${combinedSummary.entries}<br>
             Pakas: ${combinedSummary.packages}<br>
-            m³: ${combinedSummary.totalM3}
+            m³: ${Number(combinedSummary.totalM3.toFixed(4))}
         `;
 
         // ==========================================
