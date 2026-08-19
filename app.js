@@ -1321,7 +1321,9 @@ ws.addRow([]);
     // D — Produkta kods
       e.code,
     // E — m3 vienā pakā
-      Number(e.m3Pack?.toFixed(4)),
+      {
+    formula: `P${rowIndex}*I${rowIndex}`
+    },
     // F — Biezums
       e.thickness,
     // G — Platums
