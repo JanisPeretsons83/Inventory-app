@@ -1699,27 +1699,7 @@ async function importBackupFile(event) {
                 if (!entry || typeof entry !== "object") {
                     continue;
                 }
-
-                const key = JSON.stringify([
-                    entry.area,
-                    entry.packages,
-                    entry.thickness,
-                    entry.width,
-                    entry.length,
-                    entry.avgLength,
-                    entry.packWidth,
-                    entry.packLength,
-                    entry.packHeight,
-                    entry.month,
-                    entry.year,
-                    entry.pieces,
-                    entry.name,
-                    entry.code,
-                    entry.grade,
-                    entry.comment,
-                    entry.total,
-                    entry.m3Pack
-                ]);
+              const key = getEntryKey(entry);
 
                 if (seen.has(key)) {
                     duplicates++;
