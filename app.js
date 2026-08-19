@@ -1281,13 +1281,13 @@ ws.addRow([]);
     "Platums",
     "Garums",
     "Detaļu skaits pakā",
-    "m3",
+    "m3 kopā",
     "Mēnesis",
     "Gads",
     "Šķira",
     "Komentārs",
     "",
-    "m3 kopā"
+    "m3 detaļas"
   ];
 
   const tableHeader = ws.addRow(headers);
@@ -1312,24 +1312,43 @@ ws.addRow([]);
     }
   const rowIndex = ws.rowCount + 1;
   const row = ws.addRow([
+    // A — Apgabals
       e.area,
+    // B — Paku skaits
       e.packages,
+    // C — Detaļas nosaukums
       e.name,
+    // D — Produkta kods
       e.code,
+    // E — m3 vienā pakā
       Number(e.m3Pack?.toFixed(4)),
+    // F — Biezums
       e.thickness,
-      e.width,      
+    // G — Platums
+      e.width,
+    // H — Garums
       (e.length || "").toLowerCase() === "gali"
         ? e.avgLength || ""
         : Number(e.length),
+    // I — Detaļu skaits pakā
       e.pieces,
-      Number(pieceM3.toFixed(5)),
+    // J — m3 kopā
+    // Paku skaits × m3 vienā pakā
+      { formula: `B${rowIndex}*E${rowIndex}` },
+    // K — Mēnesis
       String(e.month).padStart(2, "0"),
+    // L — Gads
       e.year < 100 ? "20" + e.year : e.year,
+    // M — Šķira
       e.grade,
+    // N — Komentārs
       e.comment,
+    // O — Gali
       (e.length || "").toLowerCase() === "gali" ? "Gali" : "",
-      { formula: `B${rowIndex}*E${rowIndex}` }
+    // P = m3 detaļas
+      {
+    formula: `F${rowIndex}*G${rowIndex}*H${rowIndex}/1000000000`
+  }
     ]);
 
     row.eachCell(cell => {
@@ -1347,7 +1366,7 @@ ws.addRow([]);
     ]);
   ws.addRow([
     "m3 kopā:",
-    { formula: `SUM(P${startRow}:P${lastRow})` }
+    { formula: `SUM(J${startRow}:J${lastRow})` }
   ]);
 
   //✅ COLUMN WIDTH
