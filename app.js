@@ -1356,7 +1356,10 @@ ws.addRow([]);
     formula: `F${rowIndex}*G${rowIndex}*H${rowIndex}/1000000000`
   }
     ]);
-
+    // 🔢 3 cipari aiz komata
+    row.getCell(5).numFmt = '0.000';   // E
+    row.getCell(10).numFmt = '0.000';  // J
+    row.getCell(16).numFmt = '0.000';  // P
     row.eachCell(cell => {
       cell.border = borderAll();
     });
@@ -1370,10 +1373,12 @@ ws.addRow([]);
       "Pakas kopā:",
       { formula: `SUM(B${startRow}:B${lastRow})`, result: totalPackages }
     ]);
-  ws.addRow([
-    "m3 kopā:",
-    { formula: `SUM(J${startRow}:J${lastRow})` }
-  ]);
+  const totalM3Row = ws.addRow([
+  "m3 kopā:",
+  { formula: `SUM(J${startRow}:J${lastRow})` }
+    ]);
+
+totalM3Row.getCell(2).numFmt = '0.000';
 
   //✅ COLUMN WIDTH
 
