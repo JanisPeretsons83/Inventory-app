@@ -1027,7 +1027,7 @@ console.log("Nav API");
 return;
 }
 const recognition = new SpeechRecognition();
-recognition.lang = "en-US";
+recognition.lang = "lv-LV";
 recognition.onstart = () => {
 console.log("ONSTART");
 };
