@@ -35,10 +35,6 @@ const areasByLocation = {
 
 };
 
-const betaUsers = [
-"Jānis Pētersons"
-];
-
 function updateAreas() {
   const location = localStorage.getItem("location");
   const select = document.getElementById("area");
@@ -1002,16 +998,19 @@ function error(msg, fieldId = null) {
   );
 }
   
+const betaUsers = [
+    "jānis pētersons"
+    ];
 function checkBetaAccess() {
-    const user =
-      (localStorage.getItem("userName") || "")
-        .trim()
-        .toLowerCase();
-    const isBetaUser =
-      betaUsers.includes(user);
-        document.getElementById("betaFeatures")
-          .style.display =
-      isBetaUser ? "block" : "none";
+  const user =
+    (localStorage.getItem("userName") || "")
+      .trim()
+      .toLowerCase();
+  const isBetaUser =
+    betaUsers.includes(user);
+      document.getElementById("betaFeatures")
+        .style.display =
+    isBetaUser ? "block" : "none";
 }
 
 function clearError() {
