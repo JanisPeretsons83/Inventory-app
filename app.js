@@ -1020,18 +1020,31 @@ function startVoiceInput() {
 const SpeechRecognition =
 window.SpeechRecognition ||
 window.webkitSpeechRecognition;
-alert("API atrasts: " + !!SpeechRecognition);
-const recognition =
-new SpeechRecognition();
-recognition.lang = "en-US";
+if (!SpeechRecognition) {
+alert("Speech API nav pieejams");
+return;
+}
+const recognition = new SpeechRecognition();
+recognition.lang = "lv-LV";
+recognition.continuous = false;
+recognition.interimResults = false;
 recognition.onstart = () => {
-alert("START");
+console.log("START");
 };
-recognition.onresult = e => {
-alert(e.results[0][0].transcript);
+recognition.onresult = (e) => {
+console.log(
+"TEXT: Labdien",
+e.results[0][0].transcript
+);
 };
-recognition.onerror = e => {
-alert("ERROR: " + e.error);
+recognition.onerror = (e) => {
+console.log(
+"ERROR:",
+e.error
+);
+};
+recognition.onend = () => {
+console.log("END");
 };
 recognition.start();
 }
