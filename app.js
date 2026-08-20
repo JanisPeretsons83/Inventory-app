@@ -1017,30 +1017,22 @@ function checkBetaAccess() {
 }
 
 function startVoiceInput() {
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    showNotice(
-    "⚠️ Balss ievade nav pieejama"
-    );
-  return;
-  }
-  const recognition =
-    new SpeechRecognition();
-      recognition.lang = "lv-LV";
-      recognition.onresult = (event) => {
-  const text =
-    event.results[0][0].transcript;
-      alert("Atpazīts: " + text);
-      };
-    recognition.onerror = (event) => {
-  console.error("Speech error:", event);
-    alert(
-      "Kļūda: " +
-    event.error
-    );
-  };
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+alert("API atrasts: " + !!SpeechRecognition);
+const recognition =
+new SpeechRecognition();
+recognition.lang = "en-US";
+recognition.onstart = () => {
+alert("START");
+};
+recognition.onresult = e => {
+alert(e.results[0][0].transcript);
+};
+recognition.onerror = e => {
+alert("ERROR: " + e.error);
+};
 recognition.start();
 }
 
