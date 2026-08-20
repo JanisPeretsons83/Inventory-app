@@ -282,35 +282,40 @@ function renderDimensionAnalysis() {
 }
 
 function toggleArea(area) {
-  expandedArea =
-    expandedArea === area
-      ? null
-      : area;
+    expandedArea =
+        expandedArea === area
+            ? null
+            : area;
 
-  expandedAreaEntries = null;
-  expandedSize = null;
+    expandedAreaEntries = null;
+    expandedSize = null;
 
-  renderImportAreas();
+    renderImportAreas();
 }
+
 
 function toggleAreaEntries(area) {
-  expandedAreaEntries =
-    expandedAreaEntries === area
-      ? null
-      : area;
+    expandedAreaEntries =
+        expandedAreaEntries === area
+            ? null
+            : area;
 
-  expandedSize = null;
+    expandedSize = null;
 
-  renderImportAreas();
+    renderImportAreas();
 }
 
+
 function toggleSize(area, size) {
-  const key = `${area}_${size}`;
+    const key =
+        `${area}_${size}`;
+
     expandedSize =
-    expandedSize === key
-      ? null
-      : key;
-  renderImportAreas();
+        expandedSize === key
+            ? null
+            : key;
+
+    renderImportAreas();
 }
 
 function toggleDimension(size) {
@@ -2051,171 +2056,249 @@ ${previousMonth}.${previousYear}`
 }
 
 function renderImportAreas() {
-  if (!importedAreaSummary || !importedBackup?.entries) {
-    document.getElementById("areaList").innerHTML = "";
-    return;
-  }
+    const areaList = document.getElementById("areaList");
 
-  let areaHtml = "";
+    if (
+        !importedAreaSummary ||
+        !importedBackup ||
+        !Array.isArray(importedBackup.entries)
+    ) {
+        areaList.innerHTML = "";
+        return;
+    }
 
-  Object.entries(importedAreaSummary)
-    .sort(([a], [b]) =>
-      a.localeCompare(b, undefined, { numeric: true })
-    )
-    .forEach(([area, info]) => {
+    let areaHtml = "";
 
-      const areaEntries = importedBackup.entries.filter(
-        e => e.area === area
-      );
+    Object.entries(importedAreaSummary)
+        .sort(([a], [b]) =>
+            a.localeCompare(b, undefined, { numeric: true })
+        )
+        .forEach(([area, info]) => {
 
-      // Grupē pēc biezuma x platuma
-      const sizeGroups = {};
+            // ==========================================
+            // Šī apgabala ieraksti
+            // ==========================================
+            const areaEntries =
+                importedBackup.entries.filter(
+                    entry => entry.area === area
+                );
 
-      areaEntries.forEach(e => {
-        const size = `${e.thickness}×${e.width}`;
+            // ==========================================
+            // Grupē pēc biezuma × platuma
+            // ==========================================
+            const sizeGroups = {};
 
-        if (!sizeGroups[size]) {
-          sizeGroups[size] = {
-            packages: 0,
-            rows: []
-          };
-        }
+            areaEntries.forEach(entry => {
 
-        sizeGroups[size].packages += Number(e.packages) || 0;
-        sizeGroups[size].rows.push(e);
-      });
+                const thickness =
+                    entry.thickness ?? "";
 
-      const areaOpen = expandedArea === area;
-      const entriesOpen = expandedAreaEntries === area;
+                const width =
+                    entry.width ?? "";
 
-      areaHtml += `
-        <div class="areaBlock">
+                const size =
+                    `${thickness}×${width}`;
 
-          <label class="areaHeader">
-            <input
-              type="checkbox"
-              value="${area}"
-            >
+                if (!sizeGroups[size]) {
+                    sizeGroups[size] = [];
+                }
 
-            <strong
-              onclick="toggleArea('${area}')"
-              style="cursor:pointer;"
-            >
-              ${areaOpen ? "▼" : "▶"} ${area}
-            </strong>
-          </label>
-
-      `;
-
-      // ==============================
-      // APGABALA INFORMĀCIJA
-      // ==============================
-
-      if (areaOpen) {
-
-        areaHtml += `
-          <div class="areaDetails">
-
-            <div
-              class="areaEntriesHeader"
-              onclick="toggleAreaEntries('${area}')"
-            >
-              📄 ${info.entries} ieraksti
-              ${entriesOpen ? "▼" : "▶"}
-            </div>
-        `;
-
-        // ==============================
-        // IZMĒRU GRUPAS
-        // ==============================
-
-        if (entriesOpen) {
-
-          Object.entries(sizeGroups)
-            .sort(([a], [b]) =>
-              a.localeCompare(b, undefined, { numeric: true })
-            )
-            .forEach(([size, sizeInfo]) => {
-
-              const sizeKey = `${area}_${size}`;
-              const sizeOpen = expandedSize === sizeKey;
-
-              areaHtml += `
-                <div
-                  class="areaSize"
-                  onclick="toggleSize('${area}', '${size}')"
-                >
-                  ${sizeOpen ? "▼" : "▶"} ${size}
-                </div>
-              `;
-
-              // ==============================
-              // KONKRĒTIE IERAKSTI
-              // ==============================
-
-              if (sizeOpen) {
-
-                sizeInfo.rows.forEach(row => {
-
-                  let lengthText = "";
-
-                  if (
-                    String(row.length)
-                      .toLowerCase() === "gali"
-                  ) {
-                    lengthText =
-                      row.avgLength
-                        ? `≈${row.avgLength}`
-                        : "Gali";
-                  } else {
-                    lengthText = row.length;
-                  }
-
-                  areaHtml += `
-                    <div class="areaEntry">
-                      ${row.thickness}×${row.width}×${lengthText}
-                      |
-                      ${Number(row.packages) || 0} pal.
-                    </div>
-                  `;
-
-                });
-
-              }
-
+                sizeGroups[size].push(entry);
             });
 
-        }
+            const areaOpen =
+                expandedArea === area;
 
-        // ==============================
-        // APGABALA KOPSUMMAS
-        // ==============================
+            const entriesOpen =
+                expandedAreaEntries === area;
 
-        areaHtml += `
-            <div class="areaTotals">
-              📦 ${Number(info.packages).toLocaleString("lv-LV")} paletes
-              <br>
-              🪵 ${Number(info.totalM3).toFixed(4)} m³
-            </div>
+            // ==========================================
+            // APGABALS
+            // ==========================================
+            areaHtml += `
+                <div class="areaBlock">
 
-          </div>
+                    <label class="areaHeader">
+
+                        <input
+                            type="checkbox"
+                            value="${area}"
+                        >
+
+                        <strong
+                            onclick="toggleArea('${area}')"
+                            style="cursor:pointer;"
+                        >
+                            ${areaOpen ? "▼" : "▶"}
+                            ${area}
+                        </strong>
+
+                    </label>
+            `;
+
+            // ==========================================
+            // Ja apgabals ir atvērts
+            // ==========================================
+            if (areaOpen) {
+
+                areaHtml += `
+                    <div class="areaDetails">
+
+                        <div
+                            class="areaEntriesHeader"
+                            onclick="toggleAreaEntries('${area}')"
+                            style="cursor:pointer;"
+                        >
+                            📄 ${info.entries} ieraksti
+                            ${entriesOpen ? "▼" : "▶"}
+                        </div>
+                `;
+
+                // ======================================
+                // Ja "ieraksti" ir atvērti
+                // ======================================
+                if (entriesOpen) {
+
+                    Object.entries(sizeGroups)
+                        .sort(([a], [b]) =>
+                            a.localeCompare(
+                                b,
+                                undefined,
+                                { numeric: true }
+                            )
+                        )
+                        .forEach(([size, entries]) => {
+
+                            const sizeKey =
+                                `${area}_${size}`;
+
+                            const sizeOpen =
+                                expandedSize === sizeKey;
+
+                            // ==================================
+                            // IZMĒRS
+                            // ==================================
+                            areaHtml += `
+                                <div
+                                    class="areaSize"
+                                    onclick="toggleSize(
+                                        '${area}',
+                                        '${size}'
+                                    )"
+                                    style="
+                                        cursor:pointer;
+                                        margin-left:20px;
+                                    "
+                                >
+                                    ${sizeOpen ? "▼" : "▶"}
+                                    ${size}
+                                </div>
+                            `;
+
+                            // ==================================
+                            // KONKRĒTIE IERAKSTI
+                            // ==================================
+                            if (sizeOpen) {
+
+                                entries.forEach(entry => {
+
+                                    let lengthText = "";
+
+                                    // ------------------------------
+                                    // Parasts garums
+                                    // ------------------------------
+                                    if (
+                                        String(
+                                            entry.length ?? ""
+                                        )
+                                        .trim()
+                                        .toLowerCase() !== "gali"
+                                    ) {
+                                        lengthText =
+                                            entry.length ?? "";
+                                    }
+
+                                    // ------------------------------
+                                    // Gali
+                                    // ------------------------------
+                                    else {
+
+                                        lengthText =
+                                            entry.avgLength
+                                                ? `≈${entry.avgLength}`
+                                                : "Gali";
+                                    }
+
+                                    const packages =
+                                        Number(
+                                            entry.packages
+                                        ) || 0;
+
+                                    areaHtml += `
+                                        <div
+                                            class="areaEntry"
+                                            style="
+                                                margin-left:40px;
+                                                padding:2px 0;
+                                            "
+                                        >
+                                            ${entry.thickness}
+                                            ×${entry.width}
+                                            ×${lengthText}
+                                            |
+                                            ${packages} pal.
+                                        </div>
+                                    `;
+                                });
+                            }
+                        });
+                }
+
+                // ======================================
+                // APGABALA KOPSUMMAS
+                // ======================================
+                areaHtml += `
+                        <div
+                            class="areaTotals"
+                            style="
+                                margin-left:20px;
+                                margin-top:8px;
+                            "
+                        >
+                            📦 ${
+                                Number(info.packages || 0)
+                                .toLocaleString("lv-LV")
+                            } paletes
+                            <br>
+
+                            🪵 ${
+                                Number(info.totalM3 || 0)
+                                .toFixed(4)
+                            } m³
+                        </div>
+
+                    </div>
+                `;
+            }
+
+            areaHtml += `
+                </div>
+            `;
+        });
+
+    // ==========================================
+    // Ja nav neviena apgabala
+    // ==========================================
+    if (!areaHtml) {
+
+        areaHtml = `
+            <p>
+                Nav atrasti apgabali ar derīgiem ierakstiem.
+            </p>
         `;
-      }
+    }
 
-      areaHtml += `
-        </div>
-      `;
-    });
-
-  if (!areaHtml) {
-    areaHtml = `
-      <p>
-        Nav atrasti apgabali ar derīgiem ierakstiem.
-      </p>
-    `;
-  }
-
-  document.getElementById("areaList").innerHTML = areaHtml;
+    areaList.innerHTML = areaHtml;
 }
   
 function getEntryKey(e) {
