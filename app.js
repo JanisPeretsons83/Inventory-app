@@ -1011,6 +1011,36 @@ function checkBetaAccess() {
       document.getElementById("betaFeatures")
         .style.display =
     isBetaUser ? "block" : "none";
+    document.getElementById("voiceBtn")
+      .style.display =
+    isBetaUser ? "inline-block" : "none";
+}
+
+function startVoiceInput() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showNotice(
+    "⚠️ Balss ievade nav pieejama"
+    );
+  return;
+  }
+  const recognition =
+    new SpeechRecognition();
+      recognition.lang = "lv-LV";
+      recognition.onresult = (event) => {
+  const text =
+    event.results[0][0].transcript;
+      alert("Atpazīts: " + text);
+      };
+    recognition.onerror = (event) => {
+  console.error(event);
+    showNotice(
+    "⚠️ Balss atpazīšanas kļūda"
+    );
+  };
+recognition.start();
 }
 
 function clearError() {
