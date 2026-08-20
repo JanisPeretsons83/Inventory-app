@@ -1035,9 +1035,10 @@ function startVoiceInput() {
       alert("Atpazīts: " + text);
       };
     recognition.onerror = (event) => {
-  console.error(event);
-    showNotice(
-    "⚠️ Balss atpazīšanas kļūda"
+  console.error("Speech error:", event);
+    alert(
+      "Kļūda: " +
+    event.error
     );
   };
 recognition.start();
