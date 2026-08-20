@@ -10,6 +10,9 @@ let dimensionsLibrary = [];
 let importedBackup = null;
 let importedAreaSummary = null;
 let dataChanged = false;
+let expandedArea = null;
+let expandedAreaEntries = null;
+let expandedSize = null;
 
 // ✅ Login
 
@@ -35,18 +38,20 @@ const areasByLocation = {
 
 };
 
+if (isBetaUser()) {
+// jauna funkcionalitāte
+}
+
 function updateAreas() {
   const location = localStorage.getItem("location");
   const select = document.getElementById("area");
-
-  select.innerHTML = `<option value="">Apgabals *</option>`;
-
-  (areasByLocation[location] || []).forEach(a => {
-    const opt = document.createElement("option");
-    opt.value = a;
-    opt.textContent = a;
-    select.appendChild(opt);
-  });
+    select.innerHTML = `<option value="">Apgabals *</option>`;
+      (areasByLocation[location] || []).forEach(a => {
+        const opt = document.createElement("option");
+          opt.value = a;
+          opt.textContent = a;
+          select.appendChild(opt);
+      });
 }
 
 function startDataViewMode() {
@@ -72,24 +77,24 @@ async function importAnalysisBackup(event) {
     if (!files.length) return;
   const backups = [];
     for (const file of files) {
-    let backup;
-    try {
+      let backup;
+      try {
         const text = await file.text();
-        backup = JSON.parse(text);
-    } catch (error) {
-        alert(`Fails "${file.name}" nav derīgs JSON fails!`);
-        return;
-    }
-    if (!backup || typeof backup !== "object") {
+          backup = JSON.parse(text);
+        } catch (error) {
+          alert(`Fails "${file.name}" nav derīgs JSON fails!`);
+          return;
+        }
+      if (!backup || typeof backup !== "object") {
         alert(`Fails "${file.name}" nav derīgs backup fails!`);
         return;
-    }
-    if (!Array.isArray(backup.entries)) {
+        }
+      if (!Array.isArray(backup.entries)) {
         alert(`Failā "${file.name}" nav derīgu entries datu!`);
         return;
+        }
+        backups.push(backup);
     }
-    backups.push(backup);
-}
   const baseLocation =
     backups[0].location;
   const users =
@@ -112,7 +117,7 @@ async function importAnalysisBackup(event) {
       );
     return;
     }
-  analysisData = [];
+    analysisData = [];
       backups.forEach(backup => {
         analysisData.push(
         ...backup.entries
@@ -156,7 +161,7 @@ async function importAnalysisBackup(event) {
       ${backups.length}<br>
     Ieraksti:
       ${analysisData.length}<br>
-    Pakas:
+    Paletes:
       ${totalPackages}<br>
     m³:
       ${totalM3.toFixed(4)}
@@ -274,6 +279,29 @@ function renderDimensionAnalysis() {
   `;
 
   document.getElementById("analysisView").innerHTML = html;
+}
+
+function toggleArea(area) {
+  expandedArea =
+  expandedArea === area
+    ? null
+    : area;
+  renderImportAreas();
+}
+function toggleAreaEntries(area) {
+  expandedAreaEntries =
+  expandedAreaEntries === area
+    ? null
+    : area;
+  renderImportAreas();
+}
+function toggleSize(area, size) {
+  const key = `${area}_${size}`;
+    expandedSize =
+    expandedSize === key
+      ? null
+      : key;
+  renderImportAreas();
 }
 
 function toggleDimension(size) {
@@ -465,6 +493,7 @@ function setHeaderInfo() {
 }
 
 function saveUser() {
+  localStorage.setItem("sessionStart", Date.now());
   const name = document.getElementById("userNameInput").value.trim();
   const location = localStorage.getItem("location");
     if (!location) {
@@ -881,7 +910,7 @@ window.onload = () => {
           Lietotājs: ${backup.user}<br><br>
           📊 Inventarizācija<br>
           Ieraksti: ${backup.summary.entries}<br>
-          Pakas: ${backup.summary.packages}<br>
+          Paletes: ${backup.summary.packages}<br>
           m³: ${backup.summary.totalM3.toFixed(4)}<br><br>
           Datums:<br>
           ${new Date(
@@ -1016,39 +1045,6 @@ function checkBetaAccess() {
     isBetaUser ? "inline-block" : "none";
 }
 
-function startVoiceInput() {
-console.log("Poga nospiesta");
-const SpeechRecognition =
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
-console.log("API:", SpeechRecognition);
-if (!SpeechRecognition) {
-console.log("Nav API");
-return;
-}
-const recognition = new SpeechRecognition();
-recognition.lang = "lv-LV";
-recognition.onstart = () => {
-console.log("ONSTART");
-};
-recognition.onaudiostart = () => {
-console.log("AUDIO START");
-};
-recognition.onspeechstart = () => {
-console.log("SPEECH START");
-};
-recognition.onresult = (e) => {
-console.log("RESULT", e.results[0][0].transcript);
-};
-recognition.onerror = (e) => {
-console.log("ERROR", e.error);
-};
-recognition.onend = () => {
-console.log("END");
-};
-recognition.start();
-console.log("START izsaukts");
-}
 
 function clearError() {
   document.getElementById("error").innerText = "";
@@ -1474,7 +1470,12 @@ function doLogout() {
 }
 
 function endSession() {
-  if (data.length === 0) {
+  const sessionStart = Number(localStorage.getItem("sessionStart"));
+  const durationMs = Date.now() - sessionStart;
+  const minutes = Math.floor(durationMs / 60000);
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+    if (data.length === 0) {
     doLogout();
   return;
   }
@@ -1488,11 +1489,12 @@ function endSession() {
         .innerHTML = `
           Ražotne: ${localStorage.getItem("location")}<br>
           Lietotājs: ${localStorage.getItem("userName")}<br><br>
-          📊 Inventarizācija<br>
-          Ieraksti: ${data.length}<br>
-          Pakas: ${totalPackages}<br>
-          m³: ${totalM3.toFixed(4)}
-        `;
+          📊 Inventarizācija pabeigta!<br><br>
+          📦 Reģistrētas ${totalPackages} paletes.<br>
+          🪵 Kopā reģistrēti ${totalM3.toFixed(4)} m³.<br>
+          📝 Veikti ${data.length} ieraksti.<br><br>
+          ⏱️ Reģistrācija aizņēma ${hours} h ${remainingMinutes} min.
+          `;
       document.getElementById("confirmModal")
     .style.display = "block";
 }
@@ -1947,7 +1949,7 @@ async function importBackupFile(event) {
 
             📊 Inventarizācija<br>
             Ieraksti: ${combinedSummary.entries}<br>
-            Pakas: ${combinedSummary.packages}<br>
+            Paletes: ${combinedSummary.packages}<br>
             m³: ${Number(combinedSummary.totalM3.toFixed(4))}
         `;
 
@@ -1956,7 +1958,10 @@ async function importBackupFile(event) {
         // ==========================================
         const importModal =
             document.getElementById("importModal");
-
+        const areaEntries =
+            importedBackup.entries.filter(
+              e => e.area === area
+            );
         importModal.style.display = "block";
 
         // ==========================================
@@ -1965,20 +1970,17 @@ async function importBackupFile(event) {
         let areaHtml = "";
 
         Object.entries(areaSummary).forEach(
-            ([area, info]) => {
-                areaHtml += `
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="${area}">
-                        <strong>${area}</strong><br>
-                        ${info.entries} ieraksti<br>
-                        ${info.packages} pakas<br>
-                        ${Number(info.totalM3 || 0).toFixed(4)} m³
-                    </label>
-                    <hr>
-                `;
-            }
+            if (expandedArea === area) {
+              areaHtml += `
+                <span onclick="toggleAreaEntries('${area}')"
+                style="cursor:pointer;">
+                  ${expandedAreaEntries === area ? "▼" : "▶"}
+                📄 ${info.entries} ieraksti
+              </span><br>
+                📦 ${info.packages} paletes<br>
+                🪵 ${info.totalM3.toFixed(4)} m³<br>
+              `;
+          }
         );
 
         // ==========================================
@@ -2005,6 +2007,26 @@ async function importBackupFile(event) {
     }
 }
 
+function renderImportAreas() {
+  let areaHtml = "";
+    Object.entries(importedAreaSummary)
+      .forEach(([area, info]) => {
+    areaHtml += `
+      <label>
+        <input
+          type="checkbox"
+          value="${area}">
+            <strong
+              onclick="toggleArea('${area}')"
+              style="cursor:pointer;">
+              ${expandedArea === area ? "▼" : "▶"}
+              ${area}
+            </strong>
+      </label><br>
+      `;
+      }
+}
+  
 function getEntryKey(e) {
     return JSON.stringify([
         e.area,
