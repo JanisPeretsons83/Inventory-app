@@ -283,18 +283,27 @@ function renderDimensionAnalysis() {
 
 function toggleArea(area) {
   expandedArea =
-  expandedArea === area
-    ? null
-    : area;
+    expandedArea === area
+      ? null
+      : area;
+
+  expandedAreaEntries = null;
+  expandedSize = null;
+
   renderImportAreas();
 }
+
 function toggleAreaEntries(area) {
   expandedAreaEntries =
-  expandedAreaEntries === area
-    ? null
-    : area;
+    expandedAreaEntries === area
+      ? null
+      : area;
+
+  expandedSize = null;
+
   renderImportAreas();
 }
+
 function toggleSize(area, size) {
   const key = `${area}_${size}`;
     expandedSize =
@@ -1672,13 +1681,15 @@ async function importBackupFile(event) {
         return;
     }
 
-    // Parāda izvēlēto backup failu skaitu
     backupInfo.textContent =
-        `Pievienots ${files.length} Backup ${files.length === 1 ? "fails" : "faili"}`;
+        `Pievienots ${files.length} Backup ${
+            files.length === 1 ? "fails" : "faili"
+        }`;
 
     backupInfo.style.display = "inline-block";
 
     try {
+
         // ==========================================
         // 1. Sagatavo mainīgos
         // ==========================================
@@ -1692,34 +1703,45 @@ async function importBackupFile(event) {
         // 2. Nolasa VISUS izvēlētos backup failus
         // ==========================================
         for (const file of files) {
+
             let backup;
 
             try {
                 const text = await file.text();
                 backup = JSON.parse(text);
+
             } catch (error) {
+
                 alert(
                     `Backup fails "${file.name}" nav derīgs JSON fails!`
                 );
+
                 return;
             }
 
-            console.log(`Ielādētais backup "${file.name}":`, backup);
+            console.log(
+                `Ielādētais backup "${file.name}":`,
+                backup
+            );
 
             // ==========================================
             // 2.1. Pārbauda backup struktūru
             // ==========================================
             if (!backup || typeof backup !== "object") {
+
                 alert(
                     `Backup failā "${file.name}" nav derīgu datu!`
                 );
+
                 return;
             }
 
             if (!Array.isArray(backup.entries)) {
+
                 alert(
                     `Backup failā "${file.name}" nav derīgu "entries" datu!`
                 );
+
                 return;
             }
 
@@ -1727,9 +1749,11 @@ async function importBackupFile(event) {
                 !backup.summary ||
                 typeof backup.summary !== "object"
             ) {
+
                 alert(
                     `Backup failā "${file.name}" nav derīgu "summary" datu!`
                 );
+
                 return;
             }
 
@@ -1742,10 +1766,12 @@ async function importBackupFile(event) {
             // 2.3. Apvieno ierakstus un izņem dublikātus
             // ==========================================
             for (const entry of backup.entries) {
+
                 if (!entry || typeof entry !== "object") {
                     continue;
                 }
-              const key = getEntryKey(entry);
+
+                const key = getEntryKey(entry);
 
                 if (seen.has(key)) {
                     duplicates++;
@@ -1761,7 +1787,11 @@ async function importBackupFile(event) {
         // 3. Pārbauda, vai vispār ir backup
         // ==========================================
         if (backups.length === 0) {
-            alert("Nav atrasts neviens derīgs backup fails!");
+
+            alert(
+                "Nav atrasts neviens derīgs backup fails!"
+            );
+
             return;
         }
 
@@ -1772,23 +1802,32 @@ async function importBackupFile(event) {
             localStorage.getItem("location");
 
         if (!currentLocation) {
+
             alert(
                 "Nav iestatīta aktīvā ražotne!"
             );
+
             return;
         }
 
         // ==========================================
-        // 5. Pārbauda, vai VISI backup ir no
-        //    tās pašas ražotnes
+        // 5. Pārbauda, vai VISI backup ir
+        //    no tās pašas ražotnes
         // ==========================================
         for (const backup of backups) {
+
             if (backup.location !== currentLocation) {
+
                 alert(
                     `Nevar ielādēt backup!
-                      Aktīvā ražotne: ${currentLocation}
-                      Backup ražotne: ${backup.location || "Nav norādīta"}`
+
+Aktīvā ražotne: ${currentLocation}
+
+Backup ražotne: ${
+    backup.location || "Nav norādīta"
+}`
                 );
+
                 return;
             }
         }
@@ -1818,11 +1857,9 @@ async function importBackupFile(event) {
 
         // ==========================================
         // 7. Pārbauda katra backup datumu
-        //    Atļauts:
-        //    - pašreizējais mēnesis
-        //    - iepriekšējais mēnesis
         // ==========================================
         for (const backup of backups) {
+
             const backupMonth =
                 Number(backup.inventoryMonth);
 
@@ -1838,15 +1875,27 @@ async function importBackupFile(event) {
                 backupYear === previousYear;
 
             if (!validCurrent && !validPrevious) {
+
                 alert(
-                    `Backup no lietotāja "${backup.user || "Nezināms"}" ir pārāk vecs un to nevar ielādēt.
-                    Backup periods: ${backup.inventoryPeriod || `${backupMonth}.${backupYear}`}
-                    Atļauts: ${currentMonth}.${currentYear}
-                    vai ${previousMonth}.${previousYear}`
+                    `Backup no lietotāja "${
+                        backup.user || "Nezināms"
+                    }" ir pārāk vecs un to nevar ielādēt.
+
+Backup periods: ${
+    backup.inventoryPeriod ||
+    `${backupMonth}.${backupYear}`
+}
+
+Atļauts:
+${currentMonth}.${currentYear}
+vai
+${previousMonth}.${previousYear}`
                 );
+
                 return;
             }
         }
+
         // ==========================================
         // 8. Apvieno lietotājus
         // ==========================================
@@ -1857,44 +1906,57 @@ async function importBackupFile(event) {
                     .filter(Boolean)
             )
         ];
+
         const combinedUser =
             users.length === 0
                 ? "Nav norādīts"
                 : users.length === 1
                     ? users[0]
                     : users.join(", ");
+
         // ==========================================
         // 9. Izveido KOPĒJO summary
         // ==========================================
         const combinedSummary = {
-            // Šeit izmantojam unikālos ierakstus
-            entries: uniqueEntries.length,
-            // Pakas summējam no backup summary
-            packages: uniqueEntries.reduce(
-              (sum, e) => sum + Number(e.packages || 0),
-                0
-              ),
 
-            // m³ summējam no backup summary
-            totalM3: uniqueEntries.reduce(
-              (sum, e) => sum + Number(e.total || 0),
-                0
-              )
-          };
+            entries:
+                uniqueEntries.length,
+
+            packages:
+                uniqueEntries.reduce(
+                    (sum, e) =>
+                        sum + Number(e.packages || 0),
+                    0
+                ),
+
+            totalM3:
+                uniqueEntries.reduce(
+                    (sum, e) =>
+                        sum + Number(e.total || 0),
+                    0
+                )
+        };
 
         // ==========================================
         // 10. Izveido vienotu importedBackup objektu
         // ==========================================
         importedBackup = {
             ...backups[0],
-            duplicates: duplicates,
+
+            duplicates,
+
             user: combinedUser,
+
             entries: uniqueEntries,
+
             summary: combinedSummary,
+
             inventoryMonth:
                 backups[0].inventoryMonth,
+
             inventoryYear:
                 backups[0].inventoryYear,
+
             inventoryPeriod:
                 backups[0].inventoryPeriod
         };
@@ -1921,8 +1983,9 @@ async function importBackupFile(event) {
             "Dublikāti:",
             duplicates
         );
+
         // ==========================================
-        // 12. Izveido zonu kopsavilkumu
+        // 12. Izveido apgabalu kopsavilkumu
         //     tikai no unikālajiem ierakstiem
         // ==========================================
         const areaSummary =
@@ -1935,6 +1998,7 @@ async function importBackupFile(event) {
             "Apgabalu kopsavilkums:",
             areaSummary
         );
+
         // ==========================================
         // 13. Parāda informāciju import logā
         // ==========================================
@@ -1950,56 +2014,35 @@ async function importBackupFile(event) {
             📊 Inventarizācija<br>
             Ieraksti: ${combinedSummary.entries}<br>
             Paletes: ${combinedSummary.packages}<br>
-            m³: ${Number(combinedSummary.totalM3.toFixed(4))}
+            m³: ${Number(
+                combinedSummary.totalM3.toFixed(4)
+            )}
         `;
 
         // ==========================================
-        // 14. Parāda import modal
+        // 14. Atver import modal
         // ==========================================
         const importModal =
             document.getElementById("importModal");
-        const areaEntries =
-            importedBackup.entries.filter(
-              e => e.area === area
-            );
+
         importModal.style.display = "block";
 
         // ==========================================
-        // 15. Izveido zonu sarakstu
+        // 15. Parāda apgabalu sarakstu
         // ==========================================
-        let areaHtml = "";
+        expandedArea = null;
+        expandedAreaEntries = null;
+        expandedSize = null;
 
-        Object.entries(areaSummary).forEach(
-            if (expandedArea === area) {
-              areaHtml += `
-                <span onclick="toggleAreaEntries('${area}')"
-                style="cursor:pointer;">
-                  ${expandedAreaEntries === area ? "▼" : "▶"}
-                📄 ${info.entries} ieraksti
-              </span><br>
-                📦 ${info.packages} paletes<br>
-                🪵 ${info.totalM3.toFixed(4)} m³<br>
-              `;
-          }
-        );
+        renderImportAreas();
 
-        // ==========================================
-        // 16. Ja zonas nav atrastas
-        // ==========================================
-        if (Object.keys(areaSummary).length === 0) {
-            areaHtml = `
-                <p>
-                    Nav atrastas zonas ar derīgiem ierakstiem.
-                </p>
-            `;
-        }
-        document.getElementById("areaList")
-            .innerHTML = areaHtml;
     } catch (error) {
+
         console.error(
             "Backup importēšanas kļūda:",
             error
         );
+
         showNotice(
             "⚠️ Nederīgs backup fails",
             "error"
