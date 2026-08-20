@@ -49,6 +49,10 @@ const user =
 return betaUsers.includes(user);
 }
 
+if (isBetaUser()) {
+// jaunā funkcija
+}
+
 function updateAreas() {
   const location = localStorage.getItem("location");
   const select = document.getElementById("area");
@@ -1040,9 +1044,6 @@ function error(msg, fieldId = null) {
   );
 }
   
-const betaUsers = [
-    "jānis pētersons"
-    ];
 function checkBetaAccess() {
   const user =
     (localStorage.getItem("userName") || "")
@@ -1050,14 +1051,28 @@ function checkBetaAccess() {
       .toLowerCase();
   const isBetaUser =
     betaUsers.includes(user);
-      document.getElementById("betaFeatures")
-        .style.display =
+      [
+        "betaFeatures",
+        "voiceBtn",
+        "betaImportView",
+        "betaAnalytics"
+      ].forEach(id => {
+  const el =
+    document.getElementById(id);
+  if (el) {
+    el.style.display =
     isBetaUser ? "block" : "none";
-    document.getElementById("voiceBtn")
-      .style.display =
-    isBetaUser ? "inline-block" : "none";
+    }
+  });
 }
 
+function isBetaUser() {
+  return betaUsers.includes(
+    (localStorage.getItem("userName") || "")
+      .trim()
+      .toLowerCase()
+    );
+}
 
 function clearError() {
   document.getElementById("error").innerText = "";
