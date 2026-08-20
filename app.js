@@ -38,8 +38,15 @@ const areasByLocation = {
 
 };
 
-if (isBetaUser()) {
-// jauna funkcionalitāte
+const betaUsers = [
+  "jānis pētersons"
+  ];
+function isBetaUser() {
+const user =
+  (localStorage.getItem("userName") || "")
+    .trim()
+    .toLowerCase();
+return betaUsers.includes(user);
 }
 
 function updateAreas() {
