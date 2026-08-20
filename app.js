@@ -1017,36 +1017,37 @@ function checkBetaAccess() {
 }
 
 function startVoiceInput() {
+console.log("Poga nospiesta");
 const SpeechRecognition =
 window.SpeechRecognition ||
 window.webkitSpeechRecognition;
+console.log("API:", SpeechRecognition);
 if (!SpeechRecognition) {
-alert("Speech API nav pieejams");
+console.log("Nav API");
 return;
 }
 const recognition = new SpeechRecognition();
-recognition.lang = "lv-LV";
-recognition.continuous = false;
-recognition.interimResults = false;
+recognition.lang = "en-US";
 recognition.onstart = () => {
-console.log("START");
+console.log("ONSTART");
+};
+recognition.onaudiostart = () => {
+console.log("AUDIO START");
+};
+recognition.onspeechstart = () => {
+console.log("SPEECH START");
 };
 recognition.onresult = (e) => {
-console.log(
-"TEXT: Labdien",
-e.results[0][0].transcript
-);
+console.log("RESULT", e.results[0][0].transcript);
 };
 recognition.onerror = (e) => {
-console.log(
-"ERROR:",
-e.error
-);
+console.log("ERROR", e.error);
 };
 recognition.onend = () => {
 console.log("END");
 };
 recognition.start();
+console.log("START izsaukts");
 }
 
 function clearError() {
