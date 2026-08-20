@@ -2008,23 +2008,171 @@ async function importBackupFile(event) {
 }
 
 function renderImportAreas() {
+  if (!importedAreaSummary || !importedBackup?.entries) {
+    document.getElementById("areaList").innerHTML = "";
+    return;
+  }
+
   let areaHtml = "";
-    Object.entries(importedAreaSummary)
-      .forEach(([area, info]) => {
-    areaHtml += `
-      <label>
-        <input
-          type="checkbox"
-          value="${area}">
+
+  Object.entries(importedAreaSummary)
+    .sort(([a], [b]) =>
+      a.localeCompare(b, undefined, { numeric: true })
+    )
+    .forEach(([area, info]) => {
+
+      const areaEntries = importedBackup.entries.filter(
+        e => e.area === area
+      );
+
+      // Grupē pēc biezuma x platuma
+      const sizeGroups = {};
+
+      areaEntries.forEach(e => {
+        const size = `${e.thickness}×${e.width}`;
+
+        if (!sizeGroups[size]) {
+          sizeGroups[size] = {
+            packages: 0,
+            rows: []
+          };
+        }
+
+        sizeGroups[size].packages += Number(e.packages) || 0;
+        sizeGroups[size].rows.push(e);
+      });
+
+      const areaOpen = expandedArea === area;
+      const entriesOpen = expandedAreaEntries === area;
+
+      areaHtml += `
+        <div class="areaBlock">
+
+          <label class="areaHeader">
+            <input
+              type="checkbox"
+              value="${area}"
+            >
+
             <strong
               onclick="toggleArea('${area}')"
-              style="cursor:pointer;">
-              ${expandedArea === area ? "▼" : "▶"}
-              ${area}
+              style="cursor:pointer;"
+            >
+              ${areaOpen ? "▼" : "▶"} ${area}
             </strong>
-      </label><br>
+          </label>
+
       `;
+
+      // ==============================
+      // APGABALA INFORMĀCIJA
+      // ==============================
+
+      if (areaOpen) {
+
+        areaHtml += `
+          <div class="areaDetails">
+
+            <div
+              class="areaEntriesHeader"
+              onclick="toggleAreaEntries('${area}')"
+            >
+              📄 ${info.entries} ieraksti
+              ${entriesOpen ? "▼" : "▶"}
+            </div>
+        `;
+
+        // ==============================
+        // IZMĒRU GRUPAS
+        // ==============================
+
+        if (entriesOpen) {
+
+          Object.entries(sizeGroups)
+            .sort(([a], [b]) =>
+              a.localeCompare(b, undefined, { numeric: true })
+            )
+            .forEach(([size, sizeInfo]) => {
+
+              const sizeKey = `${area}_${size}`;
+              const sizeOpen = expandedSize === sizeKey;
+
+              areaHtml += `
+                <div
+                  class="areaSize"
+                  onclick="toggleSize('${area}', '${size}')"
+                >
+                  ${sizeOpen ? "▼" : "▶"} ${size}
+                </div>
+              `;
+
+              // ==============================
+              // KONKRĒTIE IERAKSTI
+              // ==============================
+
+              if (sizeOpen) {
+
+                sizeInfo.rows.forEach(row => {
+
+                  let lengthText = "";
+
+                  if (
+                    String(row.length)
+                      .toLowerCase() === "gali"
+                  ) {
+                    lengthText =
+                      row.avgLength
+                        ? `≈${row.avgLength}`
+                        : "Gali";
+                  } else {
+                    lengthText = row.length;
+                  }
+
+                  areaHtml += `
+                    <div class="areaEntry">
+                      ${row.thickness}×${row.width}×${lengthText}
+                      |
+                      ${Number(row.packages) || 0} pal.
+                    </div>
+                  `;
+
+                });
+
+              }
+
+            });
+
+        }
+
+        // ==============================
+        // APGABALA KOPSUMMAS
+        // ==============================
+
+        areaHtml += `
+            <div class="areaTotals">
+              📦 ${Number(info.packages).toLocaleString("lv-LV")} paletes
+              <br>
+              🪵 ${Number(info.totalM3).toFixed(4)} m³
+            </div>
+
+          </div>
+        `;
       }
+
+      areaHtml += `
+        </div>
+      `;
+    });
+
+  if (!areaHtml) {
+    areaHtml = `
+      <p>
+        Nav atrasti apgabali ar derīgiem ierakstiem.
+      </p>
+    `;
+  }
+
+  document.getElementById("areaList").innerHTML = areaHtml;
 }
   
 function getEntryKey(e) {
