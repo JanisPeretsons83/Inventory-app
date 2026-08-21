@@ -2351,37 +2351,26 @@ function renderImportAreas() {
             // ==========================================
             if (photo) {
                 areaHtml += `
-                    <div
-                        style="margin:8px 0 8px 25px;">
-                        <img
-                            src="${photo}"
-                            alt="Apgabala ${area} foto"
-                            onclick="openImageFromSrc(this.src)"
-                            style="
-                                width:120px;
-                                height:90px;
-                                object-fit:cover;
-                                border-radius:8px;
-                                cursor:pointer;
-                                border:1px solid #ccc;
-                                display:block;">
-                        <div
-                            style="font-size:12px;
-                                    margin-top:4px;
-                                    opacity:0.7;">
-                            📷 Noklikšķini, lai palielinātu
-                        </div>
-                    </div>
-                `;
-            } else {
+                    <div style="margin:6px 0 6px 25px;">
+                        <button type="button"
+                                onclick="openImageFromSrc('${photo}')"
+                                    style="cursor:pointer;
+                                    padding:5px 10px;
+                                    border:1px solid #ccc;
+                                    border-radius:6px;
+                                    background:transparent;
+                                    font-size:14px;">
+                            📷 Skatīt foto
+                        </button>
+                    </div> `;
+                } else {
                 areaHtml += `
                     <div style="margin:5px 0 5px 25px;
                                 font-size:12px;
                                 opacity:0.6;">
                         📷 Foto nav pievienots
-                    </div>
-                `;
-            }
+                    </div> `;
+                }
             // ==========================================
             // JA APGABALS IR ATVĒRTS
             // ==========================================
