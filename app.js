@@ -2317,23 +2317,12 @@ function renderImportAreas() {
             // APGABALA BLOKS
             // ==========================================
             areaHtml += `
-                <div
-                    class="areaBlock"
-                    style="margin-bottom:15px;
-                          padding-bottom:10px;">
-                    <label
-                        class="areaHeader"
-                        style="
-                            display:flex;
-                            align-items:center;
-                            gap:8px;">
+                <div class="areaBlock">
+                    <label class="areaHeader">
                         <input
                             type="checkbox"
                             value="${area}">
-                        <strong
-                            onclick="toggleArea('${area}')"
-                            style="cursor:pointer;
-                                    flex:1;">
+                        <strong onclick="toggleArea('${area}')">
                             ${areaOpen ? "▼" : "▶"}
                             ${area}
                         </strong>
@@ -2346,15 +2335,12 @@ function renderImportAreas() {
                 areaHtml += `
                     <div class="areaDetails">
                         <div class="areaEntriesHeader"
-                            onclick="toggleAreaEntries('${area}')"
-                            style="cursor:pointer;">
+                            onclick="toggleAreaEntries('${area}')">
                                 📄 ${info.entries} ieraksti
                                 ${entriesOpen ? "▼" : "▶"}
                         </div> `;
                 areaHtml += `
-                        <div class="areaTotals"
-                                style="margin-left:20px;
-                                margin-top:8px;">
+                        <div class="areaTotals">
                             📦 ${Number(info.packages || 0)
                                   .toLocaleString("lv-LV")} paletes<br>
                             🪵 ${Number(info.totalM3).toFixed(4)} m³
@@ -2362,27 +2348,17 @@ function renderImportAreas() {
             if (isBetaUser()) {
                 if (photo) {
                     areaHtml += `
-                        <div style="margin-left:20px;
-                                    margin-top:8px;">
+                        <div class="areaPhotoContainer">
                             <button
                                 type="button"
-                                onclick="openImageFromSrc('${photo}')"
-                                style="cursor:pointer;
-                                            padding:5px 10px;
-                                            border:1px solid #ccc;
-                                            border-radius:6px;
-                                            background:transparent;
-                                            font-size:14px;">
+                                onclick="openImageFromSrc('${photo}')">
                                 📷 Skatīt foto
                             </button>
                         </div>
                     `;
                 } else {
                     areaHtml += `
-                        <div style=" margin-left:20px;
-                                    margin-top:8px;
-                                    font-size:12px;
-                                    opacity:0.6;">
+                        <div class="areaPhotoMissing">
                                 📷 Foto nav pievienots
                         </div>
                     `;
@@ -2413,19 +2389,12 @@ function renderImportAreas() {
                                 // IZMĒRS
                                 // ==================================
                                 areaHtml += `
-                                    <div
-                                        class="areaSize"
+                                    <div class="areaSize"
                                         onclick="
                                             toggleSize(
                                                 '${area}',
                                                 '${size}'
-                                            )
-                                        "
-                                        style="
-                                            cursor:pointer;
-                                            margin-left:20px;
-                                        "
-                                    >
+                                            )">
                                         ${sizeOpen ? "▼" : "▶"}
                                         ${size}
                                     </div>
@@ -2461,13 +2430,7 @@ function renderImportAreas() {
                                                     entry.packages
                                                 ) || 0;
                                             areaHtml += `
-                                                <div
-                                                    class="areaEntry"
-                                                    style="
-                                                        margin-left:40px;
-                                                        padding:2px 0;
-                                                    "
-                                                >
+                                                <div class="areaEntry">
                                                     ${entry.thickness}
                                                     ×${entry.width}
                                                     ×${lengthText}
