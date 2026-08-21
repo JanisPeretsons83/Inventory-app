@@ -52,7 +52,56 @@ return betaUsers.includes(user);
 }
 
 if (isBetaUser()) {
-// jaunā funkcija
+  
+  function checkAreaPhoto() {
+    if (!isBetaUser()) return;
+      const area =
+        document.getElementById("area").value;
+    if (!area) 
+      return;
+      currentArea = area;
+    if (area hotos[area]) 
+      return;
+    if (
+      confirm(
+        `Apgabalam ${area} nav foto\n\nFotografēt?`
+        )
+      ) {
+      document .getElementById("areaPhotoInput")
+        .click();
+      }
+    }
+
+  function saveAreaPhoto(event) {
+     const file = event.target.file [0];
+      if (!file || !currentArea) return;
+     const img = new Image();
+      const reader =
+        new FileReader();
+           eader.onload = e => {
+            img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const maxWidth = 1024;
+        let width = img.width;
+        let height = img.height;
+          if (width > maxWidth) {
+            height = eight (maxWidth / width);
+            width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.heigh = height;
+      const ctx = canvas.getContext("2d") ctx.drawImage(img 0,0,width,height);
+      const photo = canvas.toDataURL("image/jpeg", 0.6);
+              areaPhoto [currentArea] = photo;
+            showNotice(
+              `📷 Foto pievienots apgabalam ${currentArea}`, "success"
+              );
+            };
+          img.src = e.target.result;
+          };
+        reader.readAsDataURL(file);
+  }
+  
 }
 
 function updateAreas() {
@@ -576,9 +625,6 @@ function add() {
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
   if (!areaVal)
-    //foto
-    document.getElementById("area")
-      .addEventListener("change", checkAreaPhoto);
     return error("Apgabals obligāts", "area");
   if (packagesVal <= 0 || isNaN(packagesVal))
     return error("Pakas obligātas", "packages");
@@ -1037,6 +1083,8 @@ document.addEventListener("click", (e) => {
     document.getElementById("packHeight").addEventListener("input", calculateGali);
     document.getElementById("thickness").addEventListener("input", calculateGali);
     document.getElementById("width").addEventListener("input", calculateGali);
+    //foto
+    document.getElementById("area").addEventListener("change", checkAreaPhoto);
   };
 
 // ✅ ERROR
@@ -1490,6 +1538,7 @@ function doLogout() {
   localStorage.removeItem("data");
   localStorage.removeItem("userName");
   localStorage.removeItem("location");
+  areaPhotos = {};
     data = [];
     document.getElementById("userNameInput").value = "";
       currentLocation = null;
@@ -1584,7 +1633,10 @@ function saveBackup() {
     inventoryMonth: inventoryMonth,
     inventoryYear: inventoryYear,
     inventoryPeriod: `${String(inventoryMonth).padStart(2, "0")}.${inventoryYear}`,
-
+    
+    // Foto Apgabalam
+    areaPhotos: areaPhotos,
+    
     // Kopsavilkums
     summary: {
       entries: data.length,
@@ -1615,6 +1667,8 @@ function restoreBackup() {
       localStorage.setItem("data",
     JSON.stringify(data)
       );
+    areaPhotos =
+      backup.areaPhotos || {};
     dataChanged = false;
     render();
     closeRestoreModal();
