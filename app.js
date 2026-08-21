@@ -13,6 +13,8 @@ let dataChanged = false;
 let expandedArea = null;
 let expandedAreaEntries = null;
 let expandedSize = null;
+let areaPhotos = {};
+let currentArea = null;
 
 // ✅ Login
 
@@ -574,6 +576,9 @@ function add() {
   const monthVal = Number(document.getElementById("month").value);
   const yearVal = Number(document.getElementById("year").value);
   if (!areaVal)
+    //foto
+    document.getElementById("area")
+      .addEventListener("change", checkAreaPhoto);
     return error("Apgabals obligāts", "area");
   if (packagesVal <= 0 || isNaN(packagesVal))
     return error("Pakas obligātas", "packages");
