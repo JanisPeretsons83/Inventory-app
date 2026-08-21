@@ -66,13 +66,7 @@ const user =
 return betaUsers.includes(user);
 }
 
-if (isBetaUser()) {
-
-// ======================================================
-// 📷 APGABALA FOTO
-// ======================================================
-  
-  // --------------------------------------------------
+    // --------------------------------------------------
     // Pārbauda, vai izvēlētajam apgabalam jau ir foto
     // --------------------------------------------------
     function checkAreaPhoto() {
@@ -201,8 +195,7 @@ if (isBetaUser()) {
         };
         reader.readAsDataURL(file);
     }
-}
-  
+
 function updateAreas() {
   const location = localStorage.getItem("location");
   const select = document.getElementById("area");
@@ -1182,9 +1175,14 @@ document.addEventListener("click", (e) => {
     document.getElementById("packHeight").addEventListener("input", calculateGali);
     document.getElementById("thickness").addEventListener("input", calculateGali);
     document.getElementById("width").addEventListener("input", calculateGali);
-    //foto
+   
+        if (isBetaUser()) {
+        // ======================================================
+        // 📷 APGABALA FOTO
+        // ======================================================
     document.getElementById("area").addEventListener("change", checkAreaPhoto);
-  };
+        }  
+    };
 
 // ✅ ERROR
 function error(msg, fieldId = null) {
