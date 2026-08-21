@@ -52,55 +52,141 @@ return betaUsers.includes(user);
 }
 
 if (isBetaUser()) {
+
+// ======================================================
+// 📷 APGABALA FOTO
+// ======================================================
   
-  function checkAreaPhoto() {
-    if (!isBetaUser()) return;
-      const area =
-        document.getElementById("area").value;
-    if (!area) 
-      return;
-      currentArea = area;
-    if (area hotos[area]) 
-      return;
-    if (
-      confirm(
-        `Apgabalam ${area} nav foto\n\nFotografēt?`
-        )
-      ) {
-      document .getElementById("areaPhotoInput")
-        .click();
-      }
+  // --------------------------------------------------
+    // Pārbauda, vai izvēlētajam apgabalam jau ir foto
+    // --------------------------------------------------
+    function checkAreaPhoto() {
+        if (!isBetaUser()) return;
+        const areaSelect = document.getElementById("area");
+        const photoInput = document.getElementById("areaPhotoInput");
+        if (!areaSelect || !photoInput) {
+            console.error("❌ Nav atrasts area vai areaPhotoInput elements.");
+            return;
+        }
+        const area = areaSelect.value;
+        if (!area) {
+            showNotice(
+                "⚠️ Vispirms izvēlies apgabalu!",
+                "error"
+            );
+            return;
+        }
+        currentArea = area;
+        // Ja foto jau eksistē – parādām to
+        if (areaPhotos[area]) {
+            openImageFromSrc(areaPhotos[area]);
+            return;
+        }
+        // Ja foto vēl nav – piedāvājam to pievienot
+        if (
+            confirm(
+                `Apgabalam ${area} nav foto.\n\nVai vēlies pievienot foto?`))
+        {
+            photoInput.value = "";
+            photoInput.click();
+        }
     }
 
-  function saveAreaPhoto(event) {
-     const file = event.target.file [0];
-      if (!file || !currentArea) return;
-     const img = new Image();
-      const reader =
-        new FileReader();
-           eader.onload = e => {
-            img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const maxWidth = 1024;
-        let width = img.width;
-        let height = img.height;
-          if (width > maxWidth) {
-            height = eight (maxWidth / width);
-            width = maxWidth;
-            }
-            canvas.width = width;
-            canvas.heigh = height;
-      const ctx = canvas.getContext("2d") ctx.drawImage(img 0,0,width,height);
-      const photo = canvas.toDataURL("image/jpeg", 0.6);
-              areaPhoto [currentArea] = photo;
+    // --------------------------------------------------
+    // Saglabā izvēlētā apgabala foto
+    // --------------------------------------------------
+    function saveAreaPhoto(event) {
+        const file =
+            event.target.files &&
+            event.target.files[0];
+        if (!file) {
+            return;
+        }
+        if (!currentArea) {
             showNotice(
-              `📷 Foto pievienots apgabalam ${currentArea}`, "success"
-              );
+                "⚠️ Nav izvēlēts apgabals!",
+                "error"
+            );
+            event.target.value = "";
+            return;
+        }
+        // Pārbauda, vai fails tiešām ir attēls
+        if (!file.type.startsWith("image/")) {
+            showNotice(
+                "❌ Lūdzu izvēlies attēla failu!",
+                "error");
+            event.target.value = "";
+            return;
+        }
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            img.onload = function () {
+                const canvas =
+                    document.createElement("canvas");
+                const maxWidth = 1024;
+                let width = img.width;
+                let height = img.height;
+                // Samazina lielus attēlus
+                if (width > maxWidth) {
+                    height = height * (maxWidth / width);
+                    width = maxWidth;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx =
+                    canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                // JPEG ar 60% kvalitāti,
+                // lai backup JSON nebūtu nevajadzīgi liels
+                const photo =
+                    canvas.toDataURL("image/jpeg", 0.6);
+                // Saglabā foto konkrētajam apgabalam
+                areaPhotos[currentArea] = photo;
+                // Saglabā arī atsevišķi localStorage,
+                // lai foto nepazustu starp sesijām
+                localStorage.setItem(
+                    "areaPhotos",
+                    JSON.stringify(areaPhotos)
+                );
+                dataChanged = true;
+                showNotice(
+                    `📷 Foto pievienots apgabalam ${currentArea}`,
+                    "success"
+                );
+                // Notīra input,
+                // lai varētu izvēlēties to pašu failu vēlreiz
+                event.target.value = "";
+
+                // Ja pašlaik ir importu skats,
+                // pārzīmējam to
+                if (
+                    typeof renderImportAreas === "function" &&
+                    importedBackup &&
+                    importedAreaSummary
+                ) {
+                    renderImportAreas();
+                }
             };
-          img.src = e.target.result;
-          };
+            img.onerror = function () {
+                showNotice(
+                    "❌ Neizdevās ielādēt attēlu!",
+                    "error"
+                );
+                event.target.value = "";
+            };
+            img.src = e.target.result;
+        };
+        reader.onerror = function () {
+            showNotice(
+                "❌ Neizdevās nolasīt attēla failu!",
+                "error"
+            );
+            event.target.value = "";
+        };
         reader.readAsDataURL(file);
-  }
+    }
+}
   
 }
 
