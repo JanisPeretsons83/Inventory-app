@@ -4,7 +4,6 @@ body {
   padding: 15px;
   margin: 0;
 }
-
 #sizeSuggestions {
 display: none;
 margin: 5px 0;
@@ -13,7 +12,6 @@ max-height: 250px;
 overflow-y: auto;
 overflow-x: hidden;
 }
-
 .sizeOption {
   background: white;
     border: 1px solid #ddd;
@@ -24,39 +22,32 @@ overflow-x: hidden;
 .sizeOption:hover {
   background: #f2f4f7;
 }
-
 .info {
   color: #777;
   font-size: 14px;
   text-align: center;
   margin-bottom: 10px;
 }
-
 .materialTabs {
 display: flex;
 gap: 6px;
 margin: 10px 0;
 }
-
 .materialTabs button {
 flex: 1;
 }
-
 .materialTabs button.active {
 background: #4CAF50;
 color: white;
 }
-
 .tableScroll {
 overflow-x: auto;
 width: 100%;
 }
-
 #analysisView {
 max-height: 70vh;
 overflow: auto
 }
-
 .modal {
 overflow-y: auto;
 }
@@ -69,7 +60,6 @@ max-height: 40vh;
 overflow-y: auto;
 padding: 10px;
 }
-
 #notice {
 opacity: 0;
 transition: opacity .25s ease;
@@ -90,7 +80,6 @@ z-index: 99999;
 box-shadow:
 0 10px 30px rgba(0,0,0,.3);
 }
-
 #notice.show {
 opacity: 1;
 }
@@ -103,32 +92,26 @@ background: #c62828;
 .notice-info {
 background: #1976d2;
 }
-
-//--------------------------------
 #message {
   display: none;
   color: green;
   font-weight: bold;
   margin-top: 10px;
 }
-
 .danger {
   background: #c62828;
   color: white;
 }
-
 .activeLocation {
   background: #2e7d32 !important;
   color: white !important;
 }
-
 #mapsContainer a {
   display: block;
   margin: 5px 0;
   text-decoration: none;
   font-size: 16px;
 }
-
 #GaliContainer {
   display: flex;
   align-items: center;
@@ -144,7 +127,6 @@ background: #1976d2;
   height: 48px;
   flex-shrink: 0;
 }
-
 /*Izvēlnes krāsojums*/
 .dropdown {
   position: relative;
@@ -160,7 +142,6 @@ background: #1976d2;
   overflow-y: auto;
   z-index: 1000;
 }
-
 .group {
   background: transparent;
   color: #1f4e79;
@@ -171,7 +152,6 @@ background: #1976d2;
   position: sticky;
   top: 0;
 }
-
 .grade-k {
   background: #C6EFCE;
 }
@@ -187,52 +167,43 @@ background: #1976d2;
 .grade-pal {
   background: #FCE4D6;
 }
-
 .item {
   padding: 12px;
   cursor: pointer;
   transition: all .15s ease;
 }
-
 .item:hover {
   transform: scale(1.02);
   filter: brightness(0.92);
 }
-
 .calcInfo {
   font-size: 12px;
   color: gray;
   white-space: nowrap;
   display: none; /* ❗ sākumā neredzams */
 }
-
 .piecesRow {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 /*Lokācijas izvēlne*/
 .areaRow {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 .areaRow select {
   flex: 1; /* aizņem vietu */
 }
-
 .areaRow a {
   white-space: nowrap; /* lai neiet jaunā rindā */
   font-size: 14px;
 }
-/**/
 h2 {
   text-align: center;
   margin-bottom: 15px;
 }
-
 input,
 select {
   transition: all 0.2s ease;
@@ -244,7 +215,6 @@ select:focus {
   box-shadow: 0 0 10px rgba(46,125,50,.25);
   outline: none;
 }
-
 input, select {
   width: 100%;
   padding: 14px;
@@ -254,7 +224,6 @@ input, select {
   font-size: 16px;
   background: white;
 }
-
 button {
   width: 100%;
   padding: 14px;
@@ -264,22 +233,18 @@ button {
   font-size: 16px;
   font-weight: bold;
 }
-
 .primary {
   background: #2e7d32;
   color: white;
 }
-
 .secondary {
   background: #1976d2;
   color: white;
 }
-
 .gray {
   background: #888;
   color: white;
 }
-
 table {
   width: 100%;
   margin-top: 15px;
@@ -288,23 +253,19 @@ table {
   border-radius: 12px;
   overflow: hidden;
 }
-
 td, th {
   padding: 10px;
   border-bottom: 1px solid #eee;
   font-size: 14px;
 }
-
 th {
   background: #f0f0f0;
 }
-
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-
 .modal {
 display: none;
 position: fixed;
@@ -320,4 +281,135 @@ padding: 20px;
 border-radius: 16px;
 text-align: center;
 box-shadow: 0 10px 30px rgba(0,0,0,.3);
+}
+/* =======================================
+   GLOBAL
+======================================= */
+.hidden {
+  display: none !impo*tant;
+}
+.footerVersion {
+  opacit*: .45;
+  font-size: 12px;
+  text-a*ign: center;
+  margin*top: 20px;
+}
+/* =======================================
+   IMAGE MODAL
+======================================= */
+.imageModal {
+  display: *one;
+  position: fixed;
+  inset: 0*
+  background: rgba(0,0,0,.9);
+  z-index: 9999;
+}
+
+.modalImage {
+  display: block;
+  margin: 20px auto;
+  max-width: 95%;
+  max-height: 95%;
+}
+/* =======================================
+   IMPORT MODAL
+======================================= */
+.area-block {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+.area-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.area-title {
+  cursor: pointer;
+  flex: 1;
+}
+.area-details {
+  margin-top: 8px;
+}
+.area-totals {
+  margin-left: 20px;
+  margin-top: 8px;
+}
+.area-photo-btn {
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 14px;
+  width: auto;
+  margin-top: 0;
+}
+.area-photo-btn:hover {
+  background: #f5f5f5;
+}
+.area-photo-missing {
+  margin-left: 20px;
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .6;
+}
+.area-size {
+  cursor: pointer;
+  margin-left: 20px;
+  padding: 4px 0;
+}
+.area-entry {
+  margin-left: 40px;
+  padding: 2px 0;
+}
+.area-entries-header {
+  cursor: pointer;
+  font-weight: bold;
+}
+/* =======================================
+   ANALYTICS
+======================================= */
+.detailRow td {
+  background: #fafafa;
+  font-size: 13px;
+}
+/* =======================================
+   BUTTON STATES
+======================================= */
+#galiBtn.active {
+  background: #2e7d32;
+  color: white;
+}
+button:hover {
+  filter: brightness(0.95);
+}
+button:active {
+  transform: scale(.98);
+}
+/* =======================================
+   RESPONSIVE
+======================================= */
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .piecesRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #GaliContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #length {
+    min-width: auto;
+  }
+  #galiBtn {
+    width: 100%;
+  }
+  .modalContent {
+    width: calc(100vw - 40px);
+    max-width: 500px;
+    margin: 10vh auto;
+  }
 }
