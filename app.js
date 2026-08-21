@@ -2481,26 +2481,7 @@ function renderImportAreas() {
                             }
                         );
                 }
-                // ======================================
-                // APGABALA KOPSUMMAS
-                // ======================================
-                areaHtml += `
-                        <div
-                            class="areaTotals"
-                            style="
-                                margin-left:20px;
-                                margin-top:8px;">
-                            📦 ${
-                                Number(
-                                    info.packages || 0
-                                )
-                                .toLocaleString("lv-LV")
-                            } paletes
-                            <br>
-                            🪵 ${Number(info.totalM3 || 0).toFixed(4)} m³
-                        </div>
-                    </div>
-                `;
+              
             }
             areaHtml += `
                 </div>
