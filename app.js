@@ -58,13 +58,6 @@ const areasByLocation = {
 const betaUsers = [
   "jānis pētersons"
   ];
-function isBetaUser() {
-const user =
-  (localStorage.getItem("userName") || "")
-    .trim()
-    .toLowerCase();
-return betaUsers.includes(user);
-}
 
     // --------------------------------------------------
     // Pārbauda, vai izvēlētajam apgabalam jau ir foto
@@ -105,6 +98,7 @@ return betaUsers.includes(user);
     // Saglabā izvēlētā apgabala foto
     // --------------------------------------------------
     function saveAreaPhoto(event) {
+        if (!isBetaUser()) return;
         const file =
             event.target.files &&
             event.target.files[0];
