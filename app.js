@@ -16,6 +16,21 @@ let expandedSize = null;
 let areaPhotos = {};
 let currentArea = null;
 
+try {
+    const savedAreaPhotos =
+        localStorage.getItem("areaPhotos");
+    if (savedAreaPhotos) {
+        areaPhotos =
+            JSON.parse(savedAreaPhotos) || {};
+    }
+} catch (error) {
+    console.error(
+        "❌ Neizdevās ielādēt areaPhotos:",
+        error
+    );
+    areaPhotos = {};
+}
+
 // ✅ Login
 
 let selectedBtn = null;
@@ -1693,51 +1708,72 @@ function saveAndExit() {
 
 // ✅ BACKUP
 function saveBackup() {
-  const totalPackages = data.reduce(
-    (sum, e) => sum + (Number(e.packages) || 0),
-    0
-  );
-
-  const totalM3 = data.reduce(
-    (sum, e) => sum + (Number(e.total) || 0),
-    0
-  );
-
-  const now = new Date();
-
-  const inventoryMonth = now.getMonth() + 1;
-  const inventoryYear = now.getFullYear();
-
-  const backup = {
-    timestamp: now.toISOString(),
-
-    user: localStorage.getItem("userName") || "",
-
-    location: localStorage.getItem("location") || "",
-
-    // Inventarizācijas periods
-    inventoryMonth: inventoryMonth,
-    inventoryYear: inventoryYear,
-    inventoryPeriod: `${String(inventoryMonth).padStart(2, "0")}.${inventoryYear}`,
-    
-    // Foto Apgabalam
-    areaPhotos: areaPhotos,
-    
-    // Kopsavilkums
-    summary: {
-      entries: data.length,
-      packages: totalPackages,
-      totalM3: Number(totalM3.toFixed(4)),
-    },
-
-    // Visi ieraksti ar saviem ražošanas datumiem
-    entries: data,
-  };
-
-  localStorage.setItem(
-    "backupData",
-    JSON.stringify(backup)
-  );
+    const totalPackages =
+        data.reduce(
+            (sum, e) =>
+                sum + (Number(e.packages) || 0),
+            0
+        );
+    const totalM3 =
+        data.reduce(
+            (sum, e) =>
+                sum + (Number(e.total) || 0),
+            0
+        );
+    const now = new Date();
+    const inventoryMonth =
+        now.getMonth() + 1;
+    const inventoryYear =
+        now.getFullYear();
+    const backup = {
+        timestamp:
+            now.toISOString(),
+        user:
+            localStorage.getItem("userName") || "",
+        location:
+            localStorage.getItem("location") || "",
+        inventoryMonth:
+            inventoryMonth,
+        inventoryYear:
+            inventoryYear,
+        inventoryPeriod:
+            `${String(inventoryMonth).padStart(2, "0")}.${inventoryYear}`,
+        // ==============================================
+        // 📷 VISI APGABALU FOTO
+        // ==============================================
+        areaPhotos:
+            { ...areaPhotos },
+        // ==============================================
+        // 📊 KOPSAVILKUMS
+        // ==============================================
+        summary: {
+            entries:
+                data.length,
+            packages:
+                totalPackages,
+            totalM3:
+                Number(totalM3.toFixed(4))
+        },
+        // ==============================================
+        // 📝 VISI IERAKSTI
+        // ==============================================
+        entries:
+            data
+    };
+    // Galvenais backup
+    localStorage.setItem(
+        "backupData",
+        JSON.stringify(backup)
+    );
+    // Foto atsevišķi arī localStorage
+    localStorage.setItem(
+        "areaPhotos",
+        JSON.stringify(areaPhotos)
+    );
+    console.log(
+        "💾 Backup saglabāts ar foto:",
+        Object.keys(areaPhotos)
+    );
 }
 
 function closeRestoreModal() {
@@ -1746,25 +1782,59 @@ document.getElementById("restoreModal")
 }
 
 function restoreBackup() {
-  const backup =
-    JSON.parse(localStorage.getItem("backupData")
-      );
-    data = backup.entries || [];
-      localStorage.setItem("data",
-    JSON.stringify(data)
-      );
+    const backupText =
+        localStorage.getItem("backupData");
+    if (!backupText) {
+        showNotice(
+            "❌ Backup dati nav atrasti!",
+            "error"
+        );
+        return;
+    }
+    let backup;
+    try {
+        backup =
+            JSON.parse(backupText);
+    } catch (error) {
+        console.error(
+            "Backup JSON kļūda:",
+            error
+        );
+        showNotice(
+            "❌ Backup fails nav derīgs!",
+            "error"
+        );
+        return;
+    }
+    // Atjauno ierakstus
+    data =
+        Array.isArray(backup.entries)
+            ? backup.entries
+            : [];
+    localStorage.setItem(
+        "data",
+        JSON.stringify(data)
+    );
+    // Atjauno apgabalu foto
     areaPhotos =
-      backup.areaPhotos || {};
+        backup.areaPhotos &&
+        typeof backup.areaPhotos === "object"
+            ? { ...backup.areaPhotos }
+            : {};
+    // Saglabā arī atsevišķi
+    localStorage.setItem(
+        "areaPhotos",
+        JSON.stringify(areaPhotos)
+    );
     dataChanged = false;
     render();
     closeRestoreModal();
-  document.getElementById("restoreModal")
-    .style.display = "none";
-      showNotice(
-`      ✅ Atjaunoti ${data.length} 
-          ieraksti`,
+    showNotice(
+        `✅ Atjaunoti ${data.length} ieraksti un ${
+            Object.keys(areaPhotos).length
+        } apgabalu foto.`,
         "success"
-      );
+    );
 }
 
 function discardBackup() {
@@ -2086,6 +2156,21 @@ ${previousMonth}.${previousYear}`
                     0
                 )
         };
+        // ======================================================
+        // 📷 APVIENO VISU BACKUP FAILU APGABALU FOTO
+        // ======================================================
+      const combinedAreaPhotos = {};
+        backups.forEach(backup => {
+        if (
+          backup.areaPhotos &&
+        typeof backup.areaPhotos === "object"
+        ) {
+        Object.assign(
+            combinedAreaPhotos,
+            backup.areaPhotos
+            );
+          }
+        });
         // ==========================================
         // 10. Izveido vienotu importedBackup objektu
         // ==========================================
@@ -2100,8 +2185,10 @@ ${previousMonth}.${previousYear}`
             inventoryYear:
                 backups[0].inventoryYear,
             inventoryPeriod:
-                backups[0].inventoryPeriod
-        };
+                backups[0].inventoryPeriod,
+            areaPhotos:
+                combinedAreaPhotos
+            };
         // ==========================================
         // 11. Debug informācija
         // ==========================================
@@ -2176,30 +2263,39 @@ ${previousMonth}.${previousYear}`
 }
 
 function renderImportAreas() {
-    const areaList = document.getElementById("areaList");
+    const areaList =
+        document.getElementById("areaList");
     if (
+        !areaList ||
         !importedAreaSummary ||
         !importedBackup ||
         !Array.isArray(importedBackup.entries)
     ) {
-        areaList.innerHTML = "";
+        if (areaList) {
+            areaList.innerHTML = "";
+        }
         return;
     }
     let areaHtml = "";
     Object.entries(importedAreaSummary)
         .sort(([a], [b]) =>
-            a.localeCompare(b, undefined, { numeric: true })
+            a.localeCompare(
+                b,
+                undefined,
+                { numeric: true }
+            )
         )
         .forEach(([area, info]) => {
             // ==========================================
-            // Šī apgabala ieraksti
+            // APGABALA IERAKSTI
             // ==========================================
             const areaEntries =
                 importedBackup.entries.filter(
-                    entry => entry.area === area
+                    entry =>
+                        entry.area === area
                 );
             // ==========================================
-            // Grupē pēc biezuma × platuma
+            // GRUPĒ PĒC BIEZUMA × PLATUMA
             // ==========================================
             const sizeGroups = {};
             areaEntries.forEach(entry => {
@@ -2219,41 +2315,90 @@ function renderImportAreas() {
             const entriesOpen =
                 expandedAreaEntries === area;
             // ==========================================
-            // APGABALS
+            // 📷 APGABALA FOTO
+            // ==========================================
+            const photo =
+                importedBackup.areaPhotos &&
+                importedBackup.areaPhotos[area]
+                    ? importedBackup.areaPhotos[area]
+                    : null;
+            // ==========================================
+            // APGABALA BLOKS
             // ==========================================
             areaHtml += `
-                <div class="areaBlock">
-                    <label class="areaHeader">
+                <div
+                    class="areaBlock"
+                    style="margin-bottom:15px;
+                          padding-bottom:10px;">
+                    <label
+                        class="areaHeader"
+                        style="
+                            display:flex;
+                            align-items:center;
+                            gap:8px;">
                         <input
                             type="checkbox"
-                            value="${area}"
-                        >
+                            value="${area}">
                         <strong
                             onclick="toggleArea('${area}')"
-                            style="cursor:pointer;"
-                        >
+                            style="cursor:pointer;
+                                    flex:1;">
                             ${areaOpen ? "▼" : "▶"}
                             ${area}
                         </strong>
                     </label>
             `;
             // ==========================================
-            // Ja apgabals ir atvērts
+            // 📷 FOTO
+            // ==========================================
+            if (photo) {
+                areaHtml += `
+                    <div
+                        style="margin:8px 0 8px 25px;">
+                        <img
+                            src="${photo}"
+                            alt="Apgabala ${area} foto"
+                            onclick="openImageFromSrc(this.src)"
+                            style="
+                                width:120px;
+                                height:90px;
+                                object-fit:cover;
+                                border-radius:8px;
+                                cursor:pointer;
+                                border:1px solid #ccc;
+                                display:block;">
+                        <div
+                            style="font-size:12px;
+                                    margin-top:4px;
+                                    opacity:0.7;">
+                            📷 Noklikšķini, lai palielinātu
+                        </div>
+                    </div>
+                `;
+            } else {
+                areaHtml += `
+                    <div style="margin:5px 0 5px 25px;
+                                font-size:12px;
+                                opacity:0.6;">
+                        📷 Foto nav pievienots
+                    </div>
+                `;
+            }
+            // ==========================================
+            // JA APGABALS IR ATVĒRTS
             // ==========================================
             if (areaOpen) {
                 areaHtml += `
                     <div class="areaDetails">
-                        <div
-                            class="areaEntriesHeader"
+                        <div class="areaEntriesHeader"
                             onclick="toggleAreaEntries('${area}')"
-                            style="cursor:pointer;"
-                        >
+                            style="cursor:pointer;">
                             📄 ${info.entries} ieraksti
                             ${entriesOpen ? "▼" : "▶"}
                         </div>
                 `;
                 // ======================================
-                // Ja "ieraksti" ir atvērti
+                // IERAKSTI ATVĒRTI
                 // ======================================
                 if (entriesOpen) {
                     Object.entries(sizeGroups)
@@ -2261,83 +2406,88 @@ function renderImportAreas() {
                             a.localeCompare(
                                 b,
                                 undefined,
-                                { numeric: true }
+                                {
+                                    numeric:true
+                                }
                             )
                         )
-                        .forEach(([size, entries]) => {
-                            const sizeKey =
-                                `${area}_${size}`;
-                            const sizeOpen =
-                                expandedSize === sizeKey;
-                            // ==================================
-                            // IZMĒRS
-                            // ==================================
-                            areaHtml += `
-                                <div
-                                    class="areaSize"
-                                    onclick="toggleSize(
-                                        '${area}',
-                                        '${size}'
-                                    )"
-                                    style="
-                                        cursor:pointer;
-                                        margin-left:20px;
-                                    "
-                                >
-                                    ${sizeOpen ? "▼" : "▶"}
-                                    ${size}
-                                </div>
-                            `;
-                            // ==================================
-                            // KONKRĒTIE IERAKSTI
-                            // ==================================
-                            if (sizeOpen) {
-                                entries.forEach(entry => {
-                                    let lengthText = "";
-                                    // ------------------------------
-                                    // Parasts garums
-                                    // ------------------------------
-                                    if (
-                                        String(
-                                            entry.length ?? ""
-                                        )
-                                        .trim()
-                                        .toLowerCase() !== "gali"
-                                    ) {
-                                        lengthText =
-                                            entry.length ?? "";
-                                    }
-                                    // ------------------------------
-                                    // Gali
-                                    // ------------------------------
-                                    else {
-                                        lengthText =
-                                            entry.avgLength
-                                                ? `≈${entry.avgLength}`
-                                                : "Gali";
-                                    }
-                                    const packages =
-                                        Number(
-                                            entry.packages
-                                        ) || 0;
-                                    areaHtml += `
-                                        <div
-                                            class="areaEntry"
-                                            style="
-                                                margin-left:40px;
-                                                padding:2px 0;
-                                            "
-                                        >
-                                            ${entry.thickness}
-                                            ×${entry.width}
-                                            ×${lengthText}
-                                            |
-                                            ${packages} pal.
-                                        </div>
-                                    `;
-                                });
+                        .forEach(
+                            ([size, entries]) => {
+                                const sizeKey =
+                                    `${area}_${size}`;
+                                const sizeOpen =
+                                    expandedSize === sizeKey;
+                                // ==================================
+                                // IZMĒRS
+                                // ==================================
+                                areaHtml += `
+                                    <div
+                                        class="areaSize"
+                                        onclick="
+                                            toggleSize(
+                                                '${area}',
+                                                '${size}'
+                                            )
+                                        "
+                                        style="
+                                            cursor:pointer;
+                                            margin-left:20px;
+                                        "
+                                    >
+                                        ${sizeOpen ? "▼" : "▶"}
+                                        ${size}
+                                    </div>
+                                `;
+                                // ==================================
+                                // KONKRĒTIE IERAKSTI
+                                // ==================================
+                                if (sizeOpen) {
+                                    entries.forEach(
+                                        entry => {
+                                            let lengthText = "";
+                                            // Parasts garums
+                                            if (
+                                                String(
+                                                    entry.length ?? ""
+                                                )
+                                                .trim()
+                                                .toLowerCase()
+                                                !== "gali"
+                                            ) {
+                                                lengthText =
+                                                    entry.length ?? "";
+                                            }
+                                            // Gali
+                                            else {
+                                                lengthText =
+                                                    entry.avgLength
+                                                        ? `≈${entry.avgLength}`
+                                                        : "Gali";
+                                            }
+                                            const packages =
+                                                Number(
+                                                    entry.packages
+                                                ) || 0;
+                                            areaHtml += `
+                                                <div
+                                                    class="areaEntry"
+                                                    style="
+                                                        margin-left:40px;
+                                                        padding:2px 0;
+                                                    "
+                                                >
+                                                    ${entry.thickness}
+                                                    ×${entry.width}
+                                                    ×${lengthText}
+                                                    |
+                                                    ${packages} pal.
+                                                </div>
+                                            `;
+                                        }
+                                    );
+                                }
                             }
-                        });
+                        );
                 }
                 // ======================================
                 // APGABALA KOPSUMMAS
@@ -2347,18 +2497,15 @@ function renderImportAreas() {
                             class="areaTotals"
                             style="
                                 margin-left:20px;
-                                margin-top:8px;
-                            "
-                        >
+                                margin-top:8px;">
                             📦 ${
-                                Number(info.packages || 0)
+                                Number(
+                                    info.packages || 0
+                                )
                                 .toLocaleString("lv-LV")
                             } paletes
                             <br>
-                            🪵 ${
-                                Number(info.totalM3 || 0)
-                                .toFixed(4)
-                            } m³
+                            🪵 ${Number(info.totalM3 || 0).toFixed(4)} m³
                         </div>
                     </div>
                 `;
@@ -2368,12 +2515,13 @@ function renderImportAreas() {
             `;
         });
     // ==========================================
-    // Ja nav neviena apgabala
+    // JA NAV APGABALU
     // ==========================================
     if (!areaHtml) {
         areaHtml = `
             <p>
-                Nav atrasti apgabali ar derīgiem ierakstiem.
+                Nav atrasti apgabali
+                ar derīgiem ierakstiem.
             </p>
         `;
     }
@@ -2419,75 +2567,194 @@ function openBackupFile() {
 }
 
 function restoreImportedBackup() {
-    if (!importedBackup || !Array.isArray(importedBackup.entries)) {
-        showNotice("❌ Nav pieejami importētie backup dati!");
+    if (
+        !importedBackup ||
+        !Array.isArray(importedBackup.entries)
+    ) {
+        showNotice(
+            "❌ Nav pieejami importētie backup dati!",
+            "error"
+        );
         return;
     }
-    data = [...importedBackup.entries];
-    localStorage.setItem("data", JSON.stringify(data));
-  dataChanged = true;
-  document.getElementById("backupFile").value = "";
-  document.getElementById("backupInfo").textContent = "";
-  document.getElementById("backupInfo").style.display = "none";
-  render();
-  saveBackup();
-  closeImportModal();
-  showNotice(
-    `✅ Atjaunoti ${data.length} ieraksti. Izlaisti ${importedBackup.duplicates || 0} dublikāti.`,
-    "success"
-  );
+    // ==============================================
+    // 📝 ATJAUNO IERAKSTUS
+    // ==============================================
+    data =
+        [...importedBackup.entries];
+    localStorage.setItem(
+        "data",
+        JSON.stringify(data)
+    );
+    // ==============================================
+    // 📷 ATJAUNO VISUS APGABALU FOTO
+    // ==============================================
+    areaPhotos =
+        importedBackup.areaPhotos &&
+        typeof importedBackup.areaPhotos === "object"
+            ? {
+                ...importedBackup.areaPhotos
+            }
+            : {};
+    localStorage.setItem(
+        "areaPhotos",
+        JSON.stringify(areaPhotos)
+    );
+    dataChanged = true;
+    // ==============================================
+    // NOTĪRA BACKUP INPUT
+    // ==============================================
+    const backupFile =
+        document.getElementById("backupFile");
+    if (backupFile) {
+        backupFile.value = "";
+    }
+    const backupInfo =
+        document.getElementById("backupInfo");
+    if (backupInfo) {
+        backupInfo.textContent = "";
+        backupInfo.style.display = "none";
+    }
+    // ==============================================
+    // PĀRZĪMĒ APP
+    // ==============================================
+    render();
+    // Izveido jauno lokālo backup
+    saveBackup();
+    closeImportModal();
+    // ==============================================
+    // PAZIŅOJUMS
+    // ==============================================
+    showNotice(
+        `✅ Atjaunoti ${data.length} ieraksti.
+        📷 Atjaunoti ${
+            Object.keys(areaPhotos).length
+        } apgabalu foto.
+        Izlaisti ${
+            importedBackup.duplicates || 0
+        } dublikāti.`,
+        "success"
+    );
 }
 
 function restoreSelectedAreas() {
-    if (!importedBackup || !Array.isArray(importedBackup.entries)) {
-        showNotice("❌ Nav pieejami importētie backup dati!");
+    if (
+        !importedBackup ||
+        !Array.isArray(importedBackup.entries)
+    ) {
+        showNotice(
+            "❌ Nav pieejami importētie backup dati!",
+            "error"
+        );
         return;
     }
+    // ==============================================
+    // IZVĒLĒTIE APGABALI
+    // ==============================================
     const selectedAreas = [
-        ...document.querySelectorAll("#areaList input:checked")
+        ...document.querySelectorAll(
+            "#areaList input:checked"
+        )
     ].map(cb => cb.value);
     if (!selectedAreas.length) {
-        showNotice("⚠️ Izvēlies vismaz vienu apgabalu!");
-        return;
-    }
-    const selectedData = importedBackup.entries.filter(e =>
-        selectedAreas.includes(e.area)
-    );
-    if (!selectedData.length) {
-        showNotice("⚠️ Izvēlētajos apgabalos backup failā dati nav atrasti!");
-        return;
-    }
-    // Esošo ierakstu atslēgas
-    const existingKeys = new Set(
-        data.map(getEntryKey)
-    );
-    // Pievieno tikai jaunus ierakstus
-    const newEntries = selectedData.filter(e => {
-        const key = getEntryKey(e);
-        if (existingKeys.has(key)) {
-            return false;
-        }
-        existingKeys.add(key);
-        return true;
-    });
-    if (!newEntries.length) {
         showNotice(
-            "ℹ️ Izvēlētie dati jau atrodas darba režīmā. Nekas netika pievienots."
+            "⚠️ Izvēlies vismaz vienu apgabalu!",
+            "error"
+        );
+        return;
+    }
+    // ==============================================
+    // IZVĒLĒTIE IERAKSTI
+    // ==============================================
+    const selectedData =
+        importedBackup.entries.filter(
+            e =>
+                selectedAreas.includes(e.area)
+        );
+    // ==============================================
+    // ESOŠO IERAKSTU ATSLĒGAS
+    // ==============================================
+    const existingKeys =
+        new Set(
+            data.map(getEntryKey)
+        );
+    // ==============================================
+    // ATLASA TIKAI JAUNOS IERAKSTUS
+    // ==============================================
+    const newEntries =
+        selectedData.filter(e => {
+            const key =
+                getEntryKey(e);
+            if (existingKeys.has(key)) {
+                return false;
+            }
+            existingKeys.add(key);
+            return true;
+        });
+    // ==============================================
+    // 📷 ATJAUNO IZVĒLĒTO APGABALU FOTO
+    // ==============================================
+    let photosAdded = 0;
+    selectedAreas.forEach(area => {
+        const photo =
+            importedBackup.areaPhotos &&
+            importedBackup.areaPhotos[area];
+        if (photo) {
+            areaPhotos[area] =
+                photo;
+            photosAdded++;
+        }
+    });
+    // ==============================================
+    // PIEVIENO JAUNOS IERAKSTUS
+    // ==============================================
+    if (newEntries.length) {
+        data.push(
+            ...newEntries
+        );
+    }
+    // ==============================================
+    // JA NEBIJA NE IERAKSTU, NE FOTO
+    // ==============================================
+    if (
+        !newEntries.length &&
+        !photosAdded
+    ) {
+        showNotice(
+            "ℹ️ Izvēlētie dati un foto jau atrodas darba režīmā. Nekas netika pievienots.",
+            "info"
         );
         closeImportModal();
         return;
     }
-    data.push(...newEntries);
-    localStorage.setItem("data", JSON.stringify(data));
+    // ==============================================
+    // 💾 SAGLABĀ
+    // ==============================================
+    localStorage.setItem(
+        "data",
+        JSON.stringify(data)
+    );
+    localStorage.setItem(
+        "areaPhotos",
+        JSON.stringify(areaPhotos)
+    );
     dataChanged = true;
+    // ==============================================
+    // PĀRZĪMĒ
+    // ==============================================
     render();
+    // Izveido backup ar jaunajiem datiem + foto
     saveBackup();
     closeImportModal();
+    // ==============================================
+    // PAZIŅOJUMS
+    // ==============================================
     showNotice(
-        `✅ Pievienoti ${newEntries.length} jauni ieraksti no: ${selectedAreas.join(", ")}`
+        `✅ Pievienoti ${newEntries.length} jauni ieraksti no: ${selectedAreas.join(", ")}.
+        📷 Atjaunoti ${photosAdded} apgabalu foto.`,
+        "success"
     );
 }
-
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/Inventory-app/sw.js")
         .then(reg => {
