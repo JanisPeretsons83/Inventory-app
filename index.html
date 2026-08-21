@@ -63,7 +63,7 @@
                 id="analysisBackupFile"
                 accept=".json"
                 multiple
-                style="display:none"
+                class="hidden"
                 onchange="importAnalysisBackup(event)">
         <button onclick="renderDimensionAnalysis()">
             📏 Dimensijas
@@ -90,7 +90,7 @@
 </div>
     
     <!-- DARBA REŽĪMS -->
-<div id="appContent" style="display:none">
+<div id="appContent" class="hidden">
 <h2>Inventarizācija</h2>
   <div id="infoLine" class="info"></div>
 <!-- Apgabals -->
@@ -136,7 +136,7 @@
 
 
 <!-- GALI (pakas izmēri) -->
-<div id="galiInputs" class="row" style="display:none">
+<div id="galiInputs" class="row hidden" style="display:none">
   <input id="packWidth" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas platums(mm)">
   <input id="packLength" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas garums(mm)">
   <input id="packHeight" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas augstums(mm)">
@@ -247,8 +247,8 @@
             multiple
         accept=".json"
         onchange="importBackupFile(event)"
-        style="display: none;">          
-    <span id="backupInfo" style="display: none;"></span>
+        class="row hidden">          
+    <span id="backupInfo" class="hidden"></span>
     
 <button class="primary" onclick="exportExcel()">
     📤 Saglabāt Excel
@@ -259,22 +259,9 @@
 </button>
 <table id="table"></table>
 </div>
-  <div id="imageModal" style="
-  display:none;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.9);
-  z-index:9999;">
+  <div id="imageModal" class="imageModal">
   
-  <img id="modalImg"
-       style="display:block;
-              margin:auto;
-              max-width:95%;
-              max-height:95%;
-              margin-top:20px;">
+  <img id="modalImg" class="modalImage">
 </div>
 
     <div id="confirmModal" class="modal">
@@ -333,6 +320,6 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
     <script src="app.js"></script>
-    <footer style="opacity:.45;font-size:12px;text-align:center">versija: v.2-0-24</footer>
+    <footer class="footerVersion">versija: v.2-0-24</footer>
 </body>
 </html>
