@@ -203,8 +203,6 @@ if (isBetaUser()) {
     }
 }
   
-}
-
 function updateAreas() {
   const location = localStorage.getItem("location");
   const select = document.getElementById("area");
