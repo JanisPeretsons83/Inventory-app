@@ -1632,9 +1632,10 @@ totalM3Row.getCell(2).numFmt = '0.000';
 
 function doLogout() {
 
-  localStorage.removeItem("data");
-  localStorage.removeItem("userName");
-  localStorage.removeItem("location");
+    localStorage.removeItem("data");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("location");
+    localStorage.removeItem("areaPhotos");
   areaPhotos = {};
     data = [];
     document.getElementById("userNameInput").value = "";
@@ -2345,31 +2346,6 @@ function renderImportAreas() {
                     </label>
             `;
             // ==========================================
-            // 📷 FOTO
-            // ==========================================
-            if (photo) {
-                areaHtml += `
-                    <div style="margin:6px 0 6px 25px;">
-                        <button type="button"
-                                onclick="openImageFromSrc('${photo}')"
-                                    style="cursor:pointer;
-                                    padding:5px 10px;
-                                    border:1px solid #ccc;
-                                    border-radius:6px;
-                                    background:transparent;
-                                    font-size:14px;">
-                            📷 Skatīt foto
-                        </button>
-                    </div> `;
-                } else {
-                areaHtml += `
-                    <div style="margin:5px 0 5px 25px;
-                                font-size:12px;
-                                opacity:0.6;">
-                        📷 Foto nav pievienots
-                    </div> `;
-                }
-            // ==========================================
             // JA APGABALS IR ATVĒRTS
             // ==========================================
             if (areaOpen) {
@@ -2378,10 +2354,47 @@ function renderImportAreas() {
                         <div class="areaEntriesHeader"
                             onclick="toggleAreaEntries('${area}')"
                             style="cursor:pointer;">
-                            📄 ${info.entries} ieraksti
-                            ${entriesOpen ? "▼" : "▶"}
+                                📄 ${info.entries} ieraksti
+                                ${entriesOpen ? "▼" : "▶"}
+                        </div> `;
+                areaHtml += `
+                        <div class="areaTotals"
+                                style="margin-left:20px;
+                                margin-top:8px;">
+                            📦 ${Number(info.packages || 0)
+                                  .toLocaleString("lv-LV")} paletes<br>
+                            🪵 ${Number(info.totalM3).toFixed(4)} m³
+                        </div> `;
+            if (isBetaUser()) {
+                if (photo) {
+                    areaHtml += `
+                        <div style="margin-left:20px;
+                                    margin-top:8px;">
+                            <button
+                                type="button"
+                                onclick="openImageFromSrc('${photo}')"
+                                style="cursor:pointer;
+                                            padding:5px 10px;
+                                            border:1px solid #ccc;
+                                            border-radius:6px;
+                                            background:transparent;
+                                            font-size:14px;">
+                                📷 Skatīt foto
+                            </button>
                         </div>
-                `;
+                    `;
+                } else {
+                    areaHtml += `
+                        <div style=" margin-left:20px;
+                                    margin-top:8px;
+                                    font-size:12px;
+                                    opacity:0.6;">
+                                📷 Foto nav pievienots
+                        </div>
+                    `;
+                }
+            }
+        }
                 // ======================================
                 // IERAKSTI ATVĒRTI
                 // ======================================
