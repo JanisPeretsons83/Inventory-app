@@ -2481,7 +2481,9 @@ function renderImportAreas() {
                             }
                         );
                 }
-              
+              areaHtml += `
+                </div>
+                `;
             }
             areaHtml += `
                 </div>
