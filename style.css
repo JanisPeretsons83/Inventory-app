@@ -413,3 +413,55 @@ button:active {
     margin: 10vh auto;
   }
 }
+.areaBlock {
+margin-bottom: 15px;
+padding-bottom: 10px;
+}
+.areaHeader {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.areaHeader strong {
+cursor: pointer;
+flex: 1;
+}
+.areaEntriesHeader {
+cursor: pointer;
+font-weight: bold;
+}
+.areaTotals {
+margin-left: 20px;
+margin-top: 8px;
+}
+.areaPhotoContainer {
+margin-left: 20px;
+margin-top: 8px;
+}
+.areaPhotoBtn {
+cursor: pointer;
+padding: 5px 10px;
+border: 1px solid #ccc;
+border-radius: 6px;
+background: transparent;
+font-size: 14px;
+width: auto;
+margin-top: 0;
+}
+.areaPhotoBtn:hover {
+background: #f4f4f4;
+}
+.areaPhotoMissing {
+margin-left: 20px;
+margin-top: 8px;
+font-size: 12px;
+opacity: .6;
+}
+.areaSize {
+cursor: pointer;
+margin-left: 20px;
+}
+.areaEntry {
+margin-left: 40px;
+padding: 2px 0;
+}
