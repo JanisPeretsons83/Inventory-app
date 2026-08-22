@@ -14,7 +14,7 @@ let expandedArea = null;
 let expandedAreaEntries = null;
 let expandedSize = null;
 let areaPhotos = {};
-let currentArea = null;
+let previousArea = null;
 
 try {
     const savedAreaPhotos =
@@ -62,36 +62,21 @@ const betaUsers = [
     // --------------------------------------------------
     // Pārbauda, vai izvēlētajam apgabalam jau ir foto
     // --------------------------------------------------
-    function checkAreaPhoto() {
-        if (!isBetaUser()) return;
-        const areaSelect = document.getElementById("area");
-        const photoInput = document.getElementById("areaPhotoInput");
-        if (!areaSelect || !photoInput) {
-            console.error("❌ Nav atrasts area vai areaPhotoInput elements.");
-            return;
-        }
-        const area = areaSelect.value;
-        if (!area) {
-            showNotice(
-                "⚠️ Vispirms izvēlies apgabalu!",
-                "error"
-            );
-            return;
-        }
-        currentArea = area;
-        // Ja foto jau eksistē – parādām to
-        if (areaPhotos[area]) {
-            openImageFromSrc(areaPhotos[area]);
-            return;
-        }
-        // Ja foto vēl nav – piedāvājam to pievienot
+    function handleAreaChange() {
+        const newArea =
+            document.getElementById("area").value;
         if (
-            confirm(
-                `Apgabalam ${area} nav foto.\n\nVai vēlies pievienot foto?`))
-        {
-            photoInput.value = "";
-            photoInput.click();
+            previousArea && !areaPhotos[previousArea]
+        ) {
+        if (
+        confirm(
+            `Apgabalam ${previousArea} nav foto.\n\nVai vēlies pievienot foto?`
+        )) {
+            currentArea = previousArea;
+            document.getElementById("areaPhotoInput").click();
+            }
         }
+        previousArea = newArea;
     }
 
     // --------------------------------------------------
@@ -1174,7 +1159,8 @@ document.addEventListener("click", (e) => {
         // ======================================================
         // 📷 APGABALA FOTO
         // ======================================================
-    document.getElementById("area").addEventListener("change", checkAreaPhoto);
+    document.getElementById("area")
+        .addEventListener("change", handleAreaChange);
         }  
     };
 
