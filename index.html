@@ -42,9 +42,7 @@
                 </button>
         </div>
     <!-- ANALĪTIKAS SKATS JAUNUMU TESTĒŠANAI -->
-    <div 
-        id="betaFeatures"
-        <div id="betaFeatures"
+    <div id="betaFeatures"
             class="notice-info hidden">>
         🧪 Testa funkcija pieejama tikai beta lietotājiem.
     </div>
@@ -136,7 +134,7 @@
 
 
 <!-- GALI (pakas izmēri) -->
-<div id="galiInputs" class="row hidden" style="display:none">
+<div id="galiInputs" class="row hidden">
   <input id="packWidth" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas platums(mm)">
   <input id="packLength" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas garums(mm)">
   <input id="packHeight" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas augstums(mm)">
@@ -247,7 +245,7 @@
             multiple
         accept=".json"
         onchange="importBackupFile(event)"
-        class="row hidden">          
+        class="hidden">          
     <span id="backupInfo" class="hidden"></span>
     
 <button class="primary" onclick="exportExcel()">
