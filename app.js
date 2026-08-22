@@ -71,6 +71,10 @@ const betaUsers = [
         if (
             hasEntries && !areaPhotos[previousArea]
         ) {
+            console.log(
+                "Foto pieprasījums:",
+                previousArea
+                );
         if (
         confirm(
             `Apgabalam ${previousArea} nav foto.\n\nVai vēlies pievienot foto?`
