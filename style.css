@@ -508,15 +508,18 @@ button:active {
   }
 }
 .areaPhotoPanel {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
+margin-top: 6px;
+padding: 6px;
+border-radius: 8px;
+background: #f5f5f5;
+border: 1px solid #ddd;
+max-width: 220px;
+font-size: 13px;
 }
 .areaPhotoTitle {
-    font-weight: bold;
-    margin-bottom: 8px;
+font-weight: 600;
+font-size: 14px;
+margin-bottom: 4px;
 }
 .areaPhotoPreview {
     width: 70px;
@@ -540,11 +543,12 @@ button:active {
     color: #777;
 }
 .areaPhotoButtons {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+display: flex;
+gap: 4px;
+justify-content: center;
 }
 .areaPhotoButtons button {
-    flex: 0 0 auto;
-    min-width: 90px;
+min-width: 70px;
+padding: 4px 8px;
+font-size: 12px;
 }
