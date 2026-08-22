@@ -4,9 +4,31 @@ body {
   padding: 15px;
   margin: 0;
 }
+/* Telefons */
+@media (max-width: 768px) {
+#appContent,
 #locationSelect {
-max-width: 420px;
-margin: 0 auto;
+max-width: 100%;
+}
+}
+/* Planšete */
+@media (min-width: 769px) and (max-width: 1200px) {
+#appContent {
+max-width: 900px;
+}
+#locationSelect {
+max-width: 600px;
+}
+}
+/* Dators */
+@media (min-width: 1201px) {
+#appContent {
+max-width: 1100px;
+}
+#locationSelect {
+max-width: 600px;
+}
+}
 }
 #locationSelect input,
 #locationSelect button {
