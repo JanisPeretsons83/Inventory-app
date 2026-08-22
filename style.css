@@ -519,8 +519,8 @@ button:active {
     margin-bottom: 8px;
 }
 .areaPhotoPreview {
-    width: 90px;
-    max-width: 200px;
+    width: 70px;
+    max-width: 90px;
     margin: 0 auto 10px auto;
     text-align: center;
 }
