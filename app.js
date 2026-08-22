@@ -349,11 +349,6 @@ function renderAreaPhotoPanel(area) {
             <div class="areaPhotoButtons">
                 <button
                     type="button"
-                    onclick="viewAreaPhoto('${area}')">
-                    👁 Skatīt
-                </button>
-                <button
-                    type="button"
                     onclick="chooseAreaPhoto('${area}')">
                     🔄 Nomainīt
                 </button>
