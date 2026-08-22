@@ -65,6 +65,9 @@ const betaUsers = [
     function handleAreaChange() {
         const newArea =
             document.getElementById("area").value;
+        if (previousArea) {
+            const hasEntries =
+                data.some(e => e.area === previousArea);
         if (
             previousArea && !areaPhotos[previousArea]
         ) {
