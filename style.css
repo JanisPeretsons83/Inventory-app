@@ -112,16 +112,17 @@ background: #1976d2;
 #GaliContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
 }
 #length {
   flex: 1 1 auto;
-  min-width: 150px;
+  width: 65%;
 }
 #galiBtn {
-  width: 90px;
+  width: 35%;
   height: 48px;
+  margin-left: auto;
   flex-shrink: 0;
 }
 /*Izvēlnes krāsojums*/
