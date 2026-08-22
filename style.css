@@ -519,15 +519,15 @@ button:active {
     margin-bottom: 8px;
 }
 .areaPhotoPreview {
-    width: 100%;
+    width: 160px;
     max-width: 500px;
     margin: 0 auto 10px auto;
     text-align: center;
 }
 .areaPhotoPreview img {
-    width: 100%;
-    max-height: 350px;
-    object-fit: contain;
+    width: 160px;
+    height: 120px;
+    object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
     border: 1px solid #ccc;
@@ -545,6 +545,6 @@ button:active {
     flex-wrap: wrap;
 }
 .areaPhotoButtons button {
-    flex: 1;
-    min-width: 100px;
+    flex: 0 0 auto;
+    min-width: 90px;
 }
