@@ -392,21 +392,21 @@ button:active {
 ======================================= */
 @media (max-width: 768px) {
   .row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   .piecesRow {
     flex-direction: column;
     align-items: stretch;
   }
   #GaliContainer {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
   }
   #length {
     min-width: auto;
   }
   #galiBtn {
-    width: 100%;
+    width: 90px;
   }
   .modalContent {
     width: calc(100vw - 40px);
