@@ -326,10 +326,18 @@ margin-top: 8px;
 display: flex;
 align-items: center;
 gap: 8px;
+width: 100%;
+}
+.areaHeader input[type="checkbox"] {
+width: auto;
+margin: 0;
+flex: 0 0 auto;
 }
 .areaHeader strong {
+flex: 1 1 auto;
+min-width: 0;
+white-space: nowrap;
 cursor: pointer;
-flex: 1;
 }
 .areaPhotoContainer {
 margin-left: 20px;
