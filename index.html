@@ -5,8 +5,8 @@
     <link rel="icon" type="image/PNG" sizes="32x32"
         href="Icons/favicon-32-v2.PNG">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <title>Inventarizācija</title>
+    
+      <title>Inventarizācija</title>
 
   <!-- ✅ PWA -->
   <link rel="manifest" href="manifest.json">
@@ -39,21 +39,21 @@
                     📊 Inventarizācijas analītikas skats
                 </button>
         </div>
-    <!-- ANALĪTIKAS SKATS JAUNUMU TESTĒŠANAI -->
-    <div id="betaFeatures"
+<!-- ANALĪTIKAS SKATS JAUNUMU TESTĒŠANAI -->
+        <div id="betaFeatures"
             class="notice-info hidden">
-        🧪 Testa funkcija pieejama tikai beta lietotājiem.
-    </div>
-    <!-- ANALĪTIKAS SKATS -->
-<div id="analyticsContent" style="display:none;">
-    <h2>📊 Inventarizācijas analītikas skats</h2>
-        <button onclick="closeDataViewMode()">
-            ← Beigt un atgriezties Login 
-        </button>
-    <hr>
-        <button onclick="openAnalysisBackupFile()">
-            📂 Ielādēt backup
-        </button>
+                🧪 Testa funkcija pieejama tikai beta lietotājiem.
+        </div>
+<!-- ANALĪTIKAS SKATS -->
+        <div id="analyticsContent" style="display:none;">
+                <h2>📊 Inventarizācijas analītikas skats</h2>
+            <button onclick="closeDataViewMode()">
+                ← Beigt un atgriezties Login 
+            </button>
+                <hr>
+            <button onclick="openAnalysisBackupFile()">
+                📂 Ielādēt backup
+            </button>
             <input
                 type="file"
                 id="analysisBackupFile"
@@ -61,9 +61,9 @@
                 multiple
                 class="hidden"
                 onchange="importAnalysisBackup(event)">
-        <button onclick="renderDimensionAnalysis()">
-            📏 Dimensijas
-        </button>
+            <button onclick="renderDimensionAnalysis()">
+                📏 Dimensijas
+            </button>
             <div class="materialTabs">
                 <button id="mat_egle"
                     class="active"
@@ -82,193 +82,216 @@
             <div class="tableScroll">
                 <div id="analysisView"></div>
             </div>
-    <div id="analysisInfo"></div>
-</div>
+            <div id="analysisInfo"></div>
+        </div>
     
-    <!-- DARBA REŽĪMS -->
-<div id="appContent" style="display:none;">
-<h2>Inventarizācija</h2>
-  <div id="infoLine" class="info"></div>
-<!-- Apgabals -->
-
-<div id="mapsContainer" class="areaRow">
-
-  <select id="area">
-    <option value="">Apgabals *</option>
-  </select>
-<input
-    type="file"
-    id="areaPhotoInput"
-    accept="image/*"
-    capture="environment"
-    onchange="saveAreaPhoto(event)"
-    style="display:none;"
->
-  <div id="mapLinks"></div>
-
-</div>
-  
-    <input id="packages" type="number" inputmode="numeric" min="0" step="1" placeholder="Paku skaits *">  
-  
-<!-- Izmēri -->
-<div class="row">
-  
-  <input id="thickness" type="number" inputmode="numeric" min="0" step="1" placeholder="Biezums(mm) *">
-  
-  <input id="width" type="number" inputmode="numeric" min="0" step="1" placeholder="Platums(mm) *">
-</div> 
-  <div id="sizeSuggestions"></div>
-  <div class="row">
-    <div id="GaliContainer" class="areaRow">
-      <input id="length" type="number" inputmode="numeric" min="0" step="1" placeholder="Garums(mm)">
-          <button
-            type="button"
-            id="galiBtn"
-            onclick="toggleGali()">
-            🪵 Gali
+<!-- DARBA REŽĪMS -->
+    <div id="appContent" style="display:none;">
+        <h2>Inventarizācija</h2>
+      <div id="infoLine" class="info"></div>
+        <!-- Apgabals -->
+        <div id="mapsContainer" class="areaRow">
+            <select id="area">
+                <option value="">Apgabals *</option>
+            </select>
+            <input
+                type="file"
+                id="areaPhotoInput"
+                accept="image/*"
+                capture="environment"
+                onchange="saveAreaPhoto(event)"
+                style="display:none;"
+            >
+            <div id="mapLinks"></div>
+        </div>
+        <input  id="packages"
+                type="number"
+                inputmode="numeric"
+                min="0" step="1" 
+                placeholder="Paku skaits *">    
+            <!-- Izmēri -->
+        <div class="row">
+            <input  id="thickness"
+                    type="number"
+                    inputmode="numeric"
+                    min="0" step="1"
+                    placeholder="Biezums(mm) *">
+            <input  id="width"
+                    type="number"
+                    inputmode="numeric"
+                    min="0" step="1" 
+                    placeholder="Platums(mm) *">
+        </div> 
+        <div id="sizeSuggestions"></div>
+        <div class="row">
+            <div id="GaliContainer" class="areaRow">
+                <input  id="length"
+                        type="number"
+                        inputmode="numeric" 
+                        min="0" step="1"
+                        placeholder="Garums(mm)">
+                <button type="button"
+                        id="galiBtn"
+                        onclick="toggleGali()">
+                            🪵 Gali
+                </button>
+            </div>
+       </div>
+        <!-- GALI (pakas izmēri) -->
+        <div id="galiInputs"
+             class="row" 
+             style="display:none">
+          <input id="packWidth" 
+              type="number" 
+              inputmode="numeric" 
+              min="0" step="1" 
+              placeholder="Pakas platums(mm)">
+          <input id="packLength" 
+              type="number" 
+              inputmode="numeric" 
+              min="0" step="1" 
+              placeholder="Pakas garums(mm)">
+          <input id="packHeight" 
+              type="number" 
+              inputmode="numeric" 
+              min="0" step="1" 
+              placeholder="Pakas augstums(mm)">
+          <input id="avgLength" 
+              type="number" 
+              inputmode="numeric" 
+              min="0" step="1" 
+              placeholder="Vidējais detaļas garums(mm)">
+        </div>
+            <!-- Gabali -->
+        <div class="piecesRow">
+          <input id="pieces" 
+              type="text" 
+              inputmode="numeric" 
+              min="0" step="1" 
+              placeholder="Gabali pakā">
+          <div id="calcInfo" class="calcInfo">
+            * Aprēķini veikti ar 95% aizpildījuma efektivitāti
+          </div>
+        </div>
+          <!-- Pakas + datums -->
+        <div class="row">
+          <input id="month" 
+              type="number" 
+              inputmode="numeric" 
+              min="1" max="12" 
+              placeholder="Mēnesis *">
+          <input id="year" 
+              type="number" 
+              inputmode="numeric" 
+              min="20" max="99" 
+              placeholder="Gads *">
+        </div>
+          <!-- Nosaukums + kods -->
+        <div class="row">
+          <input id="name" 
+              placeholder="Detaļas nosaukums">
+          <input id="productCode" 
+              placeholder="Produkta kods">
+        </div>
+            <!-- Šķira -->
+        <div class="dropdown">
+          <button id="gradeBtn">
+              Izvēlies šķiru ▼
           </button>
+          <input type="hidden" id="grade">
+            <div class="menu">
+                <div class="group">K-kods</div>
+                <div class="item grade-k" data-value="K">
+                  Sakomplektēta produkcija (K)
+                </div>
+                <div class="group">Augstākā šķira</div>
+                <div class="item grade-a" data-value="A">
+                    Pilnībā gatavas detaļas, pabeigtas visas operācijas, t.sk., impregnācija (A)
+                </div>
+                <div class="group">1. šķira</div>
+                <div class="item grade-1" data-value="1a">
+                    Ēvelēti dēļi (1a)
+                </div>
+                <div class="item grade-1" data-value="1b">
+                  Neēvelēti, bet sagarināti dēļi (1b)
+                </div>
+                <div class="item grade-1" data-value="1c">
+                  Ēvelētas sagarinātas sagataves (1c)
+                </div>
+                <div class="item grade-1" data-value="1d">
+                  Tālākā apstrādē esošas sagataves (1d)
+                </div>
+                <div class="group">2. šķira</div>
+                <div class="item grade-2" data-value="2a">
+                  Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma  (2a)
+                </div>
+                <div class="item grade-2" data-value="2b">
+                  Brāķis, kuram redzam pielietojumu - varam izmantot tālākā apstrādē (2b)
+                </div>
+                <div class="item grade-2" data-value="2c">
+                  Brāķis, kuram nav pielietojums - iznīcināms (2c)
+                </div>
+                <div class="group">Paletes</div>
+                <div class="item grade-pal" data-value="PAL">
+                  Paletes gatavai produkcijai (PAL)
+                </div>
+          </div>
     </div>
-  </div>
-
-
-<!-- GALI (pakas izmēri) -->
-<div id="galiInputs" class="row" style="display:none">
-  <input id="packWidth" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas platums(mm)">
-  <input id="packLength" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas garums(mm)">
-  <input id="packHeight" type="number" inputmode="numeric" min="0" step="1" placeholder="Pakas augstums(mm)">
-  <input id="avgLength" type="number" inputmode="numeric" min="0" step="1" placeholder="Vidējais detaļas garums(mm)">
-</div>
-
-<!-- Gabali -->
- 
-<div class="piecesRow">
-
-  <input id="pieces" type="text" inputmode="numeric" min="0" step="1" placeholder="Gabali pakā">
-
-  <div id="calcInfo" class="calcInfo">
-    * Aprēķini veikti ar 95% aizpildījuma efektivitāti
-  </div>
-
-</div>
-
-  <!-- Pakas + datums -->
-<div class="row">
-  <input id="month" type="number" inputmode="numeric" min="1" max="12" placeholder="Mēnesis *">
-  <input id="year" type="number" inputmode="numeric" min="20" max="99" placeholder="Gads *">
-</div>
-  
-  <!-- Nosaukums + kods -->
-<div class="row">
-  <input id="name" placeholder="Detaļas nosaukums">
-  <input id="productCode" placeholder="Produkta kods">
-</div>
-
-<!-- Šķira -->
-<div class="dropdown">
-  <button id="gradeBtn">
-  Izvēlies šķiru ▼
-  </button>
-  <input type="hidden" id="grade">
-  <div class="menu">
-      <div class="group">K-kods</div>
-        <div class="item grade-k" data-value="K">
-          Sakomplektēta produkcija (K)
-        </div>
-      <div class="group">Augstākā šķira</div>
-        <div class="item grade-a" data-value="A">
-        Pilnībā gatavas detaļas, pabeigtas visas operācijas, t.sk., impregnācija (A)
-        </div>
-      <div class="group">1. šķira</div>
-        <div class="item grade-1" data-value="1a">
-          Ēvelēti dēļi (1a)
-        </div>
-        <div class="item grade-1" data-value="1b">
-          Neēvelēti, bet sagarināti dēļi (1b)
-        </div>
-        <div class="item grade-1" data-value="1c">
-          Ēvelētas sagarinātas sagataves (1c)
-        </div>
-        <div class="item grade-1" data-value="1d">
-          Tālākā apstrādē esošas sagataves (1d)
-        </div>
-      <div class="group">2. šķira</div>
-        <div class="item grade-2" data-value="2a">
-          Sagataves, detaļas un gali, kurām pagaidām nav konkrēta pielietojuma  (2a)
-        </div>
-        <div class="item grade-2" data-value="2b">
-          Brāķis, kuram redzam pielietojumu - varam izmantot tālākā apstrādē (2b)
-        </div>
-        <div class="item grade-2" data-value="2c">
-          Brāķis, kuram nav pielietojums - iznīcināms (2c)
-        </div>
-      <div class="group">Paletes</div>
-        <div class="item grade-pal" data-value="PAL">
-          Paletes gatavai produkcijai (PAL)
-        </div>
-  </div>
-</div>
-
-<!-- Komentārs -->
-<select id="commentPreset">
-  <option value="">Komentārs</option>
-  <option value="Lapegle">Lapegle</option>
-  <option value="Termokoks">Termokoks</option>
-  <option value="Cits">Cits...</option>
-</select>
-  
-<input id="comment" placeholder="Komentārs">
-  
-<!-- Pogas -->
-<button id="addBtn" 
-  class="primary" 
-  onclick="add()">➕ Pievienot
-</button>
-
-<button
-  id="cancelEditBtn"
-  style="display:none;"
-  onclick="cancelEdit()">
-  ❌ Atcelt labošanu
-</button>
-<button class="secondary" onclick="toggleTable()">
-📋 Skatīt / Slēpt
-</button>
-
-<button onclick="openBackupFile()">
-    📂 Ielādēt backup
-</button>
+        <!-- Komentārs -->
+    <select id="commentPreset">
+      <option value="">Komentārs</option>
+      <option value="Lapegle">Lapegle</option>
+      <option value="Termokoks">Termokoks</option>
+      <option value="Cits">Cits...</option>
+    </select>
+    <input id="comment"
+        placeholder="Komentārs">
+        <!-- Pogas -->
+    <button id="addBtn" 
+      class="primary" 
+      onclick="add()">➕ Pievienot
+    </button>
+    <button
+      id="cancelEditBtn"
+      style="display:none;"
+      onclick="cancelEdit()">
+      ❌ Atcelt labošanu
+    </button>
+    <button class="secondary" onclick="toggleTable()">
+        📋 Skatīt / Slēpt
+    </button>
+    <button onclick="openBackupFile()">
+        📂 Ielādēt backup
+    </button>
     <input
         type="file"
         id="backupFile"
-            multiple
+        multiple
         accept=".json"
         onchange="importBackupFile(event)"
         class="hidden">          
     <span id="backupInfo" class="hidden"></span>
-    
-<button class="primary" onclick="exportExcel()">
-    📤 Saglabāt Excel
-</button>
-
-<button onclick="endSession()" class="danger">
-    🛑 Beigt darbu
-</button>
-<table id="table"></table>
-</div>
-  <div id="imageModal" class="imageModal">
-  
-  <img id="modalImg" class="modalImage">
-</div>
-
+    <button class="primary" onclick="exportExcel()">
+        📤 Saglabāt Excel
+    </button>
+    <button onclick="endSession()" class="danger">
+        🛑 Beigt darbu
+    </button>
+    <div id="tableContainer">    
+        <table id="table"></table>
+    </div>
+    <div id="imageModal" class="imageModal">
+      <img id="modalImg" class="modalImage">
+    </div>
     <div id="confirmModal" class="modal">
-    <div class="modalContent">
-        <h3>🛑 Beigt darbu</h3>
-            <p id="logoutSummary"></p>
-           <p>
+        <div class="modalContent">
+            <h3>🛑 Beigt darbu</h3>
+                <p id="logoutSummary"></p>
+                   <p>
         📤 Tiks saglabāta JSON rezerves kopija.<br>
         💾 Android ierīcēs faili parasti tiek saglabāti automātiski.<br>
         📱 iOS ierīcēs failu saglabāšana jāapstiprina manuāli.
-            </p>
+                    </p>
             <button class="secondary"
                 onclick="closeConfirmModal()">
                 Turpināt darbu
@@ -277,9 +300,8 @@
                 onclick="saveAndExit()">
                 📤 Saglabāt un iziet
             </button>
+        </div>
     </div>
-</div>
-    
     <div id="restoreModal" class="modal">
         <div class="modalContent">
             <h3>💾 Atrasta rezerves kopija</h3>
@@ -294,7 +316,6 @@
                     </button>
         </div>
     </div>
-
     <div id="importModal" class="modal">
         <div class="modalContent">
             <h3>📂 Atrasts backup</h3>
