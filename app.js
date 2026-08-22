@@ -349,6 +349,11 @@ function renderAreaPhotoPanel(area) {
             <div class="areaPhotoButtons">
                 <button
                     type="button"
+                    onclick="viewImportedAreaPhoto('${area}')">
+                    🔄 Skatīt
+                </button>
+                <button
+                    type="button"
                     onclick="chooseAreaPhoto('${area}')">
                     🔄 Nomainīt
                 </button>
@@ -1503,6 +1508,7 @@ function deleteAreaPhoto(area) {
         return;
     }
     dataChanged = true;
+    saveBackup();
     renderAreaPhotoPanel(area);
     // Ja ir importēšanas logs
     if (
@@ -2183,6 +2189,7 @@ function discardBackup() {
     document.getElementById("backupInfo").style.display = "none";
     localStorage.removeItem("areaPhotos");
         areaPhotos = {};
+    renderAreaPhotoPanel(null);
   closeRestoreModal();
     document.getElementById("restoreModal")
   .style.display = "none";
