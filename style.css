@@ -11,10 +11,14 @@ margin: 0 auto;
 #area{
 max-width: 400px;
 }
-#packages,
+#packages{
+max-width: 250px;
+}
+#thickness,
+#width,
 #width,
 #month{
-max-width: 200px;
+max-width: 210px;
 }
 #locationSelect {
 width: min(90vw, 500px);
