@@ -14,8 +14,10 @@ margin: 0 auto;
 }
 #locationSelect input,
 #locationSelect button {
+width: 90%;
+margin: 6px auto;
+display: block;
 box-sizing: border-box;
-max-width: 450px;
 }
 #sizeSuggestions {
 display: none;
