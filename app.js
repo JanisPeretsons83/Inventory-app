@@ -14,22 +14,32 @@ let expandedArea = null;
 let expandedAreaEntries = null;
 let expandedSize = null;
 let areaPhotos = {};
+let currentArea = null;
 let previousArea = null;
+let photoTargetArea = null;
+let photoBusy = false;
 
-try {
-    const savedAreaPhotos =
-        localStorage.getItem("areaPhotos");
-    if (savedAreaPhotos) {
-        areaPhotos =
-            JSON.parse(savedAreaPhotos) || {};
-    }
-} catch (error) {
-    console.error(
-        "❌ Neizdevās ielādēt areaPhotos:",
-        error
-    );
-    areaPhotos = {};
+function loadAreaPhotos() {
+    try {
+        const saved = localStorage.getItem("areaPhotos");
+            if (!saved) {areaPhotos = {};
+                return;
+                }
+        const parsed = JSON.parse(saved);
+            if (parsed &&
+                typeof parsed === "object" &&
+                    !Array.isArray(parsed)
+                ) {areaPhotos = parsed;
+            } else {areaPhotos = {};}
+            } catch (error) {
+                console.error(
+                    "❌ Neizdevās ielādēt areaPhotos:",
+                error
+                );
+        areaPhotos = {};
+        }    
 }
+loadAreaPhotos();
 
 // ✅ Login
 
@@ -60,126 +70,314 @@ const betaUsers = [
   ];
 
     // --------------------------------------------------
-    // Pārbauda, vai izvēlētajam apgabalam jau ir foto
+    //APGABALA MAIŅA
     // --------------------------------------------------
     function handleAreaChange() {
-        const newArea =
-            document.getElementById("area").value;
-        if (previousArea) {
-            const hasEntries =
-                data.some(e => e.area === previousArea);
+    const areaSelect =
+        document.getElementById("area");
+    if (!areaSelect) {
+        return;
+    }
+    const newArea =
+        areaSelect.value;
+    // Ja nekas nav izvēlēts
+    if (!newArea) {
+        currentArea = null;
+        previousArea = null;
+        photoTargetArea = null;
+        renderAreaPhotoPanel(null);
+        return;
+    }
+    // --------------------------------------------------
+    // Pārbauda iepriekšējo apgabalu
+    // --------------------------------------------------
+    if (
+        previousArea &&
+        previousArea !== newArea
+    ) {
+        const hasEntries =
+            data.some(
+                e => e.area === previousArea
+            );
+        const hasPhoto =
+            hasAreaPhoto(previousArea);
+        // Iepriekšējam apgabalam ir dati,
+        // bet nav foto
         if (
-            hasEntries && !areaPhotos[previousArea]
+            hasEntries &&
+            !hasPhoto
         ) {
             console.log(
-                "Foto pieprasījums:",
+                "📷 Foto pieprasījums:",
                 previousArea
-                );
-        if (
-        confirm(
-            `Apgabalam ${previousArea} nav foto.\n\nVai vēlies pievienot foto?`
-        )) {
-            currentArea = previousArea;
-            document.getElementById("areaPhotoInput").click();
-            }}
-            previousArea = newArea;
+            );
+            const addPhoto = confirm(
+                `Apgabalam ${previousArea} nav foto.\n\n` +
+                `Vai vēlies pievienot foto?`
+            );
+            if (addPhoto) {
+                currentArea = previousArea;
+                photoTargetArea = previousArea;
+                const input =
+                    document.getElementById(
+                        "areaPhotoInput"
+                    );
+                if (input) {
+                    input.value = "";
+                    input.click();
+                }
+            }
         }
     }
+    // --------------------------------------------------
+    // Jaunais apgabals kļūst par aktīvo
+    // --------------------------------------------------
+    currentArea = newArea;
+    previousArea = newArea;
+    photoTargetArea = newArea;
+    console.log(
+        "📍 Aktīvais apgabals:",
+        currentArea
+    );
+    console.log(
+        "📷 Foto:",
+        hasAreaPhoto(currentArea)
+            ? "IR"
+            : "NAV"
+    );
+    renderAreaPhotoPanel(
+        currentArea
+    );
+}
     // --------------------------------------------------
     // Saglabā izvēlētā apgabala foto
     // --------------------------------------------------
     function saveAreaPhoto(event) {
-        if (!isBetaUser()) return;
-        const file =
-            event.target.files &&
-            event.target.files[0];
+        if (!isBetaUser()) {
+            return;
+            }
+        if (photoBusy) {
+            return;
+            }
+        const input = event.target;
+        const file = input.files &&
+            input.files[0];
         if (!file) {
             return;
         }
-        if (!currentArea) {
+        const targetArea =
+            photoTargetArea ||
+            currentArea;
+        if (!targetArea) {
             showNotice(
                 "⚠️ Nav izvēlēts apgabals!",
-                "error"
-            );
-            event.target.value = "";
-            return;
+                "error");
+            input.value = "";
+        return;
         }
-        // Pārbauda, vai fails tiešām ir attēls
+    // Pārbauda faila tipu
         if (!file.type.startsWith("image/")) {
             showNotice(
                 "❌ Lūdzu izvēlies attēla failu!",
                 "error");
-            event.target.value = "";
-            return;
+            input.value = "";
+        return;
         }
+    // Maksimālais oriģinālā faila izmērs
+        const maxFileSize = 15 * 1024 * 1024;
+            if (file.size > maxFileSize) {
+                showNotice(
+                    "❌ Foto fails ir pārāk liels. " +
+                    "Maksimums 15 MB.",
+                    "error");
+                input.value = "";
+            return;
+            }
+            photoBusy = true;
         const img = new Image();
         const reader = new FileReader();
-        reader.onload = function (e) {
-            img.onload = function () {
-                const canvas =
-                    document.createElement("canvas");
-                const maxWidth = 1024;
-                let width = img.width;
-                let height = img.height;
-                // Samazina lielus attēlus
-                if (width > maxWidth) {
-                    height = height * (maxWidth / width);
-                    width = maxWidth;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx =
-                    canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
-                // JPEG ar 60% kvalitāti,
-                // lai backup JSON nebūtu nevajadzīgi liels
-                const photo =
-                    canvas.toDataURL("image/jpeg", 0.6);
-                // Saglabā foto konkrētajam apgabalam
-                areaPhotos[currentArea] = photo;
-                // Saglabā arī atsevišķi localStorage,
-                // lai foto nepazustu starp sesijām
-                localStorage.setItem(
-                    "areaPhotos",
-                    JSON.stringify(areaPhotos)
-                );
-                dataChanged = true;
-                showNotice(
-                    `📷 Foto pievienots apgabalam ${currentArea}`,
-                    "success"
-                );
-                // Notīra input,
-                // lai varētu izvēlēties to pašu failu vēlreiz
-                event.target.value = "";
-
-                // Ja pašlaik ir importu skats,
-                // pārzīmējam to
-                if (
-                    typeof renderImportAreas === "function" &&
-                    importedBackup &&
-                    importedAreaSummary
-                ) {
-                    renderImportAreas();
-                }
-            };
-            img.onerror = function () {
-                showNotice(
-                    "❌ Neizdevās ielādēt attēlu!",
-                    "error"
-                );
-                event.target.value = "";
-            };
+            reader.onload =
+        function (e) {
+            img.onload =
+                function () {
+                    try 
+                        // --------------------------------------------------
+                        // Maksimālais attēla platums/augstums
+                        // --------------------------------------------------
+                        const maxSize = 1280;
+                            let width = img.naturalWidth || img.width;
+                            let height = img.naturalHeight || img.height;
+                        const scale = Math.min(1,
+                                maxSize / width,
+                                maxSize / height
+                            );
+                        width = Math.round(width * scale);
+                        height = Math.round(height * scale);
+                        // --------------------------------------------------
+                        // Canvas
+                        // --------------------------------------------------
+                        const canvas = document.createElement("canvas");
+                            canvas.width = width;
+                            canvas.height = height;
+                        const ctx = canvas.getContext("2d");
+                        if (!ctx) {
+                            throw new Error(
+                                "Canvas nav pieejams");
+                        }
+                        // Balts fons JPEG gadījumā
+                        ctx.fillStyle = "#ffffff";
+                        ctx.fillRect(0, 0, width, height
+                        );
+                        ctx.drawImage(img, 0, 0, width, height);
+                        // --------------------------------------------------
+                        // JPEG
+                        // --------------------------------------------------
+                        const photo =
+                            canvas.toDataURL("image/jpeg", 0.65);
+                        if (
+                            !photo ||
+                            photo === "data:,") {
+                            throw new Error(
+                                "Foto konvertēšana neizdevās"
+                            );
+                        }
+                        // --------------------------------------------------
+                        // Saglabā konkrētajam apgabalam
+                        // --------------------------------------------------
+                        areaPhotos[targetArea] = photo;
+                        // --------------------------------------------------
+                        // localStorage
+                        // --------------------------------------------------
+                        const saved =
+                            saveAreaPhotosStorage();
+                        if (!saved) {
+                            // Ja saglabāšana neizdevās,
+                            // atceļ izmaiņu
+                            delete areaPhotos[targetArea];
+                            return;
+                        }
+                        dataChanged = true;
+                        // Aktīvais apgabals
+                        currentArea = targetArea;
+                        previousArea = document.getElementById("area")
+                            ?.value || targetArea;
+                        // --------------------------------------------------
+                        // Pārzīmē foto paneli
+                        // --------------------------------------------------
+                        renderAreaPhotoPanel(targetArea);
+                        // --------------------------------------------------
+                        // Importēšanas skats
+                        // --------------------------------------------------
+                        if (
+                            typeof renderImportAreas ===
+                                "function" &&
+                            importedBackup &&
+                            importedAreaSummary) {
+                            renderImportAreas();
+                        }
+                        console.log("📷 Foto saglabāts:",
+                            targetArea
+                        );
+                        console.log("📷 Visi foto:",
+                            Object.keys(areaPhotos)
+                        );
+                        showNotice(
+                            `📷 Foto pievienots apgabalam ${targetArea}`,
+                            "success");
+                    } catch (error) {
+                        console.error(
+                            "❌ Foto apstrādes kļūda:",
+                            error);
+                        showNotice(
+                            "❌ Neizdevās apstrādāt foto.",
+                            "error");
+                    } finally {
+                        photoBusy = false;
+                        input.value = "";}
+                };
+            img.onerror =
+                function () {
+                    photoBusy = false;
+                    input.value = "";
+                    showNotice(
+                        "❌ Neizdevās ielādēt attēlu!",
+                        "error");
+                };
             img.src = e.target.result;
         };
-        reader.onerror = function () {
+    reader.onerror =
+        function () {
+            photoBusy = false;
+            input.value = "";
             showNotice(
-                "❌ Neizdevās nolasīt attēla failu!",
-                "error"
-            );
-            event.target.value = "";
+                "❌ Neizdevās nolasīt foto failu!",
+                "error");
         };
-        reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
+}
+
+function renderAreaPhotoPanel(area) {
+    const panel =
+        document.getElementById(
+            "areaPhotoPanel"
+        );
+    if (!panel) {
+        return;
     }
+    if (
+        !area || !isBetaUser()
+    ) {
+        panel.innerHTML = "";
+        panel.style.display = "none";
+        return;
+    }
+    panel.style.display =
+        "block";
+    const photo =
+        areaPhotos[area];
+    if (photo) {
+        panel.innerHTML = `
+            <div class="areaPhotoTitle">
+                📷 Apgabala ${area} foto
+            </div>
+            <div class="areaPhotoPreview">
+                <img
+                    src="${photo}"
+                    alt="Apgabala ${area} foto"
+                    onclick="viewAreaPhoto('${area}')">
+            </div>
+            <div class="areaPhotoButtons">
+                <button
+                    type="button"
+                    onclick="viewAreaPhoto('${area}')">
+                    👁 Skatīt
+                </button>
+                <button
+                    type="button"
+                    onclick="chooseAreaPhoto('${area}')">
+                    🔄 Nomainīt
+                </button>
+                <button
+                    type="button"
+                    onclick="deleteAreaPhoto('${area}')">
+                    🗑 Dzēst
+                </button>
+            </div> `;
+    } else {
+        panel.innerHTML = `
+            <div class="areaPhotoTitle">
+                📷 Apgabala ${area} foto
+            </div>
+            <div class="areaPhotoMissing">
+                📷 Foto nav pievienots
+            </div>
+            <button
+                type="button"
+                onclick="chooseAreaPhoto('${area}')">
+                📷 Pievienot foto
+            </button> `;
+    }
+}
 
 function updateAreas() {
   const location = localStorage.getItem("location");
@@ -1210,6 +1408,153 @@ function isBetaUser() {
       .trim()
       .toLowerCase()
     );
+}
+// ======================================================
+// 📷 FOTO PALĪGFUNKCIJAS
+// ======================================================
+function hasAreaPhoto(area) {
+    return !!(
+        area &&
+        areaPhotos &&
+        areaPhotos[area]
+    );
+}
+// ------------------------------------------------------
+// Saglabā foto localStorage
+// ------------------------------------------------------
+function saveAreaPhotosStorage() {
+    try {
+        localStorage.setItem(
+            "areaPhotos",
+            JSON.stringify(areaPhotos)
+        );
+        return true;
+    } catch (error) {
+        console.error(
+            "❌ Neizdevās saglabāt foto:",
+            error);
+        if (
+            error &&
+            error.name === "QuotaExceededError") {
+            showNotice(
+                "❌ Nepietiek vietas pārlūka krātuvē. " +
+                "Foto ir pārāk liels vai foto ir par daudz.",
+                "error"
+            );
+        } else {
+            showNotice(
+                "❌ Neizdevās saglabāt foto.",
+                "error");
+        }
+        return false;
+    }
+}
+// ------------------------------------------------------
+// Atver foto izvēli konkrētam apgabalam
+// ------------------------------------------------------
+function chooseAreaPhoto(area) {
+    if (!isBetaUser()) {
+        return;
+    }
+    if (!area) {
+        showNotice(
+            "⚠️ Nav izvēlēts apgabals!",
+            "error");
+        return;
+    }
+    const input =
+        document.getElementById("areaPhotoInput");
+    if (!input) {
+        showNotice(
+            "❌ Foto ievades lauks nav atrasts!",
+            "error");
+        console.error(
+            "❌ Nav #areaPhotoInput");
+        return;
+    }
+    photoTargetArea = area;
+    currentArea = area;
+    // Notīra iepriekšējo izvēli,
+    // lai var izvēlēties to pašu foto vēlreiz
+    input.value = "";
+    input.click();
+}
+// ------------------------------------------------------
+// Dzēš apgabala foto
+// ------------------------------------------------------
+function deleteAreaPhoto(area) {
+    if (!isBetaUser()) {
+        return;
+    }
+    if (!area) {
+        return;
+    }
+    if (!hasAreaPhoto(area)) {
+        showNotice(
+            `ℹ️ Apgabalam ${area} nav foto.`,
+            "info");
+        return;
+    }
+    const confirmed = confirm(
+        `Vai tiešām dzēst apgabala ${area} foto?`
+        );
+    if (!confirmed) {
+        return;
+    }
+    delete areaPhotos[area];
+    if (!saveAreaPhotosStorage()) {
+        return;
+    }
+    dataChanged = true;
+    renderAreaPhotoPanel(area);
+    // Ja ir importēšanas logs
+    if (
+        typeof renderImportAreas === "function" &&
+        importedBackup &&
+        importedAreaSummary
+    ) {
+        renderImportAreas();
+    }
+    showNotice(
+        `🗑️ Foto dzēsts apgabalam ${area}`,
+        "success"
+    );
+}
+// ------------------------------------------------------
+// Atver foto apskatei
+// ------------------------------------------------------
+function viewAreaPhoto(area) {
+    if (!area) {
+        return;
+    }
+    const photo =
+        areaPhotos[area];
+    if (!photo) {
+        showNotice(
+            `ℹ️ Apgabalam ${area} nav foto.`,
+            "info");
+        return;
+    }
+    openImageFromSrc(photo);
+}
+// ------------------------------------------------------
+// Atver importētā backup foto
+// ------------------------------------------------------
+function viewImportedAreaPhoto(area) {
+    if (
+        !importedBackup ||
+        !importedBackup.areaPhotos) {
+        return;
+    }
+    const photo =
+        importedBackup.areaPhotos[area];
+    if (!photo) {
+        showNotice(
+            `ℹ️ Apgabalam ${area} nav foto.`,
+            "info");
+        return;
+        }    
+    openImageFromSrc(photo);
 }
 
 function clearError() {
