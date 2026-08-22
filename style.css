@@ -4,6 +4,14 @@ body {
   padding: 15px;
   margin: 0;
 }
+#locationSelect {
+max-width: 420px;
+margin: 0 auto;
+}
+#locationSelect input,
+#locationSelect button {
+box-sizing: border-box;
+}
 #sizeSuggestions {
 display: none;
 margin: 5px 0;
