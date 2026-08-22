@@ -153,9 +153,6 @@ const betaUsers = [
     // Saglabā izvēlētā apgabala foto
     // --------------------------------------------------
     function saveAreaPhoto(event) {
-        if (!isBetaUser()) {
-            return;
-            }
         if (photoBusy) {
             return;
             }
@@ -325,7 +322,7 @@ function renderAreaPhotoPanel(area) {
         return;
     }
     if (
-        !area || !isBetaUser()
+        (!area)
     ) {
         panel.innerHTML = "";
         panel.style.display = "none";
@@ -1455,9 +1452,6 @@ function saveAreaPhotosStorage() {
 // Atver foto izvēli konkrētam apgabalam
 // ------------------------------------------------------
 function chooseAreaPhoto(area) {
-    if (!isBetaUser()) {
-        return;
-    }
     if (!area) {
         showNotice(
             "⚠️ Nav izvēlēts apgabals!",
@@ -1485,9 +1479,6 @@ function chooseAreaPhoto(area) {
 // Dzēš apgabala foto
 // ------------------------------------------------------
 function deleteAreaPhoto(area) {
-    if (!isBetaUser()) {
-        return;
-    }
     if (!area) {
         return;
     }
@@ -2091,7 +2082,7 @@ function saveBackup() {
         // ==============================================
         entries: data
     };
-    // Galvenais backup
+    try {
     localStorage.setItem(
         "backupData",
         JSON.stringify(backup)
@@ -2101,6 +2092,15 @@ function saveBackup() {
         "areaPhotos",
         JSON.stringify(areaPhotos)
     );
+    } catch (error){
+        "Neizdevās saglabāt backup",
+            error);
+        showNotice(
+            "❌ Nepietiek vietas rezerves kopijas saglabāšanai.",
+            "error"
+        );
+        return;
+    }
     console.log(
         "💾 Backup saglabāts ar foto:",
         Object.keys(
@@ -2645,7 +2645,6 @@ function renderImportAreas() {
                                   .toLocaleString("lv-LV")} paletes<br>
                             🪵 ${Number(info.totalM3).toFixed(4)} m³
                         </div> `;
-            if (isBetaUser()) {
                 if (photo) {
                     areaHtml += `
                         <div class="areaPhotoContainer">
@@ -2663,7 +2662,6 @@ function renderImportAreas() {
                         </div>
                     `;
                 }
-            }
         
                 // ======================================
                 // IERAKSTI ATVĒRTI
