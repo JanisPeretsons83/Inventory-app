@@ -233,7 +233,7 @@ const betaUsers = [
                         // JPEG
                         // --------------------------------------------------
                         const photo =
-                            canvas.toDataURL("image/jpeg", 0.65);
+                            canvas.toDataURL("image/jpeg", 0.4);
                         if (
                             !photo ||
                             photo === "data:,") {
