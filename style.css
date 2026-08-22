@@ -8,8 +8,11 @@ body {
 width: min(95vw, 800px);
 margin: 0 auto;
 }
-#packages {
-max-width: 150px;
+#area,
+#packages,
+#width,
+#month{
+max-width: 200px;
 }
 #locationSelect {
 width: min(90vw, 500px);
