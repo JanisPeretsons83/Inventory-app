@@ -5,7 +5,7 @@ body {
   margin: 0;
 }
 #appContent {
-width: min(95vw, 900px);
+width: min(95vw, 800px);
 margin: 0 auto;
 }
 #locationSelect {
@@ -55,6 +55,22 @@ flex: 1;
 .materialTabs button.active {
 background: #4CAF50;
 color: white;
+}
+#tableContainer {
+max-height: 420px;
+overflow-x: auto;
+overflow-y: auto;
+margin-top: 15px;
+border-radius: 12px;
+}
+#table {
+min-width: 700px;
+}
+#table th {
+position: sticky;
+top: 0;
+z-index: 10;
+background: #f0f0f0;
 }
 .tableScroll {
 overflow-x: auto;
