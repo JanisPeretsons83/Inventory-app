@@ -188,6 +188,8 @@ function updateAreas() {
           opt.textContent = a;
           select.appendChild(opt);
       });
+    previousArea =
+        document.getElementById("area").value;
 }
 
 function startDataViewMode() {
