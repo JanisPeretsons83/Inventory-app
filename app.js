@@ -204,7 +204,7 @@ const betaUsers = [
                         // --------------------------------------------------
                         // Maksimālais attēla platums/augstums
                         // --------------------------------------------------
-                        const maxSize = 1280;
+                        const maxSize = 800;
                             let width = img.naturalWidth || img.width;
                             let height = img.naturalHeight || img.height;
                         const scale = Math.min(1,
