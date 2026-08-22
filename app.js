@@ -2087,20 +2087,18 @@ function saveBackup() {
         "backupData",
         JSON.stringify(backup)
     );
-    // Foto atsevišķi arī localStorage
     localStorage.setItem(
         "areaPhotos",
         JSON.stringify(areaPhotos)
     );
-    } catch (error){
-        "Neizdevās saglabāt backup",
-            error);
-        showNotice(
-            "❌ Nepietiek vietas rezerves kopijas saglabāšanai.",
-            "error"
-        );
-        return;
-    }
+} catch (error) {
+    console.error("Neizdevās saglabāt backup:", error);
+    showNotice(
+        "❌ Nepietiek vietas rezerves kopijas saglabāšanai.",
+        "error"
+    );
+    return;
+}
     console.log(
         "💾 Backup saglabāts ar foto:",
         Object.keys(
