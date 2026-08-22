@@ -48,9 +48,6 @@ width: 100%;
 max-height: 70vh;
 overflow: auto
 }
-.modal {
-overflow-y: auto;
-}
 .modalContent {
 max-height: 90vh;
 overflow-y: auto;
@@ -272,6 +269,7 @@ position: fixed;
 inset: 0;
 background: rgba(0,0,0,.45);
 z-index: 99999;
+overflow-y: auto;
 }
 .modalContent {
 background: white;
@@ -286,25 +284,24 @@ box-shadow: 0 10px 30px rgba(0,0,0,.3);
    GLOBAL
 ======================================= */
 .hidden {
-  display: none !impo*tant;
+  display: none !important;
 }
 .footerVersion {
-  opacit*: .45;
+  opacity: .45;
   font-size: 12px;
-  text-a*ign: center;
-  margin*top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 /* =======================================
    IMAGE MODAL
 ======================================= */
 .imageModal {
-  display: *one;
+  display: none;
   position: fixed;
-  inset: 0*
+  inset: 0;
   background: rgba(0,0,0,.9);
   z-index: 9999;
 }
-
 .modalImage {
   display: block;
   margin: 20px auto;
@@ -314,57 +311,61 @@ box-shadow: 0 10px 30px rgba(0,0,0,.3);
 /* =======================================
    IMPORT MODAL
 ======================================= */
-.area-block {
+.areaBlock {
   margin-bottom: 15px;
   padding-bottom: 10px;
 }
-.area-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.areaDetails {
+margin-top: 8px;
 }
-.area-title {
-  cursor: pointer;
-  flex: 1;
+.areaTotals {
+margin-left: 20px;
+margin-top: 8px;
 }
-.area-details {
-  margin-top: 8px;
+.areaHeader {
+display: flex;
+align-items: center;
+gap: 8px;
 }
-.area-totals {
-  margin-left: 20px;
-  margin-top: 8px;
+.areaHeader strong {
+cursor: pointer;
+flex: 1;
 }
-.area-photo-btn {
-  cursor: pointer;
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: transparent;
-  font-size: 14px;
-  width: auto;
-  margin-top: 0;
+.areaPhotoContainer {
+margin-left: 20px;
+margin-top: 8px;
 }
-.area-photo-btn:hover {
-  background: #f5f5f5;
+.areaPhotoBtn {
+cursor: pointer;
+padding: 5px 10px;
+border: 1px solid #ccc;
+border-radius: 6px;
+background: transparent;
+font-size: 14px;
+width: auto;
+margin-top: 0;
 }
-.area-photo-missing {
-  margin-left: 20px;
-  margin-top: 8px;
-  font-size: 12px;
-  opacity: .6;
+.areaPhotoBtn:hover {
+background: #f4f4f4;
 }
-.area-size {
-  cursor: pointer;
-  margin-left: 20px;
-  padding: 4px 0;
+.areaPhotoMissing {
+margin-left: 20px;
+margin-top: 8px;
+font-size: 12px;
+opacity: .6;
 }
-.area-entry {
-  margin-left: 40px;
-  padding: 2px 0;
+.areaSize {
+cursor: pointer;
+margin-left: 20px;
+padding: 4px 0;
 }
-.area-entries-header {
-  cursor: pointer;
-  font-weight: bold;
+.areaEntry {
+margin-left: 40px;
+padding: 2px 0;
+}
+.areaEntriesHeader {
+cursor: pointer;
+font-weight: bold;
 }
 /* =======================================
    ANALYTICS
@@ -412,56 +413,4 @@ button:active {
     max-width: 500px;
     margin: 10vh auto;
   }
-}
-.areaBlock {
-margin-bottom: 15px;
-padding-bottom: 10px;
-}
-.areaHeader {
-display: flex;
-align-items: center;
-gap: 8px;
-}
-.areaHeader strong {
-cursor: pointer;
-flex: 1;
-}
-.areaEntriesHeader {
-cursor: pointer;
-font-weight: bold;
-}
-.areaTotals {
-margin-left: 20px;
-margin-top: 8px;
-}
-.areaPhotoContainer {
-margin-left: 20px;
-margin-top: 8px;
-}
-.areaPhotoBtn {
-cursor: pointer;
-padding: 5px 10px;
-border: 1px solid #ccc;
-border-radius: 6px;
-background: transparent;
-font-size: 14px;
-width: auto;
-margin-top: 0;
-}
-.areaPhotoBtn:hover {
-background: #f4f4f4;
-}
-.areaPhotoMissing {
-margin-left: 20px;
-margin-top: 8px;
-font-size: 12px;
-opacity: .6;
-}
-.areaSize {
-cursor: pointer;
-margin-left: 20px;
-}
-.areaEntry {
-margin-left: 40px;
-padding: 2px 0;
 }
