@@ -204,7 +204,7 @@ const betaUsers = [
                         // --------------------------------------------------
                         // Maksimālais attēla platums/augstums
                         // --------------------------------------------------
-                        const maxSize = 800;
+                        const maxSize = 600;
                             let width = img.naturalWidth || img.width;
                             let height = img.naturalHeight || img.height;
                         const scale = Math.min(1,
@@ -233,7 +233,7 @@ const betaUsers = [
                         // JPEG
                         // --------------------------------------------------
                         const photo =
-                            canvas.toDataURL("image/jpeg", 0.4);
+                            canvas.toDataURL("image/jpeg", 0.5);
                         if (
                             !photo ||
                             photo === "data:,") {
