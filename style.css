@@ -5,7 +5,7 @@ body {
   margin: 0;
 }
 #appContent {
-width: min(95vw, 1100px);
+width: min(95vw, 900px);
 margin: 0 auto;
 }
 #locationSelect {
