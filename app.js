@@ -69,7 +69,7 @@ const betaUsers = [
             const hasEntries =
                 data.some(e => e.area === previousArea);
         if (
-            previousArea && !areaPhotos[previousArea]
+            hasEntries && !areaPhotos[previousArea]
         ) {
         if (
         confirm(
@@ -77,11 +77,10 @@ const betaUsers = [
         )) {
             currentArea = previousArea;
             document.getElementById("areaPhotoInput").click();
-            }
+            }}
+            previousArea = newArea;
         }
-        previousArea = newArea;
     }
-
     // --------------------------------------------------
     // Saglabā izvēlētā apgabala foto
     // --------------------------------------------------
