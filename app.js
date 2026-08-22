@@ -1361,13 +1361,15 @@ document.addEventListener("click", (e) => {
     document.getElementById("thickness").addEventListener("input", calculateGali);
     document.getElementById("width").addEventListener("input", calculateGali);
    
-        if (isBetaUser()) {
-        // ======================================================
-        // 📷 APGABALA FOTO
-        // ======================================================
-    document.getElementById("area")
-        .addEventListener("change", handleAreaChange);
-        }  
+        const areaSelect = document.getElementById("area");
+            if (areaSelect) {
+                areaSelect.removeEventListener("change",
+                    handleAreaChange
+                );
+                areaSelect.addEventListener("change",
+                    handleAreaChange
+                );
+            } 
     };
 
 // ✅ ERROR
