@@ -8,7 +8,8 @@ body {
 width: min(95vw, 800px);
 margin: 0 auto;
 }
-#area{
+#area,
+#comment{
 max-width: 300px;
 }
 #packages,
