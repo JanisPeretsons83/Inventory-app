@@ -2181,6 +2181,8 @@ function discardBackup() {
     document.getElementById("backupFile").value = "";
     document.getElementById("backupInfo").textContent = "";
     document.getElementById("backupInfo").style.display = "none";
+    localStorage.removeItem("areaPhotos");
+        areaPhotos = {};
   closeRestoreModal();
     document.getElementById("restoreModal")
   .style.display = "none";
