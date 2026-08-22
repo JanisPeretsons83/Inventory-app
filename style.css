@@ -12,14 +12,10 @@ margin: 0 auto;
 width: min(90vw, 500px);
 margin: 0 auto;
 }
-#locationSelect {
-max-width: 600px;
-}
-}
-}
 #locationSelect input,
 #locationSelect button {
 box-sizing: border-box;
+max-width: 450px;
 }
 #sizeSuggestions {
 display: none;
