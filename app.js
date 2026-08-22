@@ -1972,6 +1972,9 @@ function doLogout() {
     localStorage.removeItem("location");
     localStorage.removeItem("areaPhotos");
   areaPhotos = {};
+    currentArea = null;
+    previousArea = null;
+    photoTargetArea = null;
     data = [];
     document.getElementById("userNameInput").value = "";
       currentLocation = null;
@@ -2040,17 +2043,13 @@ function saveAndExit() {
 
 // ✅ BACKUP
 function saveBackup() {
-    const totalPackages =
-        data.reduce(
+    const totalPackages = data.reduce(
             (sum, e) =>
-                sum + (Number(e.packages) || 0),
-            0
+                sum + (Number(e.packages) || 0), 0
         );
-    const totalM3 =
-        data.reduce(
+    const totalM3 = data.reduce(
             (sum, e) =>
-                sum + (Number(e.total) || 0),
-            0
+                sum + (Number(e.total) || 0), 0
         );
     const now = new Date();
     const inventoryMonth =
@@ -2089,8 +2088,7 @@ function saveBackup() {
         // ==============================================
         // 📝 VISI IERAKSTI
         // ==============================================
-        entries:
-            data
+        entries: data
     };
     // Galvenais backup
     localStorage.setItem(
@@ -2104,7 +2102,15 @@ function saveBackup() {
     );
     console.log(
         "💾 Backup saglabāts ar foto:",
-        Object.keys(areaPhotos)
+        Object.keys(
+            backup.areaPhotos || {}
+        )
+    );
+    console.log(
+        "📷 Foto skaits:",
+        Object.keys(
+            backup.areaPhotos || {}
+        ).length
     );
 }
 
@@ -2167,6 +2173,10 @@ function restoreBackup() {
         } apgabalu foto.`,
         "success"
     );
+    currentArea = null;
+    previousArea = null;
+    photoTargetArea = null;
+    renderAreaPhotoPanel(null);
 }
 
 function discardBackup() {
@@ -2269,161 +2279,106 @@ async function importBackupFile(event) {
         // 2. Nolasa VISUS izvēlētos backup failus
         // ==========================================
         for (const file of files) {
-
             let backup;
-
             try {
                 const text = await file.text();
                 backup = JSON.parse(text);
-
             } catch (error) {
-
                 alert(
                     `Backup fails "${file.name}" nav derīgs JSON fails!`
                 );
-
                 return;
             }
-
             console.log(
                 `Ielādētais backup "${file.name}":`,
                 backup
             );
-
             // ==========================================
             // 2.1. Pārbauda backup struktūru
             // ==========================================
             if (!backup || typeof backup !== "object") {
-
                 alert(
                     `Backup failā "${file.name}" nav derīgu datu!`
                 );
-
                 return;
             }
-
             if (!Array.isArray(backup.entries)) {
-
                 alert(
                     `Backup failā "${file.name}" nav derīgu "entries" datu!`
                 );
-
                 return;
             }
-
             if (
                 !backup.summary ||
                 typeof backup.summary !== "object"
             ) {
-
                 alert(
                     `Backup failā "${file.name}" nav derīgu "summary" datu!`
                 );
-
                 return;
             }
-
-            // ==========================================
             // 2.2. Pievieno backup kopējam sarakstam
-            // ==========================================
             backups.push(backup);
-
-            // ==========================================
             // 2.3. Apvieno ierakstus un izņem dublikātus
-            // ==========================================
             for (const entry of backup.entries) {
-
                 if (!entry || typeof entry !== "object") {
                     continue;
                 }
-
                 const key = getEntryKey(entry);
-
                 if (seen.has(key)) {
                     duplicates++;
                     continue;
                 }
-
                 seen.add(key);
                 uniqueEntries.push(entry);
             }
         }
-
-        // ==========================================
         // 3. Pārbauda, vai vispār ir backup
-        // ==========================================
         if (backups.length === 0) {
-
             alert(
                 "Nav atrasts neviens derīgs backup fails!"
             );
-
             return;
         }
-
-        // ==========================================
         // 4. Nosaka aktīvo ražotni
-        // ==========================================
         const currentLocation =
             localStorage.getItem("location");
-
         if (!currentLocation) {
-
             alert(
                 "Nav iestatīta aktīvā ražotne!"
             );
-
             return;
         }
-
-        // ==========================================
         // 5. Pārbauda, vai VISI backup ir
         //    no tās pašas ražotnes
-        // ==========================================
         for (const backup of backups) {
-
             if (backup.location !== currentLocation) {
-
                 alert(
                     `Nevar ielādēt backup!
-
 Aktīvā ražotne: ${currentLocation}
-
 Backup ražotne: ${
     backup.location || "Nav norādīta"
 }`
                 );
-
                 return;
             }
         }
-
-        // ==========================================
         // 6. Nosaka pašreizējo un iepriekšējo mēnesi
-        // ==========================================
         const today = new Date();
-
         const currentMonth =
             today.getMonth() + 1;
-
         const currentYear =
             today.getFullYear();
-
         const previousDate = new Date(
             currentYear,
             currentMonth - 2,
             1
         );
-
         const previousMonth =
             previousDate.getMonth() + 1;
-
         const previousYear =
             previousDate.getFullYear();
-
-        // ==========================================
         // 7. Pārbauda katra backup datumu
-        // ==========================================
         for (const backup of backups) {
             const backupMonth =
                 Number(backup.inventoryMonth);
@@ -2692,7 +2647,7 @@ function renderImportAreas() {
                         <div class="areaPhotoContainer">
                             <button
                                 type="button"
-                                onclick="openImageFromSrc('${photo}')">
+                                onclick="viewImportedAreaPhoto('${photo}')">
                                 📷 Skatīt foto
                             </button>
                         </div>
