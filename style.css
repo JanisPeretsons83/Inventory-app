@@ -9,16 +9,19 @@ width: min(95vw, 800px);
 margin: 0 auto;
 }
 #area{
-max-width: 400px;
+max-width: 300px;
 }
-#packages{
+#packages,
+pieces{
 max-width: 250px;
 }
 #thickness,
 #width,
-#width,
-#month{
-max-width: 210px;
+#month,
+#year,
+#name,
+#productCode{
+max-width: 180px;
 }
 #locationSelect {
 width: min(90vw, 500px);
