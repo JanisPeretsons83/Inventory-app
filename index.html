@@ -91,9 +91,15 @@
       <div id="infoLine" class="info"></div>
         <!-- Apgabals -->
         <div id="mapsContainer" class="areaRow">
-            <select id="area">
+            <select id="area"
+                    onchange="handleAreaChange()">
                 <option value="">Apgabals *</option>
             </select>
+            <div
+                id="areaPhotoPanel"
+                class="areaPhotoPanel"
+                style="display:none;">
+            </div>
             <input
                 type="file"
                 id="areaPhotoInput"
