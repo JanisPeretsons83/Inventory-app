@@ -519,14 +519,14 @@ button:active {
     margin-bottom: 8px;
 }
 .areaPhotoPreview {
-    width: 160px;
-    max-width: 500px;
+    width: 90px;
+    max-width: 200px;
     margin: 0 auto 10px auto;
     text-align: center;
 }
 .areaPhotoPreview img {
-    width: 160px;
-    height: 120px;
+    width: 50px;
+    height: 30px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
