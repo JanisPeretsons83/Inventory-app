@@ -200,7 +200,7 @@ const betaUsers = [
         function (e) {
             img.onload =
                 function () {
-                    try 
+                    try {
                         // --------------------------------------------------
                         // Maksimālais attēla platums/augstums
                         // --------------------------------------------------
