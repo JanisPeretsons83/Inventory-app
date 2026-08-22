@@ -4,26 +4,13 @@ body {
   padding: 15px;
   margin: 0;
 }
-/* Telefons */
-@media (max-width: 768px) {
-#appContent,
-#locationSelect {
-max-width: 100%;
-}
-}
-/* Planšete */
-@media (min-width: 769px) and (max-width: 1200px) {
 #appContent {
-max-width: 900px;
+width: min(95vw, 1100px);
+margin: 0 auto;
 }
 #locationSelect {
-max-width: 600px;
-}
-}
-/* Dators */
-@media (min-width: 1201px) {
-#appContent {
-max-width: 1100px;
+width: min(90vw, 500px);
+margin: 0 auto;
 }
 #locationSelect {
 max-width: 600px;
