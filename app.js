@@ -2243,6 +2243,15 @@ function buildAreaSummary(entries) {
 
 async function importBackupFile(event) {
     const files = Array.from(event?.target?.files || []);
+        if (files.length > 1) {
+            importPhotos = confirm(
+                "Importēt arī foto?\n\n" +
+                "Foto palielina atmiņas patēriņu.\n" +
+                "Ja veido kopēju backup no daudziem lietotājiem, ieteicams izvēlēties Nē."
+                );
+} else {
+importPhotos = true;
+}
     const backupInfo = document.getElementById("backupInfo");
 
     // ==========================================
@@ -2444,17 +2453,19 @@ ${previousMonth}.${previousYear}`
         // 📷 APVIENO VISU BACKUP FAILU APGABALU FOTO
         // ======================================================
       const combinedAreaPhotos = {};
-        backups.forEach(backup => {
-        if (
-          backup.areaPhotos &&
-        typeof backup.areaPhotos === "object"
-        ) {
-        Object.assign(
-            combinedAreaPhotos,
-            backup.areaPhotos
-            );
-          }
-        });
+        if (importPhotos) {
+            backups.forEach(backup => {
+                if (
+                  backup.areaPhotos &&
+                typeof backup.areaPhotos === "object"
+                ) {
+                    Object.assign(
+                    combinedAreaPhotos,
+                    backup.areaPhotos
+                );
+              }
+            });
+        }
         // ==========================================
         // 10. Izveido vienotu importedBackup objektu
         // ==========================================
@@ -2513,7 +2524,8 @@ ${previousMonth}.${previousYear}`
             Ražotne: ${currentLocation}<br>
             Lietotājs: ${combinedUser}<br>
             Backup faili: ${backups.length}<br>
-            Dublikāti: ${duplicates}<br><br>
+            Dublikāti: ${duplicates}<br>
+            📷 Foto: ${importPhotos ? "Importēti" : "Izlaisti"}<br><br>
             📊 Inventarizācija<br>
             Ieraksti: ${combinedSummary.entries}<br>
             Paletes: ${combinedSummary.packages}<br>
