@@ -346,11 +346,6 @@ function renderAreaPhotoPanel(area) {
             <div class="areaPhotoButtons">
                 <button
                     type="button"
-                    onclick="viewImportedAreaPhoto('${area}')">
-                    🔄 Skatīt
-                </button>
-                <button
-                    type="button"
                     onclick="chooseAreaPhoto('${area}')">
                     🔄 Nomainīt
                 </button>
@@ -2648,7 +2643,7 @@ function renderImportAreas() {
                         <div class="areaPhotoContainer">
                             <button
                                 type="button"
-                                onclick="viewImportedAreaPhoto('${photo}')">
+                                onclick="viewImportedAreaPhoto('${area}')">
                                 📷 Skatīt foto
                             </button>
                         </div>
