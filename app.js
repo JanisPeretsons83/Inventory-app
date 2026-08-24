@@ -337,23 +337,25 @@ function renderAreaPhotoPanel(area) {
             <div class="areaPhotoTitle">
                 📷 Apgabala ${area} foto
             </div>
-            <div class="areaPhotoPreview">
-                <img
-                    src="${photo}"
-                    alt="Apgabala ${area} foto"
-                    onclick="viewAreaPhoto('${area}')">
-            </div>
-            <div class="areaPhotoButtons">
-                <button
-                    type="button"
-                    onclick="chooseAreaPhoto('${area}')">
-                    🔄 Nomainīt
-                </button>
-                <button
-                    type="button"
-                    onclick="deleteAreaPhoto('${area}')">
-                    🗑 Dzēst
-                </button>
+            <div class="areaPhotoContent">
+                <div class="areaPhotoPreview">
+                    <img
+                        src="${photo}"
+                        alt="Apgabala ${area} foto"
+                        onclick="viewAreaPhoto('${area}')">
+                </div>
+                <div class="areaPhotoButtons">
+                    <button
+                        type="button"
+                        onclick="chooseAreaPhoto('${area}')">
+                        🔄 Nomainīt
+                    </button>
+                    <button
+                        type="button"
+                        onclick="deleteAreaPhoto('${area}')">
+                        🗑 Dzēst
+                    </button>
+                </div>
             </div> `;
     } else {
         panel.innerHTML = `
