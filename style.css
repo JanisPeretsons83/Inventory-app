@@ -548,13 +548,15 @@ margin-bottom: 2px;
     background: white;
 }
 .areaPhotoPlaceholder {
+width: 56px;
+height: 56px;
 display: flex;
 align-items: center;
 justify-content: center;
 border: 1px dashed #bbb;
 border-radius: 6px;
 color: #888;
-background: #fafafa;
+font-size: 20px;
 }
 .areaPhotoButtons {
 display: flex;
