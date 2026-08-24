@@ -362,14 +362,19 @@ function renderAreaPhotoPanel(area) {
             <div class="areaPhotoTitle">
                 📷 Apgabala ${area} foto
             </div>
+        <div class="areaPhotoContent">
             <div class="areaPhotoPreview areaPhotoPlaceholder">
                 📷 Foto<br>nav<br>pievienots
             </div>
-            <button
-                type="button"
-                onclick="chooseAreaPhoto('${area}')">
-                📷 Pievienot<br>foto
-            </button> `;
+            <div class="areaPhotoButtons">
+                <button
+                    type="button"
+                    onclick="chooseAreaPhoto('${area}')">
+                    📷 Pievienot<br>foto
+                </button>
+            </div>
+        </div>
+        `;
     }
 }
 
