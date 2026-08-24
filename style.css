@@ -510,7 +510,7 @@ button:active {
 .areaPhotoContent {
 display: flex;
 align-items: center;
-gap: 8px;
+gap: 4px;
 }
 .areaPhotoPanel {
 margin-top: 4px;
@@ -528,18 +528,18 @@ margin-bottom: 2px;
 margin-bottom: 2px;
 }
 .areaPhotoPreview {
-    width: 70px;
-    max-width: 90px;
+    width: 56px;
+    height: 56px;
     margin: 0 auto 2px auto;
     position: relative;
     z-index: 999;
     text-align: center;
 }
 .areaPhotoPreview img {
-    width: 45px;
-    height: 28px;
+    width: 56px;
+    height: 56px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     border: 1px solid #ccc;
     background: white;
@@ -556,7 +556,7 @@ gap: 2px;
 flex-direction: column;
 }
 .areaPhotoButtons button {
-min-width: 60px;
+min-width: 55px;
 padding: 2px 4px;
 font-size: 10px;
 }
