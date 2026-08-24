@@ -363,7 +363,7 @@ function renderAreaPhotoPanel(area) {
                 📷 Apgabala ${area} foto
             </div>
             <div class="areaPhotoPreview areaPhotoPlaceholder">
-                📷 Foto nav pievienots
+                📷 Foto<br>nav<br>pievienots
             </div>
             <button
                 type="button"
