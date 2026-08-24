@@ -866,6 +866,10 @@ function saveUser() {
   setHeaderInfo();
   updateAreas();
   updateMaps();
+    currentArea = null;
+    previousArea = null;
+    photoTargetArea = null;
+        renderAreaPhotoPanel(null);
   checkBetaAccess();
 }
 
