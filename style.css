@@ -532,6 +532,7 @@ margin-bottom: 2px;
 .areaPhotoPreview {
     width: 56px;
     height: 56px;
+    flex: 0 0 56px;
     margin: 0 auto 2px auto;
     position: relative;
     z-index: 999;
@@ -546,11 +547,14 @@ margin-bottom: 2px;
     border: 1px solid #ccc;
     background: white;
 }
-.areaPhotoMissing {
-    padding: 12px;
-    margin-bottom: 8px;
-    text-align: center;
-    color: #777;
+.areaPhotoPlaceholder {
+display: flex;
+align-items: center;
+justify-content: center;
+border: 1px dashed #bbb;
+border-radius: 6px;
+color: #888;
+background: #fafafa;
 }
 .areaPhotoButtons {
 display: flex;
