@@ -1969,6 +1969,7 @@ function doLogout() {
     currentArea = null;
     previousArea = null;
     photoTargetArea = null;
+    renderAreaPhotoPanel(null);
     data = [];
     document.getElementById("userNameInput").value = "";
       currentLocation = null;
