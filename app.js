@@ -368,7 +368,7 @@ function renderAreaPhotoPanel(area) {
             <button
                 type="button"
                 onclick="chooseAreaPhoto('${area}')">
-                📷 Pievienot foto
+                📷 Pievienot<br>foto
             </button> `;
     }
 }
