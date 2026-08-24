@@ -568,4 +568,11 @@ min-width: 55px;
 padding: 2px 4px;
 font-size: 10px;
 }
-
+.areaPhotoButtons button,
+.areaPhotoPanel button {
+width: auto;
+min-width: 55px;
+padding: 2px 4px;
+font-size: 10px;
+line-height: 1.1;
+}
