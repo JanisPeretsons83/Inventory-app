@@ -526,6 +526,8 @@ margin-bottom: 2px;
     width: 70px;
     max-width: 90px;
     margin: 0 auto 2px auto;
+    position: relative;
+    z-index: 999;
     text-align: center;
 }
 .areaPhotoPreview img {
