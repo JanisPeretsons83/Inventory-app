@@ -1252,7 +1252,7 @@ function startVoiceRecognition() {
             recognition.lang = "lv-LV";
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
+            recognition.maxAlternatives = 5;
     const voiceResult = document.getElementById("voiceResult");
         voiceResult.classList.remove("hidden");
         voiceResult.innerHTML =
@@ -1265,6 +1265,12 @@ function startVoiceRecognition() {
         .toLowerCase();
         voiceResult.innerHTML =
             `🎤 Dzirdēju: <strong>${text}</strong>`;
+            for (let i = 0; i < event.results[0].length; i++) {
+                console.log(
+                    event.results[0][i].transcript,
+                    event.results[0][i].confidence
+                );
+                }
                 // Dimensiju aizpilde
                 const packageWords = {
                     "viena": 1,
