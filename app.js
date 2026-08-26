@@ -1265,6 +1265,37 @@ function startVoiceRecognition() {
         .toLowerCase();
         voiceResult.innerHTML =
             `🎤 Dzirdēju: <strong>${text}</strong>`;
+                // Dimensiju aizpilde
+                const packageWords = {
+                    "viena": 1,
+                    "divas": 2,
+                    "trīs": 3,
+                    "cetras": 4,
+                        "četras": 4,
+                    "piecas": 5,
+                    "sešas": 6,
+                    "septiņas": 7,
+                    "astoņas": 8,
+                    "deviņas": 9,
+                    "desmit": 10
+                };
+                    for (const [word, value] of Object.entries(packageWords)) {
+                        if (text.includes(word + " paka") ||
+                            text.includes(word + " pakas")) {
+                                document.getElementById("packages").value = value;
+                            break;
+                            }
+                    }        
+                const sizeMatch = text.match(
+                    /(\d+)\s*\*\s*(\d+)\s*\*\s*(\d+)/
+                );
+                    if (sizeMatch) {
+                        document.getElementById("thickness").value = sizeMatch[1];
+                        document.getElementById("width").value = sizeMatch[2];
+                        document.getElementById("length").value = sizeMatch[3];
+                            voiceResult.innerHTML += "<br>✅ Dimensijas aizpildītas";
+                    }
+                
                 // Tikai "pievienot"
             if (text === "pievienot") {
                 voiceResult.innerHTML +=
