@@ -1265,12 +1265,17 @@ function startVoiceRecognition() {
         .toLowerCase();
         voiceResult.innerHTML =
             `🎤 Dzirdēju: <strong>${text}</strong>`;
-            for (let i = 0; i < event.results[0].length; i++) {
-                console.log(
-                    event.results[0][i].transcript,
-                    event.results[0][i].confidence
-                );
-                }
+                let debugText = "";
+                    for (let i = 0; i < event.results[0].length; i++) {
+                        debugText += `<br>
+                            Variant ${i + 1}:
+                                ${event.results[0][i].transcript}
+                                (${event.results[0][i].confidence.toFixed(2)})`;
+                    }
+                    voiceResult.innerHTML += `<br>Alternatīvu skaits:
+                        ${event.results[0].length}`;
+                    voiceResult.innerHTML += debugText;
+                
                 // Dimensiju aizpilde
                 const packageWords = {
                     "viena": 1,
