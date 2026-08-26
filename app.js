@@ -1234,6 +1234,55 @@ document.getElementById("cancelEditBtn").style.display =
   "inline-block";
 }
 
+// 🎤 BALSS TESTS
+
+function startVoiceRecognition() {
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            showNotice(
+                "❌ Šī pārlūkprogramma neatbalsta balss ievadi.",
+                "error"
+            );
+        return;
+        }
+    const recognition =
+        new SpeechRecognition();
+            recognition.lang = "lv-LV";
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+    const voiceResult = document.getElementById("voiceResult");
+        voiceResult.classList.remove("hidden");
+        voiceResult.innerHTML =
+        "🎤 Klausos...";
+        recognition.start();
+        recognition.onresult = function(event) {
+    const text = event.results[0][0]
+        .transcript
+        .trim()
+        .toLowerCase();
+        voiceResult.innerHTML =
+            `🎤 Dzirdēju: <strong>${text}</strong>`;
+                // Tikai "pievienot"
+            if (text === "pievienot") {
+                voiceResult.innerHTML +=
+                    "<br>✅ Komanda atpazīta";
+                    add();
+            }
+        };
+            recognition.onerror = function(event) {
+                voiceResult.innerHTML =
+                    `❌ Kļūda: ${event.error}`;
+            };
+            recognition.onend = function() {
+                console.log(
+                    "🎤 Balss ieraksts pabeigts"
+                );
+            };
+}
+
 window.onload = () => {
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
@@ -1372,7 +1421,14 @@ document.addEventListener("click", (e) => {
                 areaSelect.addEventListener("change",
                     handleAreaChange
                 );
-            } 
+            }
+        const voiceBtn = document.getElementById("voiceBtn");
+            if (voiceBtn) {
+                voiceBtn.addEventListener(
+                    "click",
+                    startVoiceRecognition
+                );
+            }
     };
 
 // ✅ ERROR
