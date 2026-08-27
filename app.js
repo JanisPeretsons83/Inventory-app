@@ -1237,109 +1237,619 @@ document.getElementById("cancelEditBtn").style.display =
 // 🎤 BALSS TESTS
 
 function startVoiceRecognition() {
+
     const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            showNotice(
-                "❌ Šī pārlūkprogramma neatbalsta balss ievadi.",
-                "error"
-            );
+
+    if (!SpeechRecognition) {
+        showNotice(
+            "❌ Šī pārlūkprogramma neatbalsta balss ievadi.",
+            "error"
+        );
         return;
-        }
-    const recognition =
-        new SpeechRecognition();
-            recognition.lang = "lv-LV";
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 5;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "lv-LV";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 5;
+
     const voiceResult = document.getElementById("voiceResult");
-        voiceResult.classList.remove("hidden");
-        voiceResult.innerHTML =
-        "🎤 Klausos...";
-        recognition.start();
-        recognition.onresult = function(event) {
-    const rawText =
-        event.results[0][0].transcript;
-        alert("RAW: " + rawText);
-    let text = event.results[0][0]
-        //.transcript
-        .trim()
-        .toLowerCase();
-            alert("TEXT: " + text);
-        text = text
-           //.replace(/(\d)\.(\d{2})/g, "$1$2")
-           //.replace(/(\d)\s+(\d{2})/g, "$1$2")
-           //.replace(/(\d+)\s+simti/g, (_, n) =>
-           // String(Number(n) * 100)
-           //     )
-            .replace(/(\d+)\s+tūkstoši/g, (_, n) =>
-            String(Number(n) * 1000)
-                )
-            .replace(/(\d+)\s+tūkstots/g, (_, n) =>
-            String(Number(n) * 1000)
-            );
-            
-        voiceResult.innerHTML =
-            `🎤 Dzirdēju: <strong>${text}</strong>`;
-                let debugText = "";
-                    for (let i = 0; i < event.results[0].length; i++) {
-                        debugText += `<br>
-                            Variant ${i + 1}:
-                                ${event.results[0][i].transcript}
-                                (${event.results[0][i].confidence.toFixed(2)})`;
-                    }
-                    voiceResult.innerHTML += `<br>Alternatīvu skaits:
-                        ${event.results[0].length}`;
-                    voiceResult.innerHTML += debugText;
-                
-                // Dimensiju aizpilde
-                const packageWords = {
-                    "viena": 1,
-                    "divas": 2,
-                    "trīs": 3,
-                    "cetras": 4,
-                        "četras": 4,
-                    "piecas": 5,
-                    "sešas": 6,
-                    "septiņas": 7,
-                    "astoņas": 8,
-                    "deviņas": 9,
-                    "desmit": 10
-                };
-                    for (const [word, value] of Object.entries(packageWords)) {
-                        if (text.includes(word + " paka") ||
-                            text.includes(word + " pakas")) {
-                                document.getElementById("packages").value = value;
-                            break;
-                            }
-                    }        
-                const sizeMatch = text.match(
-                    /(\d+)\s*\*\s*(\d+)\s*\*\s*(\d+)/
-                );
-                    if (sizeMatch) {
-                        document.getElementById("thickness").value = sizeMatch[1];
-                        document.getElementById("width").value = sizeMatch[2];
-                        document.getElementById("length").value = sizeMatch[3];
-                            voiceResult.innerHTML += "<br>✅ Dimensijas aizpildītas";
-                    }
-                
-                // Tikai "pievienot"
-            if (text === "pievienot") {
-                voiceResult.innerHTML +=
-                    "<br>✅ Komanda atpazīta";
-                    add();
+
+    if (!voiceResult) {
+        console.error("Nav atrasts elements #voiceResult");
+        return;
+    }
+
+    voiceResult.classList.remove("hidden");
+    voiceResult.innerHTML = "🎤 Klausos...";
+
+    // ============================================================
+    // PALĪGFUNKCIJAS
+    // ============================================================
+
+    function normalizeText(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[.,!?;:]/g, " ")
+            .replace(/\s+/g, " ");
+    }
+
+    // ------------------------------------------------------------
+    // Latviešu skaitļu vārdnīca
+    // ------------------------------------------------------------
+
+    const units = {
+        "nulle": 0,
+        "viens": 1,
+        "viena": 1,
+        "vienu": 1,
+
+        "divi": 2,
+        "divas": 2,
+        "divu": 2,
+
+        "trīs": 3,
+        "tris": 3,
+
+        "četri": 4,
+        "četras": 4,
+        "četras": 4,
+        "cetri": 4,
+        "cetras": 4,
+
+        "pieci": 5,
+        "piecas": 5,
+
+        "seši": 6,
+        "sešas": 6,
+        "sesi": 6,
+        "sesas": 6,
+
+        "septiņi": 7,
+        "septiņas": 7,
+        "septini": 7,
+        "septinas": 7,
+
+        "astoņi": 8,
+        "astoņas": 8,
+        "astoni": 8,
+        "astonas": 8,
+
+        "deviņi": 9,
+        "deviņas": 9,
+        "devini": 9,
+        "devinas": 9
+    };
+
+    const tens = {
+        "desmit": 10,
+        "vienpadsmit": 11,
+        "divpadsmit": 12,
+        "trīspadsmit": 13,
+        "trispadsmit": 13,
+        "četrpadsmit": 14,
+        "cetrpadsmit": 14,
+        "piecpadsmit": 15,
+        "sešpadsmit": 16,
+        "sespadsmit": 16,
+        "septiņpadsmit": 17,
+        "septinpadsmit": 17,
+        "astoņpadsmit": 18,
+        "astonpadsmit": 18,
+        "deviņpadsmit": 19,
+        "devinpadsmit": 19,
+
+        "divdesmit": 20,
+        "trīsdesmit": 30,
+        "trisdesmit": 30,
+        "četrdesmit": 40,
+        "cetrdesmit": 40,
+        "piecdesmit": 50,
+        "sešdesmit": 60,
+        "sesdesmit": 60,
+        "septiņdesmit": 70,
+        "septindesmit": 70,
+        "astoņdesmit": 80,
+        "astondesmit": 80,
+        "deviņdesmit": 90,
+        "devindesmit": 90
+    };
+
+    const hundreds = {
+        "simts": 100,
+        "simtu": 100
+    };
+
+    const multipliers = {
+        "tūkstotis": 1000,
+        "tūkstoši": 1000,
+        "tūkstotis": 1000,
+        "tūkstoša": 1000,
+        "tukstotis": 1000,
+        "tukstosi": 1000,
+
+        "miljons": 1000000,
+        "miljoni": 1000000,
+        "miljonu": 1000000
+    };
+
+    // ------------------------------------------------------------
+    // Viens skaitlis no latviešu vārdiem
+    // ------------------------------------------------------------
+
+    function parseLatvianNumberWords(text) {
+        text = normalizeText(text);
+        // Ja jau ir tīrs cipars
+        if (/^\d+$/.test(text)) {
+            return Number(text);
+        }
+        const words = text.split(" ");
+        let total = 0;
+        let current = 0;
+        let foundNumber = false;
+        for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            if (units[word] !== undefined) {
+                current += units[word];
+                foundNumber = true;
+            } else if (tens[word] !== undefined) {
+                current += tens[word];
+                foundNumber = true;
+            } else if (hundreds[word] !== undefined) {
+                // "simts"
+                if (current === 0) {
+                    current = 100;
+                } else {
+                    current *= 100;
+                }
+                foundNumber = true;
+            } else if (multipliers[word] !== undefined) {
+                const multiplier = multipliers[word];
+                if (current === 0) {
+                    current = 1;
+                }
+                total += current * multiplier;
+                current = 0;
+                foundNumber = true;
+            } else if (word === "un") {
+                // neko nedarām
+            } else if (/^\d+$/.test(word)) {
+                current = Number(word);
+                foundNumber = true;
+            } else {
+                // Nepazīstams vārds.
+                // Neizmetam visu skaitli.
             }
-        };
-            recognition.onerror = function(event) {
-                voiceResult.innerHTML =
-                    `❌ Kļūda: ${event.error}`;
-            };
-            recognition.onend = function() {
-                console.log(
-                    "🎤 Balss ieraksts pabeigts"
-                );
-            };
+        }
+        total += current;
+        return foundNumber ? total : null;
+    }
+    // CIPARU VIRKŅU ATPAZĪŠANA
+    const digitWords = {
+        "nulle": "0",
+        "viens": "1",
+        "viena": "1",
+        "divi": "2",
+        "divas": "2",
+        "trīs": "3",
+        "tris": "3",
+        "četri": "4",
+        "četras": "4",
+        "cetri": "4",
+        "cetras": "4",
+        "pieci": "5",
+        "piecas": "5",
+        "seši": "6",
+        "sešas": "6",
+        "sesi": "6",
+        "sesas": "6",
+        "septiņi": "7",
+        "septiņas": "7",
+        "septini": "7",
+        "septinas": "7",
+        "astoņi": "8",
+        "astoņas": "8",
+        "astoni": "8",
+        "astonas": "8",
+        "deviņi": "9",
+        "deviņas": "9",
+        "devini": "9",
+        "devinas": "9"
+    };
+    function parseDigitSequence(text) {
+        const words = normalizeText(text).split(" ");
+        let result = "";
+        let found = false;
+        for (const word of words) {
+            if (/^\d+$/.test(word)) {
+                result += word;
+                found = true;
+            }
+            else if (digitWords[word] !== undefined) {
+                result += digitWords[word];
+                found = true;
+            }
+        }
+        return found && result.length > 0
+            ? Number(result)
+            : null;
+    }
+    // ATROD SKAITLI NOTEIKTĀ FRĀZĒ
+    function extractNumberAfterKeyword(text, keywords) {
+        for (const keyword of keywords) {
+            const regex = new RegExp(
+                keyword +
+                "\\s+(?:ir\\s+)?(.+?)(?=\\s+(?:pakas?|biezums|platums|garums|piezīme|piezime|atgādne|atgadne|pievienot|$))",
+                "i"
+            );
+            const match = text.match(regex);
+            if (match) {
+                const candidate = match[1].trim();
+                let number =
+                    parseLatvianNumberWords(candidate);
+                if (number !== null) {
+                    return number;
+                }
+                number =
+                    parseDigitSequence(candidate);
+                if (number !== null) {
+                    return number;
+                }
+            }
+        }
+        return null;
+    }
+    // DIMENSIJU ATPAZĪŠANA
+    function parseDimensions(text) {
+        let match;
+        // 1) 10 * 20 * 30
+        match = text.match(
+            /(\d+)\s*(?:\*|x|×|reiz|reizes)\s*(\d+)\s*(?:\*|x|×|reiz|reizes)\s*(\d+)/
+        );
+        if (match) {
+            return [
+                Number(match[1]),
+                Number(match[2]),
+                Number(match[3])
+            ];
+        }
+        // 2) "desmit reiz divdesmit reiz trīsdesmit"
+        const dimensionRegex =
+            /(.+?)\s+(?:reiz|reizes)\s+(.+?)\s+(?:reiz|reizes)\s+(.+?)(?=$|,)/;
+        match = text.match(dimensionRegex);
+        if (match) {
+            const a = parseLatvianNumberWords(match[1]);
+            const b = parseLatvianNumberWords(match[2]);
+            const c = parseLatvianNumberWords(match[3]);
+            if (
+                a !== null &&
+                b !== null &&
+                c !== null
+            ) {
+                return [a, b, c];
+            }
+        }
+        // 3) "10 20 30"
+        match = text.match(
+            /\b(\d+)\s+(\d+)\s+(\d+)\b/
+        );
+        if (match) {
+            return [
+                Number(match[1]),
+                Number(match[2]),
+                Number(match[3])
+            ];
+        }
+        return null;
+    }
+    // PAKU SKAITS
+    function parsePackages(text) {
+        // Piemēram:
+        // "3 pakas"
+        let match = text.match(
+            /(\d+)\s+(?:paka|pakas|pakām|pakam)/
+        );
+        if (match) {
+            return Number(match[1]);
+        }
+        // "trīs pakas"
+        match = text.match(
+            /(.+?)\s+(?:paka|pakas|pakām|pakam)/
+        );
+        if (match) {
+            const candidate = match[1].trim();
+            let number =
+                parseLatvianNumberWords(candidate);
+            if (number !== null) {
+                return number;
+            }
+            number =
+                parseDigitSequence(candidate);
+            if (number !== null) {
+                return number;
+            }
+        }
+        return null;
+    }
+    // IZVĒLAMIES LABĀKO ATPAZĪŠANAS VARIANTU
+    function chooseBestTranscript(results) {
+        const candidates = [];
+        for (let i = 0; i < results.length; i++) {
+            const transcript =
+                normalizeText(results[i].transcript);
+            const confidence =
+                results[i].confidence || 0;
+            let score = confidence;
+            // Papildu punkti, ja tekstā ir mums svarīgi
+            // atslēgvārdi.
+            if (
+                transcript.includes("paka") ||
+                transcript.includes("pakas")
+            ) {
+                score += 0.20;
+            }
+            if (transcript.includes("biezum")) {
+                score += 0.20;
+            }
+            if (transcript.includes("platum")) {
+                score += 0.20;
+            }
+            if (transcript.includes("garum")) {
+                score += 0.20;
+            }
+            if (
+                transcript.includes("pievienot") ||
+                transcript.includes("pievieno")
+            ) {
+                score += 0.30;
+            }
+            // Dimensiju pazīmes
+            if (
+                transcript.includes("*") ||
+                transcript.includes("reiz") ||
+                transcript.includes("reizes")
+            ) {
+                score += 0.20;
+            }
+            candidates.push({
+                text: transcript,
+                confidence: confidence,
+                score: score
+            });
+        }
+        candidates.sort(
+            (a, b) => b.score - a.score
+        );
+        return candidates.length
+            ? candidates[0]
+            : null;
+    }
+    // SĀKAM ATPAZĪŠANU
+    try {
+        recognition.start();
+    } catch (error) {
+        console.error(
+            "SpeechRecognition start error:",
+            error
+        );
+        voiceResult.innerHTML =
+            "❌ Neizdevās palaist balss atpazīšanu.";
+        return;
+    }
+    // REZULTĀTS
+    recognition.onresult = function(event) {
+        const result = event.results[0];
+        // Visi varianti
+        let debugText = "";
+        for (let i = 0; i < result.length; i++) {
+            const transcript =
+                result[i].transcript;
+            const confidence =
+                result[i].confidence || 0;
+            debugText += `
+                <br>
+                Variant ${i + 1}:
+                ${transcript}
+                (${confidence.toFixed(2)})
+            `;
+        }
+        // Izvēlamies labāko
+        const best =
+            chooseBestTranscript(result);
+        if (!best) {
+            voiceResult.innerHTML =
+                "❌ Neizdevās saprast runu.";
+            return;
+        }
+        let text = best.text;
+        // Tūkstoši
+        text = text
+            .replace(
+                /(\d+)\s+tūkstoši/g,
+                (_, n) =>
+                    String(Number(n) * 1000)
+            )
+            .replace(
+                /(\d+)\s+tūkstotis/g,
+                (_, n) =>
+                    String(Number(n) * 1000)
+            )
+            .replace(
+                /(\d+)\s+tukstosi/g,
+                (_, n) =>
+                    String(Number(n) * 1000)
+            );
+        // Parādām rezultātu
+        voiceResult.innerHTML = `
+            🎤 Dzirdēju:
+            <strong>${text}</strong>
+            <br>
+            ⭐ Izvēlētais variants:
+            ${best.confidence.toFixed(2)}
+            <br>
+            Alternatīvu skaits:
+            ${result.length}
+            ${debugText}
+        `;
+        // PAKAS
+        const packages =
+            parsePackages(text);
+        if (packages !== null) {
+            const field =
+                document.getElementById("packages");
+            if (field) {
+                field.value = packages;
+            }
+            voiceResult.innerHTML +=
+                `<br>📦 Pakas: <strong>${packages}</strong>`;
+        }
+        // DIMENSIJAS
+        const dimensions =
+            parseDimensions(text);
+        if (dimensions) {
+            const thickness =
+                document.getElementById("thickness");
+            const width =
+                document.getElementById("width");
+            const length =
+                document.getElementById("length");
+            if (thickness) {
+                thickness.value = dimensions[0];
+            }
+            if (width) {
+                width.value = dimensions[1];
+            }
+            if (length) {
+                length.value = dimensions[2];
+            }
+            voiceResult.innerHTML += `
+                <br>
+                📐 Dimensijas:
+                <strong>
+                    ${dimensions[0]} ×
+                    ${dimensions[1]} ×
+                    ${dimensions[2]}
+                </strong>
+            `;
+        }
+        // BIEZUMS
+        const thicknessValue =
+            extractNumberAfterKeyword(
+                text,
+                [
+                    "biezums",
+                    "biezumā",
+                    "biezuma"
+                ]
+            );
+        if (thicknessValue !== null) {
+            const field =
+                document.getElementById("thickness");
+            if (field) {
+                field.value =
+                    thicknessValue;
+            }
+            voiceResult.innerHTML +=
+                `<br>📏 Biezums: <strong>${thicknessValue}</strong>`;
+        }
+        // PLATUMS
+        const widthValue =
+            extractNumberAfterKeyword(
+                text,
+                [
+                    "platums",
+                    "platumā",
+                    "platuma"
+                ]
+            );
+        if (widthValue !== null) {
+            const field =
+                document.getElementById("width");
+            if (field) {
+                field.value =
+                    widthValue;
+            }
+            voiceResult.innerHTML +=
+                `<br>↔️ Platums: <strong>${widthValue}</strong>`;
+        }
+        // GARUMS
+        const lengthValue =
+            extractNumberAfterKeyword(
+                text,
+                [
+                    "garums",
+                    "garumā",
+                    "garuma"
+                ]
+            );
+        if (lengthValue !== null) {
+            const field =
+                document.getElementById("length");
+            if (field) {
+                field.value =
+                    lengthValue;
+            }
+            voiceResult.innerHTML +=
+                `<br>↕️ Garums: <strong>${lengthValue}</strong>`;
+        }
+        // "PIEVIENOT"
+        const addCommand =
+            /\bpievienot\b|\bpievieno\b|\bpievienoj\b/i.test(text);
+        if (addCommand) {
+            voiceResult.innerHTML +=
+                "<br>✅ Komanda «pievienot» atpazīta";
+            // Neliela aizture, lai lietotājs redz rezultātu
+            setTimeout(function() {
+                if (typeof add === "function") {
+                    add();
+                } else {
+                    console.error(
+                        "Funkcija add() nav atrasta."
+                    );
+                    voiceResult.innerHTML +=
+                        "<br>❌ Funkcija add() nav atrasta.";
+                }
+            }, 300);
+        }
+    };
+    // KĻŪDA
+    recognition.onerror = function(event) {
+        console.error(
+            "SpeechRecognition error:",
+            event.error
+        );
+        let message =
+            "❌ Balss atpazīšanas kļūda.";
+        if (event.error === "not-allowed") {
+            message =
+                "❌ Mikrofonam nav dota atļauja.";
+        }
+        else if (event.error === "no-speech") {
+            message =
+                "❌ Netika uztverta runa.";
+        }
+        else if (event.error === "audio-capture") {
+            message =
+                "❌ Neizdevās piekļūt mikrofonam.";
+        }
+        else if (event.error === "network") {
+            message =
+                "❌ Tīkla kļūda balss atpazīšanas laikā.";
+        }
+        voiceResult.innerHTML =
+            `${message}<br>Kļūda: ${event.error}`;
+    };
+    // BEIGAS
+    recognition.onend = function() {
+        console.log(
+            "🎤 Balss ieraksts pabeigts"
+        );
+    };
 }
 
 window.onload = () => {
