@@ -1271,8 +1271,8 @@ function startVoiceRecognition() {
            //.replace(/(\d)\.(\d{2})/g, "$1$2")
            //.replace(/(\d)\s+(\d{2})/g, "$1$2")
            //.replace(/(\d+)\s+simti/g, (_, n) =>
-            String(Number(n) * 100)
-                )
+           // String(Number(n) * 100)
+           //     )
             .replace(/(\d+)\s+tūkstoši/g, (_, n) =>
             String(Number(n) * 1000)
                 )
