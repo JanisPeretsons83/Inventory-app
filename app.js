@@ -1259,14 +1259,18 @@ function startVoiceRecognition() {
         "🎤 Klausos...";
         recognition.start();
         recognition.onresult = function(event) {
+    const rawText =
+        event.results[0][0].transcript;
+        alert("RAW: " + rawText);
     let text = event.results[0][0]
-        .transcript
+        //.transcript
         .trim()
         .toLowerCase();
+            alert("TEXT: " + text);
         text = text
-            .replace(/(\d)\.(\d{2})/g, "$1$2")
-            .replace(/(\d)\s+(\d{2})/g, "$1$2")
-            .replace(/(\d+)\s+simti/g, (_, n) =>
+           //.replace(/(\d)\.(\d{2})/g, "$1$2")
+           //.replace(/(\d)\s+(\d{2})/g, "$1$2")
+           //.replace(/(\d+)\s+simti/g, (_, n) =>
             String(Number(n) * 100)
                 )
             .replace(/(\d+)\s+tūkstoši/g, (_, n) =>
