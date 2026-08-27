@@ -1259,10 +1259,14 @@ function startVoiceRecognition() {
         "🎤 Klausos...";
         recognition.start();
         recognition.onresult = function(event) {
-    const text = event.results[0][0]
+    let text = event.results[0][0]
         .transcript
         .trim()
         .toLowerCase();
+        text = text
+            .replace(/(\d)\.(\d{2})/g, "$1$2")
+            .replace(/(\d)\s+(\d{2})/g, "$1$2");
+            
         voiceResult.innerHTML =
             `🎤 Dzirdēju: <strong>${text}</strong>`;
                 let debugText = "";
