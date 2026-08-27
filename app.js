@@ -1265,7 +1265,16 @@ function startVoiceRecognition() {
         .toLowerCase();
         text = text
             .replace(/(\d)\.(\d{2})/g, "$1$2")
-            .replace(/(\d)\s+(\d{2})/g, "$1$2");
+            .replace(/(\d)\s+(\d{2})/g, "$1$2")
+            .replace(/(\d+)\s+simti/g, (_, n) =>
+            String(Number(n) * 100)
+                )
+            .replace(/(\d+)\s+tūkstoši/g, (_, n) =>
+            String(Number(n) * 1000)
+                )
+            .replace(/(\d+)\s+tūkstots/g, (_, n) =>
+            String(Number(n) * 1000)
+            );
             
         voiceResult.innerHTML =
             `🎤 Dzirdēju: <strong>${text}</strong>`;
