@@ -827,9 +827,13 @@ function setHeaderInfo() {
     String(d.getDate()).padStart(2, "0") + "." +
     String(d.getMonth() + 1).padStart(2, "0") + "." +
     d.getFullYear();
-
-  document.getElementById("infoLine").innerText =
-    `${location} | ${name} | ${date}`;
+  const testText = isTestMode()
+    ? " 🧪 TEST"
+    : "";
+    document.getElementById("infoLine").innerText =
+        `${location} | ${name}${testText} | ${date}`;
+    document.getElementById("infoLine").innerText =
+        `${location} | ${name} | ${date}`;
 }
 
 function saveUser() {
