@@ -1235,6 +1235,86 @@ document.getElementById("cancelEditBtn").style.display =
 }
 
 // 🎤 BALSS TESTS
+function startVoiceRecognition() {
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        showNotice(
+            "⚠️ Balss ievade nav pieejama",
+            "error"
+        );
+    return;
+    }
+    const recognition =
+        new SpeechRecognition();
+            recognition.lang =
+                /iPad|iPhone|iPod/.test(
+            navigator.userAgent
+            )
+            ? "en-US"
+            : "lv-LV";
+            recognition.start();
+                showNotice(
+                    "🎤 Klausos...",
+                    "info"
+                );
+            recognition.onresult = function(event) {
+                const transcript =
+                    event.results[0][0].transcript;
+                        console.log(
+                            "🎤 Atpazīts:",
+                        transcript
+                        );
+                parseVoiceInput(
+                    transcript
+                );
+            };
+            recognition.onerror =
+    function(error) {
+        console.error(error);
+            showNotice(
+                "❌ Balss ievades kļūda",
+                "error"
+            );
+    };
+}
+function parseVoiceInput(transcript) {
+    const cleaned = transcript
+        .toLowerCase()
+        .replaceAll("tālāk", "next");
+    const parts = cleaned
+        .split("next")
+        .map(
+            part => part
+                .replace(/\s+/g, "")
+                .trim()
+        )
+        .filter(Boolean);
+    console.log(parts);
+    if (parts.length !== 7) {
+        showNotice(
+            "⚠️ Jābūt 7 laukiem",
+            "error"
+        );
+    return;
+    }
+    document.getElementById("packages").value = parts[0];
+    document.getElementById("thickness").value = parts[1];
+    document.getElementById("width").value = parts[2];
+    document.getElementById("length").value = parts[3];
+    document.getElementById("pieces").value = parts[4];
+    document.getElementById("month").value = parts[5];
+    document.getElementById("year").value =
+        Number(parts[6]) < 100 ? 2000 +
+        Number(parts[6])
+        : Number(parts[6]);
+    showNotice(
+        "✅ Dati aizpildīti",
+        "success"
+    );
+}
+
 
 window.onload = () => {
   const location = localStorage.getItem("location");
