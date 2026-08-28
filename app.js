@@ -1391,33 +1391,25 @@ function error(msg, fieldId = null) {
 }
   
 function checkBetaAccess() {
-  const user =
-    (localStorage.getItem("userName") || "")
-      .trim()
-      .toLowerCase();
-  const isBetaUser =
-    betaUsers.includes(user);
-      [
-        "betaFeatures",
-        "voiceBtn",
-        "betaImportView",
-        "betaAnalytics"
-      ].forEach(id => {
-  const el =
-    document.getElementById(id);
-  if (el) {
-    el.style.display =
-    isBetaUser ? "block" : "none";
-    }
-  });
+    const testMode = isTestMode(); [
+            "betaFeatures",
+            "voiceBtn",
+            "betaImportView",
+            "betaAnalytics"
+        ].forEach(id => {
+    const el = document.getElementById(id);
+        if (el) {el.style.display = testMode
+            ? "block"
+            : "none";
+            }
+        });
 }
 
-function isBetaUser() {
-  return betaUsers.includes(
-    (localStorage.getItem("userName") || "")
-      .trim()
-      .toLowerCase()
-    );
+function isTestMode() {
+    const user = (localStorage.getItem("userName") || "")
+        .trim()
+        .toLowerCase();
+    return user.endsWith(" test");
 }
 // ======================================================
 // 📷 FOTO PALĪGFUNKCIJAS
