@@ -1254,30 +1254,434 @@ function startVoiceRecognition() {
             )
             ? "en-US"
             : "lv-LV";
-            recognition.start();
-                showNotice(
-                    "🎤 Klausos...",
-                    "info"
-                );
-            recognition.onresult = function(event) {
-                const transcript =
-                    event.results[0][0].transcript;
-                        console.log(
-                            "🎤 Atpazīts:",
-                        transcript
-                        );
-                parseVoiceInput(
-                    transcript
-                );
-            };
-            recognition.onerror =
-    function(error) {
-        console.error(error);
+// 🎤 BALSS DATU IEVADĪŠANA
+// iOS -> English
+// Android -> Latviešu
+function isIOSDevice() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" &&
+         navigator.maxTouchPoints > 1);
+}
+
+function getVoiceLanguage() {
+    return isIOSDevice() ? "en-US" : "lv-LV";
+}
+// TEKSTA NORMALIZĒŠANA
+function normalizeVoiceText(text) {
+    return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,;:!?]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+// ANGĻU SKAITĻI
+const EN_ONES = {
+    zero: 0,
+    oh: 0,
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+    ten: 10,
+    eleven: 11,
+    twelve: 12,
+    thirteen: 13,
+    fourteen: 14,
+    fifteen: 15,
+    sixteen: 16,
+    seventeen: 17,
+    eighteen: 18,
+    nineteen: 19
+};
+const EN_TENS = {
+    twenty: 20,
+    thirty: 30,
+    forty: 40,
+    fifty: 50,
+    sixty: 60,
+    seventy: 70,
+    eighty: 80,
+    ninety: 90
+};
+// LATVIEŠU SKAITĻI
+const LV_ONES = {
+    nulle: 0,
+    viens: 1,
+    viena: 1,
+    divi: 2,
+    divas: 2,
+    tris: 3,
+    cetri: 4,
+    pieci: 5,
+    sesi: 6,
+    septini: 7,
+    astoni: 8,
+    devini: 9,
+    desmit: 10,
+    vienpadsmit: 11,
+    divpadsmit: 12,
+    trispadsmit: 13,
+    cetrpadsmit: 14,
+    piecpadsmit: 15,
+    sespadsmit: 16,
+    septinpadsmit: 17,
+    astonpadsmit: 18,
+    devinpadsmit: 19
+};
+const LV_TENS = {
+    divdesmit: 20,
+    trisdesmit: 30,
+    cetrdesmit: 40,
+    piecdesmit: 50,
+    sesdesmit: 60,
+    septindesmit: 70,
+    astondesmit: 80,
+    devindesmit: 90
+};
+// SKAITĻA PĀRVĒRŠANA
+function wordsToNumber(text, language) {
+    const s = normalizeVoiceText(text);
+    // Ja SpeechRecognition jau atdeva ciparus
+    if (/^\d+$/.test(s)) {
+        return Number(s);
+    }
+    const words = s
+        .split(/\s+/)
+        .filter(Boolean);
+    if (!words.length) {
+        return NaN;
+    }
+    // ANGĻU
+    if (language === "en-US") {
+        // Piemēram:
+        // "one five" -> 15
+        // "one seven eight eight" -> 1788
+        if (
+            words.every(word =>
+                EN_ONES[word] !== undefined &&
+                EN_ONES[word] < 10
+            )
+        ) {
+            return Number(
+                words
+                    .map(word => EN_ONES[word])
+                    .join("")
+            );
+        }
+        let total = 0;
+        let current = 0;
+        let found = false;
+        
+        for (const word of words) {
+            if (EN_ONES[word] !== undefined) {
+                current += EN_ONES[word];
+                found = true;
+            }
+            else if (EN_TENS[word] !== undefined) {
+                current += EN_TENS[word];
+                found = true;
+            }
+            else if (word === "hundred") {
+                current =
+                    (current || 1) * 100;
+                found = true;
+            }
+            else if (word === "thousand") {
+                total +=
+                    (current || 1) * 1000;
+                current = 0;
+                found = true;
+            }
+            else if (word === "and") {
+                continue;
+            }
+            else {
+                return NaN;
+            }
+        }
+        return found
+            ? total + current
+            : NaN;
+    }
+    // LATVIEŠU
+    if (language === "lv-LV") {
+        // Piemēram:
+        // "viens pieci" -> 15
+        if (
+            words.every(word =>
+                LV_ONES[word] !== undefined &&
+                LV_ONES[word] < 10
+            )
+        ) {
+            return Number(
+                words
+                    .map(word => LV_ONES[word])
+                    .join("")
+            );
+        }
+        let total = 0;
+        let current = 0;
+        let found = false;
+        for (const word of words) {
+            if (LV_ONES[word] !== undefined) {
+                current += LV_ONES[word];
+                found = true;
+            }
+            else if (LV_TENS[word] !== undefined) {
+                current += LV_TENS[word];
+                found = true;
+            }
+            else if (word === "simts") {
+                current =
+                    (current || 1) * 100;
+                found = true;
+            }
+            else if (word === "tukstotis") {
+                total +=
+                    (current || 1) * 1000;
+                current = 0;
+                found = true;
+            }
+            else if (word === "un") {
+                continue;
+            }
+            else {
+                return NaN;
+            }
+        }
+        return found
+            ? total + current
+            : NaN;
+    }
+    return NaN;
+}
+// SADALĪT PĒC "NEXT" / "TĀLĀK"
+function splitVoiceFields(transcript) {
+    const text = normalizeVoiceText(transcript)
+        // ANGĻU
+        .replace(/\bthen\b/g, " next ")
+        .replace(/\bnext\b/g, " next ")
+        // LATVIEŠU
+        .replace(/\btalak\b/g, " next ")
+        .replace(/\bnakosais\b/g, " next ")
+        .replace(/\bnakamais\b/g, " next ");
+    return text
+        .split(/\s+next\s+/)
+        .map(part => part.trim())
+        .filter(Boolean);
+}
+// IERAKSTĪT VĒRTĪBU LAUKĀ
+function setVoiceField(id, value) {
+    const el =
+        document.getElementById(id);
+    if (el) {
+        el.value = String(value);
+    }
+}
+// 🎤 START VOICE
+function startVoiceRecognition() {
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        showNotice(
+            isIOSDevice()
+                ? "⚠️ Šajā iOS pārlūkā balss ievade nav pieejama."
+                : "⚠️ Šajā Android pārlūkā balss ievade nav pieejama.",
+            "error"
+        );
+        return;
+    }
+    const language = getVoiceLanguage();
+    const recognition =
+        new SpeechRecognition();
+            recognition.lang = language;
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 3;
+    // NORĀDE LIETOTĀJAM
+    const example =
+        language === "en-US"
+        ? "1 next 15 next 44 next 1788 next 600 next 5 next 26"
+        : "1 tālāk 15 tālāk 44 tālāk 1788 tālāk 600 tālāk 5 tālāk 26";
+    showNotice(
+        language === "en-US"
+            ? "🎤 Speak: " + example
+            : "🎤 Saki: " + example,
+        "info"
+    );
+    // REZULTĀTS
+    recognition.onresult =
+        function(event) {
+            const transcript =
+                event.results[0][0]
+                    .transcript || "";
+            console.log(
+                "🎤 Atpazīts:",
+                transcript
+            );
+            console.log(
+                "🌐 Valoda:",
+                language
+            );
+            parseVoiceInput(transcript, language);
+        };
+    // KĻŪDA
+    recognition.onerror =
+        function(event) {
+            console.error(
+                "🎤 Balss kļūda:",
+                event
+            );
+            let message = "❌ Balss ievades kļūda";
+                if (
+                event.error ===
+                "not-allowed"
+                ) {
+                message = "❌ Atļauj mikrofonu pārlūkā un mēģini vēlreiz.";
+                }
+                else if (
+                event.error === "no-speech"
+                ) {
+                message = "❌ Balss netika sadzirdēta. Mēģini vēlreiz.";
+                }
             showNotice(
-                "❌ Balss ievades kļūda",
+                message,
                 "error"
             );
-    };
+        };
+    // SĀKT
+    try {
+        recognition.start();
+    }
+    catch (error) {
+        console.error(
+            "recognition.start:",
+            error
+        );
+        showNotice(
+            "❌ Neizdevās palaist mikrofonu.",
+            "error"
+        );
+    }
+}
+// 📥 APSTRĀDĀ BALSS IEVADI
+function parseVoiceInput(
+    transcript,
+    language = getVoiceLanguage()
+) {
+    const parts = splitVoiceFields(transcript);
+    console.log(
+        "🎤 Lauki:",
+        parts
+    );
+    // JĀBŪT 7 LAUKIEM
+    if (parts.length !== 7) {
+        showNotice(
+            language === "en-US"
+                ? `⚠️ I need 7 fields separated by "next". I heard ${parts.length}.`
+                : `⚠️ Vajag 7 laukus, atdalītus ar "tālāk". Atpazīti ${parts.length}.`,
+            "error"
+        );
+        return false;
+    }
+    // PĀRVĒRŠAM VISUS LAUKUS SKAITĻOS
+    const values =
+        parts.map(
+            part =>
+                wordsToNumber(
+                    part,
+                    language
+                )
+        );
+    // JA KĀDS NAV SKAITLIS
+    if (
+        values.some(
+            value =>
+                !Number.isFinite(value)
+        )
+    ) {
+        showNotice(
+            language === "en-US"
+                ? "⚠️ I couldn't understand one of the numbers."
+                : "⚠️ Neizdevās saprast kādu no skaitļiem.",
+            "error"
+        );
+        return false;
+    }
+    // 7 LAUKI
+    const [
+        packages,
+        thickness,
+        width,
+        length,
+        pieces,
+        month,
+        year
+    ] = values;
+    // VALIDĀCIJA
+    if (
+        packages <= 0 ||
+        thickness <= 0 ||
+        width <= 0 ||
+        length <= 0 ||
+        pieces <= 0 ||
+        month < 1 ||
+        month > 12 ||
+        year <= 0
+    ) {
+        showNotice(
+            language === "en-US"
+                ? "⚠️ One or more values are invalid."
+                : "⚠️ Viens vai vairāki ievadītie dati nav derīgi.",
+            "error"
+        );
+        return false;
+    }
+    // AIZPILDĀM FORMU
+    setVoiceField("packages", packages);
+    setVoiceField("thickness", thickness);
+    setVoiceField("width", width);
+    setVoiceField("length", length);
+    setVoiceField("pieces", pieces);
+    setVoiceField("month", month);
+    // 26 -> 2026
+    setVoiceField("year", year < 100
+            ? 2000 + year
+            : year
+    );
+    // JA ir "GALI" REŽĪMS
+    if (isGaliMode) {
+        isGaliMode = false;
+        const lengthInput =
+            document.getElementById("length");
+        const galiInputs = document.getElementById("galiInputs");
+        const galiBtn = document.getElementById("galiBtn");
+            if (lengthInput)
+                lengthInput.disabled = false;
+            if (galiInputs)
+                galiInputs.style.display = "none";
+            if (galiBtn)
+                galiBtn.classList.remove("active");
+    }
+    // ==================================================
+    // GATAVS
+    // ==================================================
+    showNotice(
+        language === "en-US"
+            ? "✅ Data filled in: 1 package, 15 × 44 × 1788 mm, 600 pieces, May 2026."
+            : "✅ Dati aizpildīti: 1 paka, 15 × 44 × 1788 mm, 600 gab., 05.2026.",
+        "success"
+    );
+    return true;
+}
 }
 function parseVoiceInput(transcript) {
     const cleaned = transcript
