@@ -1375,13 +1375,7 @@ document.addEventListener("click", (e) => {
                     handleAreaChange
                 );
             }
-        const voiceBtn = document.getElementById("voiceBtn");
-            if (voiceBtn) {
-                voiceBtn.addEventListener(
-                    "click",
-                    startVoiceRecognition
-                );
-            }
+        
     };
 
 // ✅ ERROR
