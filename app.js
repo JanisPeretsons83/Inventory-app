@@ -1332,7 +1332,7 @@ function voiceDigitsToNumber(text) {
     for (const part of parts) {
         // Ja telefons atgriež ciparu
         // "1 7 8 8"
-        if (/^\d$/.test(part)) {
+        if (/^\d+$/.test(part)) {
             digits += part;
             continue;
         }
@@ -1397,21 +1397,20 @@ function splitVoiceFields(transcript) {
 // ======================================================
 // 📝 AIZPILDA VIENU FORMAS LAUKU
 // ======================================================
-function setVoiceField(
-    id,
-    value
-) {
-    const input =
-        document.getElementById(id);
-    if (!input) {
-        console.warn(
-            "Balss lauks nav atrasts:",
-            id
-        );
-        return;
+function setVoiceField(id, value) {
+        const input = document.getElementById(id);
+            if (!input) {
+                console.warn("Balss lauks nav atrasts:", id);
+            return;
+            }
+                input.value = String(value);
+                input.dispatchEvent(
+                    new Event("input", { bubbles: true })
+                    );
+                input.dispatchEvent(
+                    new Event("change", { bubbles: true })
+                    );
     }
-    input.value = String(value);
-}
 // ======================================================
 // 🎤 START VOICE
 // ======================================================
@@ -1639,20 +1638,7 @@ function parseVoiceInput(
     // ==================================================
     // AIZPILDA FORMU
     // ==================================================
-    function setVoiceField(id, value) {
-        const input = document.getElementById(id);
-            if (!input) {
-                console.warn("Balss lauks nav atrasts:", id);
-            return;
-            }
-                input.value = String(value);
-                input.dispatchEvent(
-                    new Event("input", { bubbles: true })
-                    );
-                input.dispatchEvent(
-                    new Event("change", { bubbles: true })
-                    );
-    }
+    
     setVoiceField("packages", packages);
     setVoiceField("thickness", thickness);
     setVoiceField("width", width);
@@ -1660,7 +1646,7 @@ function parseVoiceInput(
     setVoiceField("pieces", pieces);
     setVoiceField("month", month);
     // 26 -> 2026
-    setVoiceField("year", year < 100 ? 2000 + year : year);
+    setVoiceField("year", year);;
     // ==================================================
     // ✅ GATAVS
     // ==================================================
