@@ -1639,6 +1639,20 @@ function parseVoiceInput(
     // ==================================================
     // AIZPILDA FORMU
     // ==================================================
+    function setVoiceField(id, value) {
+        const input = document.getElementById(id);
+            if (!input) {
+                console.warn("Balss lauks nav atrasts:", id);
+            return;
+            }
+                input.value = String(value);
+                input.dispatchEvent(
+                    new Event("input", { bubbles: true })
+                    );
+                input.dispatchEvent(
+                    new Event("change", { bubbles: true })
+                    );
+    }
     setVoiceField("packages", packages);
     setVoiceField("thickness", thickness);
     setVoiceField("width", width);
@@ -1647,20 +1661,6 @@ function parseVoiceInput(
     setVoiceField("month", month);
     // 26 -> 2026
     setVoiceField("year", year < 100 ? 2000 + year : year);
-    // ==================================================
-    // JA BIJA GALI REŽĪMS
-    // ==================================================
-    if (isGaliMode) {
-        isGaliMode = false;
-            const lengthInput = document.getElementById("length");
-            const galiInputs = document.getElementById("galiInputs");
-            const calcInfo = document.getElementById("calcInfo");
-            const galiBtn = document.getElementById("galiBtn");
-                if (lengthInput) {lengthInput.disabled = false;}
-                if (galiInputs) {galiInputs.style.display = "none";}
-                if (calcInfo) {calcInfo.style.display = "none";
-                    if (galiBtn) { galiBtn.classList.remove("active");}
-                    }
     // ==================================================
     // ✅ GATAVS
     // ==================================================
