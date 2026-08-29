@@ -1234,39 +1234,47 @@ document.getElementById("cancelEditBtn").style.display =
   "inline-block";
 }
 
-// 🎤 BALSS TESTS
-function startVoiceRecognition() {
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        showNotice(
-            "⚠️ Balss ievade nav pieejama",
-            "error"
-        );
-    return;
-    }
-    const recognition =
-        new SpeechRecognition();
-            recognition.lang =
-                /iPad|iPhone|iPod/.test(
-            navigator.userAgent
-            )
-            ? "en-US"
-            : "lv-LV";
+// ======================================================
 // 🎤 BALSS DATU IEVADĪŠANA
-// iOS -> English
-// Android -> Latviešu
+//
+// SECĪBA:
+// 1. Pakas
+// 2. Biezums
+// 3. Platums
+// 4. Garums
+// 5. Gabali pakā
+// 6. Mēnesis
+// 7. Gads
+//
+// iOS:
+// 1 next 1 5 next 4 4 next 1 7 8 8 next 6 0 0 next 5 next 2 6
+//
+// Android:
+// 1 tālāk 1 5 tālāk 4 4 tālāk 1 7 8 8 tālāk 6 0 0 tālāk 5 tālāk 2 6
+// ======================================================
+// ======================================================
+// 📱 NOSAKA iOS
+// ======================================================
 function isIOSDevice() {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === "MacIntel" &&
-         navigator.maxTouchPoints > 1);
+    return (
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (
+            navigator.platform === "MacIntel" &&
+            navigator.maxTouchPoints > 1
+        )
+    );
 }
-
+// ======================================================
+// 🌐 BALSS VALODA
+// ======================================================
 function getVoiceLanguage() {
-    return isIOSDevice() ? "en-US" : "lv-LV";
+    return isIOSDevice()
+        ? "en-US"
+        : "lv-LV";
 }
-// TEKSTA NORMALIZĒŠANA
+// ======================================================
+// 🧹 NORMALIZĒ BALSS TEKSTU
+// ======================================================
 function normalizeVoiceText(text) {
     return String(text || "")
         .toLowerCase()
@@ -1276,225 +1284,147 @@ function normalizeVoiceText(text) {
         .replace(/\s+/g, " ")
         .trim();
 }
-// ANGĻU SKAITĻI
-const EN_ONES = {
-    zero: 0,
-    oh: 0,
-    one: 1,
-    two: 2,
-    three: 3,
-    four: 4,
-    five: 5,
-    six: 6,
-    seven: 7,
-    eight: 8,
-    nine: 9,
-    ten: 10,
-    eleven: 11,
-    twelve: 12,
-    thirteen: 13,
-    fourteen: 14,
-    fifteen: 15,
-    sixteen: 16,
-    seventeen: 17,
-    eighteen: 18,
-    nineteen: 19
+// ======================================================
+// 🔢 VIENA LAUKA CIPARI
+//
+// "1 7 8 8" -> 1788
+// "6 0 0"     -> 600
+// "1 5"       -> 15
+//
+// Ja telefons atgriež "1788", arī tas strādās.
+// ======================================================
+const DIGIT_WORDS = {
+
+    // English
+    zero: "0",
+    oh: "0",
+    one: "1",
+    two: "2",
+    three: "3",
+    four: "4",
+    five: "5",
+    six: "6",
+    seven: "7",
+    eight: "8",
+    nine: "9",
+
+    // Latvian
+    nulle: "0",
+    viens: "1",
+    viena: "1",
+    divi: "2",
+    divas: "2",
+    tris: "3",
+    cetri: "4",
+    pieci: "5",
+    sesi: "6",
+    septini: "7",
+    astoni: "8",
+    devini: "9"
 };
-const EN_TENS = {
-    twenty: 20,
-    thirty: 30,
-    forty: 40,
-    fifty: 50,
-    sixty: 60,
-    seventy: 70,
-    eighty: 80,
-    ninety: 90
-};
-// LATVIEŠU SKAITĻI
-const LV_ONES = {
-    nulle: 0,
-    viens: 1,
-    viena: 1,
-    divi: 2,
-    divas: 2,
-    tris: 3,
-    cetri: 4,
-    pieci: 5,
-    sesi: 6,
-    septini: 7,
-    astoni: 8,
-    devini: 9,
-    desmit: 10,
-    vienpadsmit: 11,
-    divpadsmit: 12,
-    trispadsmit: 13,
-    cetrpadsmit: 14,
-    piecpadsmit: 15,
-    sespadsmit: 16,
-    septinpadsmit: 17,
-    astonpadsmit: 18,
-    devinpadsmit: 19
-};
-const LV_TENS = {
-    divdesmit: 20,
-    trisdesmit: 30,
-    cetrdesmit: 40,
-    piecdesmit: 50,
-    sesdesmit: 60,
-    septindesmit: 70,
-    astondesmit: 80,
-    devindesmit: 90
-};
-// SKAITĻA PĀRVĒRŠANA
-function wordsToNumber(text, language) {
-    const s = normalizeVoiceText(text);
-    // Ja SpeechRecognition jau atdeva ciparus
-    if (/^\d+$/.test(s)) {
-        return Number(s);
+
+function voiceDigitsToNumber(text) {
+    const normalized =
+        normalizeVoiceText(text);
+    const parts =
+        normalized.split(/\s+/);
+    let digits = "";
+    for (const part of parts) {
+        // Ja telefons atgriež ciparu
+        // "1 7 8 8"
+        if (/^\d$/.test(part)) {
+            digits += part;
+            continue;
+        }
+        // Ja telefons atgriež vārdus
+        // "one seven eight eight"
+        // "viens septini astoni astoni"
+        if (DIGIT_WORDS[part] !== undefined) {
+            digits += DIGIT_WORDS[part];
+        }
     }
-    const words = s
-        .split(/\s+/)
-        .filter(Boolean);
-    if (!words.length) {
+    if (!digits) {
         return NaN;
     }
-    // ANGĻU
-    if (language === "en-US") {
-        // Piemēram:
-        // "one five" -> 15
-        // "one seven eight eight" -> 1788
-        if (
-            words.every(word =>
-                EN_ONES[word] !== undefined &&
-                EN_ONES[word] < 10
-            )
-        ) {
-            return Number(
-                words
-                    .map(word => EN_ONES[word])
-                    .join("")
-            );
-        }
-        let total = 0;
-        let current = 0;
-        let found = false;
-        
-        for (const word of words) {
-            if (EN_ONES[word] !== undefined) {
-                current += EN_ONES[word];
-                found = true;
-            }
-            else if (EN_TENS[word] !== undefined) {
-                current += EN_TENS[word];
-                found = true;
-            }
-            else if (word === "hundred") {
-                current =
-                    (current || 1) * 100;
-                found = true;
-            }
-            else if (word === "thousand") {
-                total +=
-                    (current || 1) * 1000;
-                current = 0;
-                found = true;
-            }
-            else if (word === "and") {
-                continue;
-            }
-            else {
-                return NaN;
-            }
-        }
-        return found
-            ? total + current
-            : NaN;
-    }
-    // LATVIEŠU
-    if (language === "lv-LV") {
-        // Piemēram:
-        // "viens pieci" -> 15
-        if (
-            words.every(word =>
-                LV_ONES[word] !== undefined &&
-                LV_ONES[word] < 10
-            )
-        ) {
-            return Number(
-                words
-                    .map(word => LV_ONES[word])
-                    .join("")
-            );
-        }
-        let total = 0;
-        let current = 0;
-        let found = false;
-        for (const word of words) {
-            if (LV_ONES[word] !== undefined) {
-                current += LV_ONES[word];
-                found = true;
-            }
-            else if (LV_TENS[word] !== undefined) {
-                current += LV_TENS[word];
-                found = true;
-            }
-            else if (word === "simts") {
-                current =
-                    (current || 1) * 100;
-                found = true;
-            }
-            else if (word === "tukstotis") {
-                total +=
-                    (current || 1) * 1000;
-                current = 0;
-                found = true;
-            }
-            else if (word === "un") {
-                continue;
-            }
-            else {
-                return NaN;
-            }
-        }
-        return found
-            ? total + current
-            : NaN;
-    }
-    return NaN;
+    return Number(digits);
 }
-// SADALĪT PĒC "NEXT" / "TĀLĀK"
+// ======================================================
+// ✂️ SADALA 7 LAUKOS
+// ======================================================
 function splitVoiceFields(transcript) {
-    const text = normalizeVoiceText(transcript)
-        // ANGĻU
-        .replace(/\bthen\b/g, " next ")
-        .replace(/\bnext\b/g, " next ")
-        // LATVIEŠU
-        .replace(/\btalak\b/g, " next ")
-        .replace(/\bnakosais\b/g, " next ")
-        .replace(/\bnakamais\b/g, " next ");
+    let text =
+        normalizeVoiceText(
+            transcript
+        );
+    // ------------------------------------------
+    // iOS / angļu separatori
+    // ------------------------------------------
+    text = text
+        .replace(
+            /\bnext\b/g,
+            " | "
+        )
+        .replace(
+            /\bthen\b/g,
+            " | "
+        );
+    // ------------------------------------------
+    // Android / latviešu separatori
+    //
+    // tālāk pēc normalizācijas kļūst par "talak"
+    // ------------------------------------------
+    text = text
+        .replace(
+            /\btalak\b/g,
+            " | "
+        )
+        .replace(
+            /\bnakamais\b/g,
+            " | "
+        )
+        .replace(
+            /\bnakosais\b/g,
+            " | "
+        );
     return text
-        .split(/\s+next\s+/)
-        .map(part => part.trim())
+        .split("|")
+        .map(
+            part =>
+                part.trim()
+        )
         .filter(Boolean);
 }
-// IERAKSTĪT VĒRTĪBU LAUKĀ
-function setVoiceField(id, value) {
-    const el =
+// ======================================================
+// 📝 AIZPILDA VIENU FORMAS LAUKU
+// ======================================================
+function setVoiceField(
+    id,
+    value
+) {
+    const input =
         document.getElementById(id);
-    if (el) {
-        el.value = String(value);
+    if (!input) {
+        console.warn(
+            "Balss lauks nav atrasts:",
+            id
+        );
+        return;
     }
+    input.value = String(value);
 }
+// ======================================================
 // 🎤 START VOICE
+// ======================================================
 function startVoiceRecognition() {
     const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
+    // ------------------------------------------
+    // Browseris neatbalsta
+    // ------------------------------------------
     if (!SpeechRecognition) {
         showNotice(
-            isIOSDevice()
-                ? "⚠️ Šajā iOS pārlūkā balss ievade nav pieejama."
-                : "⚠️ Šajā Android pārlūkā balss ievade nav pieejama.",
+            "⚠️ Šajā pārlūkā balss ievade nav pieejama.",
             "error"
         );
         return;
@@ -1505,118 +1435,176 @@ function startVoiceRecognition() {
             recognition.lang = language;
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.maxAlternatives = 3;
-    // NORĀDE LIETOTĀJAM
-    const example =
-        language === "en-US"
-        ? "1 next 15 next 44 next 1788 next 600 next 5 next 26"
-        : "1 tālāk 15 tālāk 44 tālāk 1788 tālāk 600 tālāk 5 tālāk 26";
-    showNotice(
-        language === "en-US"
-            ? "🎤 Speak: " + example
-            : "🎤 Saki: " + example,
-        "info"
-    );
-    // REZULTĀTS
+            recognition.maxAlternatives = 5;
+    // ------------------------------------------
+    // Uz ekrāna parāda piemēru
+    // ------------------------------------------
+    if (language === "en-US") {
+        showNotice(
+            "🎤 Saki: 1 next 1 5 next 4 4 next 1 7 8 8 next 6 0 0 next 5 next 2 6",
+            "info"
+        );
+    }
+    else {
+        showNotice(
+            "🎤 Saki: 1 tālāk 1 5 tālāk 4 4 tālāk 1 7 8 8 tālāk 6 0 0 tālāk 5 tālāk 2 6",
+            "info"
+        );
+    }
+    // ==================================================
+    // 🎙 SĀK KLAUSĪTIES
+    // ==================================================
+
+    recognition.onstart =
+        function() {
+            console.log(
+                "🎤 Mikrofons ieslēgts"
+            );
+        };
+    // ==================================================
+    // 🎯 REZULTĀTS
+    // ==================================================
     recognition.onresult =
         function(event) {
-            const transcript =
-                event.results[0][0]
-                    .transcript || "";
+            let bestTranscript = "";
+            // Iziet cauri visām alternatīvām
+            for (
+                let i = 0;
+                i < event.results[0].length;
+                i++
+            ) {
+                const candidate =
+                    event.results[0][i]
+                        .transcript;
+                console.log(
+                    `🎤 Variants ${i + 1}:`,
+                    candidate
+                );
+                if (!bestTranscript) {
+                    bestTranscript = candidate;
+                }
+            }
             console.log(
-                "🎤 Atpazīts:",
-                transcript
+                "🎤 Izvēlētais:",
+                bestTranscript
             );
-            console.log(
-                "🌐 Valoda:",
-                language
-            );
-            parseVoiceInput(transcript, language);
+            // ------------------------------------------
+            // Parāda, ko telefons sadzirdēja
+            // ------------------------------------------
+            const voiceResult =
+                document.getElementById(
+                    "voiceResult"
+                );
+            if (voiceResult) {
+                voiceResult.style.display = "block";
+                voiceResult.classList.remove("hidden");
+                voiceResult.innerText = "🎤 Sadzirdēju: " + bestTranscript;
+            }
+            // ------------------------------------------
+            // Apstrādā
+            // ------------------------------------------
+            parseVoiceInput(bestTranscript);
         };
-    // KĻŪDA
+    // ==================================================
+    // ❌ KĻŪDAS
+    // ==================================================
     recognition.onerror =
         function(event) {
             console.error(
-                "🎤 Balss kļūda:",
-                event
+                "🎤 SpeechRecognition:",
+                event.error
             );
-            let message = "❌ Balss ievades kļūda";
-                if (
-                event.error ===
-                "not-allowed"
-                ) {
-                message = "❌ Atļauj mikrofonu pārlūkā un mēģini vēlreiz.";
-                }
-                else if (
+            let message = "❌ Balss ievades kļūda: " +
+                event.error;
+            if (
+                event.error === "not-allowed"
+            ) {
+                message = "❌ Nav atļauta piekļuve mikrofonam.";
+            }
+            else if (
                 event.error === "no-speech"
-                ) {
-                message = "❌ Balss netika sadzirdēta. Mēģini vēlreiz.";
-                }
-            showNotice(
-                message,
-                "error"
+            ) {
+                message = "⚠️ Balss netika sadzirdēta.";
+            }
+            else if (
+                event.error === "audio-capture"
+            ) {
+                message = "❌ Mikrofons nav pieejams.";
+            }
+            showNotice(message, "error");
+        };
+    recognition.onend =
+        function() {
+            console.log(
+                "🎤 Klausīšanās pabeigta"
             );
         };
-    // SĀKT
-    try {
-        recognition.start();
-    }
-    catch (error) {
-        console.error(
-            "recognition.start:",
-            error
-        );
+    // ==================================================
+    // ▶️ START
+    // ==================================================
+    try {recognition.start();}
+        catch (error) {
+            console.error(
+                "🎤 START kļūda:",
+            error);
         showNotice(
-            "❌ Neizdevās palaist mikrofonu.",
+            "❌ Neizdevās palaist balss ievadi.",
             "error"
         );
     }
 }
-// 📥 APSTRĀDĀ BALSS IEVADI
+// ======================================================
+// 📥 BALSS DATU APSTRĀDE
+// ======================================================
 function parseVoiceInput(
-    transcript,
-    language = getVoiceLanguage()
+    transcript
 ) {
+    // ------------------------------------------
+    // SADALA 7 GRUPĀS
+    // ------------------------------------------
     const parts = splitVoiceFields(transcript);
-    console.log(
-        "🎤 Lauki:",
-        parts
-    );
-    // JĀBŪT 7 LAUKIEM
-    if (parts.length !== 7) {
-        showNotice(
-            language === "en-US"
-                ? `⚠️ I need 7 fields separated by "next". I heard ${parts.length}.`
-                : `⚠️ Vajag 7 laukus, atdalītus ar "tālāk". Atpazīti ${parts.length}.`,
-            "error"
+        console.log(
+            "🎤 Balss grupas:",
+            parts
         );
+    // ------------------------------------------
+    // PĀRBAUDA GRUPU SKAITU
+    // ------------------------------------------
+    if (parts.length !== 7
+        ) {
+        showNotice(
+            `⚠️ Atpazīti ${parts.length} no 7 laukiem.`,
+            "error");
         return false;
     }
-    // PĀRVĒRŠAM VISUS LAUKUS SKAITĻOS
+    // ------------------------------------------
+    // SALĪMĒ CIPARUS
+    //
+    // "1 7 8 8" -> 1788
+    // ------------------------------------------
     const values =
         parts.map(
-            part =>
-                wordsToNumber(
-                    part,
-                    language
-                )
+            voiceDigitsToNumber
         );
-    // JA KĀDS NAV SKAITLIS
-    if (
-        values.some(
-            value =>
-                !Number.isFinite(value)
-        )
-    ) {
+    console.log(
+        "🔢 Balss skaitļi:",
+        values
+    );
+    // ------------------------------------------
+    // VAI VISI IR SKAITĻI
+    // ------------------------------------------
+    if (values.some(value =>
+                !Number.isFinite(value))
+        ) {
         showNotice(
-            language === "en-US"
-                ? "⚠️ I couldn't understand one of the numbers."
-                : "⚠️ Neizdevās saprast kādu no skaitļiem.",
+            "⚠️ Kādu ciparu neizdevās saprast.",
             "error"
         );
         return false;
     }
-    // 7 LAUKI
+    // ==================================================
+    // LAUKI
+    // ==================================================
     const [
         packages,
         thickness,
@@ -1626,26 +1614,31 @@ function parseVoiceInput(
         month,
         year
     ] = values;
+    // ==================================================
     // VALIDĀCIJA
+    // ==================================================
     if (
-        packages <= 0 ||
-        thickness <= 0 ||
-        width <= 0 ||
-        length <= 0 ||
-        pieces <= 0 ||
-        month < 1 ||
-        month > 12 ||
-        year <= 0
-    ) {
-        showNotice(
-            language === "en-US"
-                ? "⚠️ One or more values are invalid."
-                : "⚠️ Viens vai vairāki ievadītie dati nav derīgi.",
+        packages < 1 ||
+        thickness < 1 ||
+        width < 1 ||
+        length < 1 ||
+        pieces < 1
+    ) {showNotice(
+            "⚠️ Pakas vai dimensiju dati nav pareizi.",
+            "error");
+        return false;
+    }
+    if (month < 1 ||
+        month > 12
+        ) {showNotice(
+            "⚠️ Mēnesim jābūt no 1 līdz 12.",
             "error"
         );
         return false;
     }
-    // AIZPILDĀM FORMU
+    // ==================================================
+    // AIZPILDA FORMU
+    // ==================================================
     setVoiceField("packages", packages);
     setVoiceField("thickness", thickness);
     setVoiceField("width", width);
@@ -1653,72 +1646,34 @@ function parseVoiceInput(
     setVoiceField("pieces", pieces);
     setVoiceField("month", month);
     // 26 -> 2026
-    setVoiceField("year", year < 100
-            ? 2000 + year
-            : year
-    );
-    // JA ir "GALI" REŽĪMS
+    setVoiceField("year", year < 100 ? 2000 + year : year);
+    // ==================================================
+    // JA BIJA GALI REŽĪMS
+    // ==================================================
     if (isGaliMode) {
         isGaliMode = false;
-        const lengthInput =
-            document.getElementById("length");
-        const galiInputs = document.getElementById("galiInputs");
-        const galiBtn = document.getElementById("galiBtn");
-            if (lengthInput)
-                lengthInput.disabled = false;
-            if (galiInputs)
-                galiInputs.style.display = "none";
-            if (galiBtn)
-                galiBtn.classList.remove("active");
-    }
+            const lengthInput = document.getElementById("length");
+            const galiInputs = document.getElementById("galiInputs");
+            const calcInfo = document.getElementById("calcInfo");
+            const galiBtn = document.getElementById("galiBtn");
+                if (lengthInput) {lengthInput.disabled = false;}
+                if (galiInputs) {galiInputs.style.display = "none";}
+                if (calcInfo) {calcInfo.style.display = "none";
+                    if (galiBtn) { galiBtn.classList.remove("active");}
+                    }
     // ==================================================
-    // GATAVS
+    // ✅ GATAVS
     // ==================================================
     showNotice(
-        language === "en-US"
-            ? "✅ Data filled in: 1 package, 15 × 44 × 1788 mm, 600 pieces, May 2026."
-            : "✅ Dati aizpildīti: 1 paka, 15 × 44 × 1788 mm, 600 gab., 05.2026.",
+        `✅ ${packages} pak. | ` +
+        `${thickness}×${width}×${length} | ` +
+        `${pieces} gab. | ` +
+        `${String(month).padStart(2, "0")}.` +
+        `${year < 100 ? 2000 + year : year}`,
         "success"
     );
     return true;
 }
-}
-function parseVoiceInput(transcript) {
-    const cleaned = transcript
-        .toLowerCase()
-        .replaceAll("tālāk", "next");
-    const parts = cleaned
-        .split("next")
-        .map(
-            part => part
-                .replace(/\s+/g, "")
-                .trim()
-        )
-        .filter(Boolean);
-    console.log(parts);
-    if (parts.length !== 7) {
-        showNotice(
-            "⚠️ Jābūt 7 laukiem",
-            "error"
-        );
-    return;
-    }
-    document.getElementById("packages").value = parts[0];
-    document.getElementById("thickness").value = parts[1];
-    document.getElementById("width").value = parts[2];
-    document.getElementById("length").value = parts[3];
-    document.getElementById("pieces").value = parts[4];
-    document.getElementById("month").value = parts[5];
-    document.getElementById("year").value =
-        Number(parts[6]) < 100 ? 2000 +
-        Number(parts[6])
-        : Number(parts[6]);
-    showNotice(
-        "✅ Dati aizpildīti",
-        "success"
-    );
-}
-
 
 window.onload = () => {
   const location = localStorage.getItem("location");
