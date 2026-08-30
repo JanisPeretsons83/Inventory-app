@@ -5,7 +5,7 @@
 "scope": "/Inventory-app/",
 "display": "standalone",
 "background_color": "#ffffff",
-"theme_color": "#1f4e46",
+"theme_color": "#1f4e46"
 "icons": [
   {
   "src": "Icons/worklog-192-v2.PNG",
