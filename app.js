@@ -887,11 +887,21 @@ function updateYearFromMonth() {
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
-    const year =
+    const fullyear =
       month > currentMonth
       ? currentYear - 1
       : currentYear;
-    document.getElementById("year").value = year;
+    document.getElementById("year").value = fullYear % 100;
+}
+
+function getFullYear(shortYear) {
+    const year = Number(shortYear);
+    if (!Number.isInteger(year) ||
+        year < 0 ||
+        year > 99
+        ) {return null;
+    }
+    return 2000 + year;
 }
 
 // ✅ PIEVIENO IERAKSTU
@@ -901,7 +911,8 @@ function add() {
   const thicknessVal = Number(document.getElementById("thickness").value);
   const widthVal = Number(document.getElementById("width").value);
   const monthVal = Number(document.getElementById("month").value);
-  const yearVal = Number(document.getElementById("year").value);
+  const yearShortVal = Number(document.getElementById("year").value);
+  const yearVal = getFullYear(yearShortVal);
   if (!areaVal)
     return error("Apgabals obligāts", "area");
   if (packagesVal <= 0 || isNaN(packagesVal))
@@ -925,8 +936,16 @@ function add() {
   );
   if (!monthVal || monthVal < 1 || monthVal > 12)
     return error("Mēnesis 1–12", "month");
-  if (!yearVal)
-    return error("Gads obligāts", "year");
+  if (
+    yearVal === null ||
+    yearShortVal < 20 ||
+    yearShortVal > 99
+    ) {
+    return error(
+        "Gads jāievada ar 2 cipariem, piem. 26",
+        "year"
+        );
+    }
   if (!document.getElementById("grade").value)
     return error("Izvēlies šķiru", "gradeBtn");
   let rawLength =
@@ -1192,7 +1211,7 @@ function edit(i) {
     document.getElementById("width").value = e.width;
     document.getElementById("length").value = e.length;
     document.getElementById("month").value = e.month;
-    document.getElementById("year").value = e.year;
+    document.getElementById("year").value = Number(e.year) % 100;
     document.getElementById("pieces").value = e.pieces;
     document.getElementById("name").value = e.name;
     document.getElementById("productCode").value = e.code;
@@ -1352,7 +1371,7 @@ document.addEventListener("click", (e) => {
     // ✅ Ja gads tukšs, ieliek aktuālo
   if (!document.getElementById("year").value) {
         document.getElementById("year").value =
-      new Date().getFullYear();
+      new Date().getFullYear() % 100;
     }
   // ✅ LIVE APRĒĶINS
     document.getElementById("avgLength").addEventListener("input", calculateGali);
@@ -1382,6 +1401,38 @@ function error(msg, fieldId = null) {
         "error",
     fieldId
   );
+}
+
+// ======================================================
+// 💾 DROŠI SAGLABĀ DARBA DATUS
+// ======================================================
+function saveWorkingState() {
+    try {
+        localStorage.setItem(
+            "data",
+            JSON.stringify(data)
+        );
+        localStorage.setItem(
+            "areaPhotos",
+            JSON.stringify(areaPhotos)
+        );
+        return true;
+    }
+    catch (error) {
+        console.error(
+            "❌ Neizdevās saglabāt darba datus:",
+            error
+        );
+        const message =
+            error?.name === "QuotaExceededError"
+                ? "❌ Nepietiek vietas pārlūka krātuvē."
+                : "❌ Neizdevās saglabāt darba datus.";
+        showNotice(
+            message,
+            "error"
+        );
+        return false;
+    }
 }
 
 function checkBetaAccess() {
@@ -2015,102 +2066,97 @@ function closeConfirmModal() {
     }
 
 function saveAndExit() {
-  if (dataChanged) {
-    saveBackup();
-    exportBackupFile();
-    dataChanged = false;
-      showNotice(
-        "✅ Izveidota rezerves kopija",
-        "success"
-        );
-  } else {
-    showNotice(
-      "ℹ️ Izmaiņu nav, rezerves kopija netika veidota",
-      "info"
-      );
+    // JA IR IZMAIŅAS
+    if (dataChanged) {
+        const backupSaved =
+            saveBackup();
+        // ❌ Ja lokālais backup neizdevās,
+        // NEIZLOGOJAM lietotāju.
+        if (!backupSaved) {
+            showNotice(
+                "❌ Backup neizdevās. Darbs netika pabeigts.",
+                "error");
+            return;
+        }
+        const exported = exportBackupFile();
+        // ❌ Ja pat failu neizdevās sagatavot
+        if (!exported) {
+            showNotice(
+                "❌ Backup failu neizdevās izveidot. Darbs netika pabeigts.",
+                "error");
+            return;
+        }
+        dataChanged = false;
+        showNotice(
+            "✅ Izveidota rezerves kopija",
+            "success");
     }
-  closeConfirmModal();
-  doLogout();
-  }
+    else {
+        showNotice(
+            "ℹ️ Izmaiņu nav, rezerves kopija netika veidota",
+            "info");
+    }
+    closeConfirmModal();
+    doLogout();
+}
 
 // ✅ BACKUP
 function saveBackup() {
     const totalPackages = data.reduce(
-            (sum, e) =>
-                sum + (Number(e.packages) || 0), 0
-        );
-    const totalM3 = data.reduce(
-            (sum, e) =>
-                sum + (Number(e.total) || 0), 0
-        );
+            (sum, e) => sum + (Number(e.packages) || 0), 0);
+    const totalM3 = data.reduce((sum, e) => 
+            sum + (Number(e.total) || 0), 0);
     const now = new Date();
-    const inventoryMonth =
-        now.getMonth() + 1;
-    const inventoryYear =
-        now.getFullYear();
-    const backup = {
-        timestamp:
+    const inventoryMonth = now.getMonth() + 1;
+    const inventoryYear = now.getFullYear();
+    const backup = {timestamp:
             now.toISOString(),
-        user:
-            localStorage.getItem("userName") || "",
-        location:
-            localStorage.getItem("location") || "",
-        inventoryMonth:
-            inventoryMonth,
-        inventoryYear:
-            inventoryYear,
-        inventoryPeriod:
-            `${String(inventoryMonth).padStart(2, "0")}.${inventoryYear}`,
-        // ==============================================
-        // 📷 VISI APGABALU FOTO
-        // ==============================================
-        areaPhotos:
-            { ...areaPhotos },
-        // ==============================================
-        // 📊 KOPSAVILKUMS
-        // ==============================================
-        summary: {
-            entries:
-                data.length,
-            packages:
-                totalPackages,
-            totalM3:
-                Number(totalM3.toFixed(4))
-        },
-        // ==============================================
-        // 📝 VISI IERAKSTI
-        // ==============================================
+        user: localStorage.getItem("userName") || "",
+        location: localStorage.getItem("location") || "",
+        inventoryMonth,
+        inventoryYear,
+        inventoryPeriod: `${String(inventoryMonth)
+                .padStart(2, "0")}.${inventoryYear}`,
+        summary: {entries:
+                    data.length,
+                packages:
+                    totalPackages,
+                totalM3:
+                    Number(totalM3.toFixed(4))},
         entries: data
     };
     try {
-    localStorage.setItem(
-        "backupData",
-        JSON.stringify(backup)
-    );
-    localStorage.setItem(
-        "areaPhotos",
-        JSON.stringify(areaPhotos)
-    );
-} catch (error) {
-    console.error("Neizdevās saglabāt backup:", error);
-    showNotice(
-        "❌ Nepietiek vietas rezerves kopijas saglabāšanai.",
-        "error"
-    );
-    return;
-}
-    console.log(
-        "💾 Backup saglabāts ar foto:",
-        Object.keys(
-            backup.areaPhotos || {}
-        )
-    );
-    console.log(
-        "📷 Foto skaits:",
-        Object.keys(
-            backup.areaPhotos || {}
-        ).length
-    );
+        localStorage.setItem(
+            "backupData",
+            JSON.stringify(backup)
+        );
+        // Foto tiek glabāti tikai VIENĀ vietā
+        localStorage.setItem(
+            "areaPhotos",
+            JSON.stringify(areaPhotos)
+        );
+        console.log(
+            "💾 Backup saglabāts"
+        );
+        console.log(
+            "📷 Foto skaits:",
+            Object.keys(areaPhotos).length
+        );
+        return true;
+    }
+    catch (error) {
+        console.error(
+            "❌ Neizdevās saglabāt backup:",
+            error
+        );
+        showNotice(
+            error?.name === "QuotaExceededError"
+                ? "❌ Nepietiek vietas rezerves kopijas saglabāšanai."
+                : "❌ Neizdevās saglabāt rezerves kopiju.",
+            "error"
+        );
+        return false;
+    }
 }
 
 function closeRestoreModal() {
@@ -2148,21 +2194,39 @@ function restoreBackup() {
         Array.isArray(backup.entries)
             ? backup.entries
             : [];
-    localStorage.setItem(
-        "data",
-        JSON.stringify(data)
+    if (!saveWorkingState()) {
+    showNotice(
+        "❌ Izvēlētos datus neizdevās saglabāt.",
+        "error"
     );
+    return;
+}
     // Atjauno apgabalu foto
     areaPhotos =
         backup.areaPhotos &&
         typeof backup.areaPhotos === "object"
             ? { ...backup.areaPhotos }
             : {};
-    // Saglabā arī atsevišķi
-    localStorage.setItem(
-        "areaPhotos",
-        JSON.stringify(areaPhotos)
-    );
+    let storedPhotos = {};
+        try {storedPhotos = JSON.parse(
+            localStorage.getItem("areaPhotos") || "{}"
+        );
+}
+catch (error) {
+    storedPhotos = {};
+}
+areaPhotos =
+    Object.keys(storedPhotos).length
+        ? storedPhotos
+        : (
+            backup.areaPhotos &&
+            typeof backup.areaPhotos === "object"
+                ? { ...backup.areaPhotos }
+                : {}
+        );
+if (!saveWorkingState()) {
+    return;
+}
     dataChanged = false;
     render();
     closeRestoreModal();
@@ -2198,33 +2262,53 @@ function discardBackup() {
 }
 
 function exportBackupFile() {
-  const backup =
-    JSON.parse(
-    localStorage.getItem("backupData")
-    );
-  if (!backup) return;
-  const location =
-    safeFileName(backup.location);
-  const user =
-    safeFileName(backup.user);
-  const d = new Date();
-  const fileDate =
-    String(d.getDate()).padStart(2, "0") + "-" +
-    String(d.getMonth() + 1).padStart(2, "0") + "-" +
-      d.getFullYear();
-  const timeStr =
-    String(d.getHours()).padStart(2, "0") +
-    String(d.getMinutes()).padStart(2, "0") +
-    String(d.getSeconds()).padStart(2, "0");
-  const blob = new Blob(
-    [JSON.stringify(backup, null, 2)],
-    { type: "application/json" }
-    );
-    saveAs(
-      blob,
-      `inv_${location}_${user}_${fileDate}_${timeStr}_backup.json`
-    );
-  dataChanged = false;
+    try {
+        const backupRaw = localStorage.getItem(
+                "backupData");
+        if (!backupRaw) {
+            showNotice(
+                "❌ Backup dati nav atrasti.",
+                "error");
+            return false;
+        }
+        const storedBackup =
+            JSON.parse(backupRaw);
+        // 📷 FOTO PIEVIENO TIKAI EKSPORTĒJAMAJAM FAILAM
+        const exportBackup = {
+            ...storedBackup,
+            areaPhotos: {
+                ...areaPhotos
+            }
+        };
+        const location = safeFileName(exportBackup.location);
+        const user = safeFileName(exportBackup.user);
+        const d =
+            new Date();
+        const fileDate =
+            String(d.getDate()).padStart(2, "0") + "-" +
+            String(d.getMonth() + 1).padStart(2, "0") + "-" +
+            d.getFullYear();
+        const timeStr =
+            String(d.getHours()).padStart(2, "0") +
+            String(d.getMinutes()).padStart(2, "0") +
+            String(d.getSeconds()).padStart(2, "0");
+        const blob = new Blob([
+                    JSON.stringify(exportBackup,
+                        null, 2)],
+                {type: "application/json"}
+            );
+        saveAs(blob,
+            `inv_${location}_${user}_${fileDate}_${timeStr}_backup.json`
+        );
+        return true;
+    }
+    catch (error) {
+        console.error("❌ Backup eksporta kļūda:",
+            error);
+        showNotice("❌ Neizdevās izveidot backup failu.",
+            "error");
+        return false;
+    }
 }
 
 function buildAreaSummary(entries) {
@@ -2248,6 +2332,7 @@ function buildAreaSummary(entries) {
 
 async function importBackupFile(event) {
     const files = Array.from(event?.target?.files || []);
+    let importPhotos = true;
         if (files.length > 1) {
             importPhotos = confirm(
                 "Importēt arī foto?\n\n" +
@@ -2823,29 +2908,40 @@ function restoreImportedBackup() {
         );
         return;
     }
+// ==============================================
+// ⚠️ DROŠĪBAS APSTIPRINĀJUMS
+// ==============================================
+if (data.length > 0) {
+    const confirmed = confirm(
+        "⚠️ Darba režīmā jau ir ievadīti dati.\n\n" +
+        `Pašlaik: ${data.length} ieraksti.\n\n` +
+        "Atjaunojot VISU backup, pašreizējie dati tiks aizvietoti.\n\n" +
+        "Vai tiešām turpināt?"
+    );
+    if (!confirmed) {
+        return;
+    }
+}
     // ==============================================
     // 📝 ATJAUNO IERAKSTUS
     // ==============================================
-    data =
-        [...importedBackup.entries];
-    localStorage.setItem(
-        "data",
-        JSON.stringify(data)
-    );
+    data = [...importedBackup.entries];
     // ==============================================
     // 📷 ATJAUNO VISUS APGABALU FOTO
     // ==============================================
-    areaPhotos =
-        importedBackup.areaPhotos &&
+    areaPhotos = importedBackup.areaPhotos &&
         typeof importedBackup.areaPhotos === "object"
             ? {
                 ...importedBackup.areaPhotos
             }
             : {};
-    localStorage.setItem(
-        "areaPhotos",
-        JSON.stringify(areaPhotos)
+   if (!saveWorkingState()) {
+    showNotice(
+        "❌ Importētos datus neizdevās saglabāt.",
+        "error"
     );
+    return;
+}
     dataChanged = true;
     // ==============================================
     // NOTĪRA BACKUP INPUT
@@ -2976,14 +3072,13 @@ function restoreSelectedAreas() {
     // ==============================================
     // 💾 SAGLABĀ
     // ==============================================
-    localStorage.setItem(
-        "data",
-        JSON.stringify(data)
+    if (!saveWorkingState()) {
+    showNotice(
+        "❌ Izvēlētos datus neizdevās saglabāt.",
+        "error"
     );
-    localStorage.setItem(
-        "areaPhotos",
-        JSON.stringify(areaPhotos)
-    );
+    return;
+}
     dataChanged = true;
     // ==============================================
     // PĀRZĪMĒ
