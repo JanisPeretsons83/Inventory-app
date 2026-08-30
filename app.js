@@ -1427,6 +1427,25 @@ function parseLabelOCR(text) {
     return result;
 }
 // ======================================================
+// 📝 IELIEK VĒRTĪBU FORMAS LAUKĀ
+// ======================================================
+function setVoiceField(id, value) {
+    const input = document.getElementById(id);
+    if (!input) {
+        console.warn("Lauks nav atrasts:", id);
+        return;
+    }
+    input.value = String(value);
+    input.dispatchEvent(
+        new Event("input",
+            { bubbles: true })
+    );
+    input.dispatchEvent(
+        new Event("change",
+            { bubbles: true })
+    );
+}
+// ======================================================
 // 📝 AIZPILDA FORMU NO ETIĶETES
 // ======================================================
 function fillFormFromLabel(data) {
