@@ -1234,7 +1234,307 @@ document.getElementById("cancelEditBtn").style.display =
   "inline-block";
 }
 
+// ======================================================
+// 📷 ETIĶETES / LAPIŅAS NOLASĪŠANA
+// TEST MODE
+// ======================================================
+// ======================================================
+// 📷 ATVĒR KAMERU
+// ======================================================
+function startLabelScan() {
+    // Drošība — funkcija tikai TEST lietotājiem
+    if (!isTestMode()) {
+        return;
+    }
+    const input = document.getElementById("labelImageInput");
+    if (!input) {
+        console.error(
+            "❌ labelImageInput nav atrasts"
+        );
+        return;
+    }
+    // Ļauj nofotografēt to pašu failu atkārtoti
+    input.value = "";
+    input.click();
+}
+// ======================================================
+// 📷 SAŅEM NOFOTOGRAFĒTO ATTĒLU
+// ======================================================
+async function handleLabelImage(event) {
+    if (!isTestMode()) {
+        return;
+    }
+    const file = event.target.files?.[0];
+    if (!file) {
+        return;
+    }
+    const scanResult = document.getElementById("scanResult");
+        if (scanResult) {
+            scanResult.style.display = "block";
+            scanResult.innerHTML = "📷 Nolasa lapiņu...";
+        }
+    showNotice(
+        "📷 Notiek lapiņas nolasīšana...",
+        "info"
+    );
+    try {
+        // ==================================================
+        // 🔎 OCR
+        // ==================================================
+        const result = await Tesseract.recognize(
+                file,
+                "eng",
+                {
+                    logger: info => {
+                        console.log(
+                            "OCR:",
+                            info
+                        );
+                        if (scanResult && info.status ===
+                                "recognizing text"
+                        ) {
+                            const percent = Math.round(
+                                    (info.progress || 0) * 100
+                                );
+                            scanResult.innerHTML = `📷 Nolasa lapiņu... ${percent}%`;
+                        }
+                    }
+                }
+            );
+        const text = result.data.text || "";
+        console.log(
+            "📷 OCR TEKSTS:"
+        );
+        console.log(text);
+        // ==================================================
+        // 🧠 IZVELK VAJADZĪGOS DATUS
+        // ==================================================
+        const data =
+            parseLabelOCR(text);
+        // ==================================================
+        // 📝 AIZPILDA FORMU
+        // ==================================================
+        fillFormFromLabel(data);
+        // ==================================================
+        // 👁 PARĀDA REZULTĀTU
+        // ==================================================
+        showLabelScanResult(
+            data,
+            text
+        );
+    }
+    catch (error) {
+        console.error(
+            "📷 OCR kļūda:",
+            error
+        );
+        if (scanResult) {
+            scanResult.innerHTML = "❌ Lapiņu neizdevās nolasīt.";
+        }
+        showNotice( "❌ Lapiņu neizdevās nolasīt.",
+            "error");
+    }
+}
 
+// ======================================================
+// 🧠 ANALIZĒ OCR TEKSTU
+// ======================================================
+function parseLabelOCR(text) {
+    let normalized = String(text || "")
+            .replace(/\r/g, "\n")
+            .replace(/[×X]/g, "x")
+            .replace(/\s+/g, " ")
+            .trim();
+    console.log(
+        "📷 Normalizēts OCR:",
+        normalized
+    );
+    const result = {
+        packages: 1,
+        thickness: null,
+        width: null,
+        length: null,
+        pieces: null,
+        day: null,
+        month: null,
+        year: null
+    };
+    // ==================================================
+    // 📏 DIMENSIJA
+    //
+    // Piem:
+    // 15x82x1027
+    // 15 x 82 x 1027
+    // ==================================================
+    const dimensionMatch = normalized.match(
+            /(\d{1,3})\s*x\s*(\d{1,3})\s*x\s*(\d{2,5})/i
+        );
+    if (dimensionMatch) {
+        result.thickness = Number(dimensionMatch[1]);
+        result.width = Number(dimensionMatch[2]);
+        result.length = Number(dimensionMatch[3]);
+    }
+    // ==================================================
+    // 📦 GABALI
+    //
+    // Meklē:
+    // GB 935
+    // GB: 935
+    // GAB 935
+    // GABALI 935
+    // ==================================================
+    const piecesMatch = normalized.match(
+            /\b(?:GB|GAB|GABALI)\b\s*[:\-]?\s*(\d{1,5})/i
+        );
+    if (piecesMatch) {
+        result.pieces = Number(piecesMatch[1]);
+    }
+    // ==================================================
+    // 📅 DATUMS
+    //
+    // Piem:
+    // 27.03
+    // 27/03
+    // 27-03
+    // ==================================================
+    const dateMatch = normalized.match(
+            /\b([0-3]?\d)\s*[.\/-]\s*([01]?\d)\b/
+        );
+    if (dateMatch) {
+        const day = Number(dateMatch[1]);
+        const month = Number(dateMatch[2]);
+        if (day >= 1 &&
+            day <= 31
+            ) {result.day = day;
+            }
+        if (month >= 1 &&
+            month <= 12
+            ) {result.month = month;
+            }
+    }
+    // ==================================================
+    // 📆 GADS
+    // 2024
+    // 2025
+    // 2026...
+    // ==================================================
+    const yearMatch = normalized.match(
+            /\b20\d{2}\b/
+        );
+    if (yearMatch) {
+        result.year = Number(yearMatch[0]);
+    }
+    console.log("📷 Atrastie dati:",
+        result);
+    return result;
+}
+// ======================================================
+// 📝 AIZPILDA FORMU NO ETIĶETES
+// ======================================================
+function fillFormFromLabel(data) {
+    // ==================================================
+    // 📦 1 FOTO = 1 PALETE
+    // ==================================================
+    setVoiceField("packages", 1);
+    // ==================================================
+    // 📏 DIMENSIJA
+    // ==================================================
+    if (Number.isFinite(data.thickness)
+        ) {setVoiceField("thickness",
+            data.thickness);
+        }
+    if (Number.isFinite(data.width)
+        ) {setVoiceField("width",
+            data.width);
+        }
+    if (Number.isFinite(data.length)
+        ) {setVoiceField("length",
+            data.length);
+        }
+    // ==================================================
+    // 🔢 GABALI
+    // ==================================================
+    if (Number.isFinite(data.pieces)
+        ) {setVoiceField("pieces",
+            data.pieces);
+        }
+    // ==================================================
+    // 📅 MĒNESIS
+    // ==================================================
+    if (Number.isFinite(data.month)
+        ) {setVoiceField("month",
+            data.month);
+        }
+    // ==================================================
+    // 📆 GADS
+    // ==================================================
+    if (Number.isFinite(data.year)
+        ) {setScannedYear(
+            data.year);
+        }
+}
+
+// ======================================================
+// 📆 IELIEK NOLASĪTO GADU
+// ======================================================
+function setScannedYear(year) {
+    const input = document.getElementById("year");
+    if (!input) {
+        return;
+    }
+    const max = Number(input.max);
+    // Ja HTML ir:
+    // max="99"
+    // 2024 -> 24
+    // Ja lauks pieņem 2024,
+    // atstāj pilno gadu.
+    const value = Number.isFinite(max) &&
+        max <= 99
+            ? year % 100
+            : year;
+    setVoiceField("year",
+        value);
+}
+
+// ======================================================
+// 👁 PARĀDA NOLASĪTO INFORMĀCIJU
+// ======================================================
+
+function showLabelScanResult(
+    data,
+    rawText
+    ) {
+    const el = document.getElementById(
+            "scanResult"
+        );
+    if (!el) {
+        return;
+    }
+    const dimension = (data.thickness &&
+        data.width &&
+        data.length)
+            ? `${data.thickness} × ${data.width} × ${data.length}`
+            : "⚠️ Nav nolasīta";
+    const pieces = data.pieces ??
+        "⚠️ Nav nolasīti";
+    const month = data.month
+            ? String(data.month)
+                .padStart(2, "0")
+            : "⚠️ Nav nolasīti";
+    const year = data.year ??
+        "⚠️ Nav nolasīti";
+    el.style.display = "block";
+    el.innerHTML = `
+        <b>📷 Nolasīts:</b><br><br>
+        📦 Pakas: <b>1</b><br>
+        📏 Dimensija: <b>${dimension}</b><br>
+        🔢 Gabali: <b>${pieces}</b><br>
+        📅 Mēnesis: <b>${month}</b><br>
+        📆 Gads: <b>${year}</b>`;
+    showNotice(
+        "✅ Lapiņa nolasīta. Pārbaudi laukus.",
+        "success");
+}
 
 window.onload = () => {
   const location = localStorage.getItem("location");
