@@ -110,6 +110,15 @@
             >
             <div id="mapLinks"></div>
         </div>
+        <!-- 📷 OCR rezultāts -->
+        <div id="scanResult"
+            style="display:none;
+                margin-top:8px;
+                padding:8px;
+                border-radius:6px;
+                background:#f3f3f3;
+                font-size:14px;">
+        </div>
         <div class="row">
             <input  id="packages"
                     type="number"
@@ -122,6 +131,12 @@
                 onclick="startLabelScan()">
                 📷 Nolasīt lapiņu
             </button>
+                <input id="labelImageInput"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    style="display:none;"
+                    onchange="handleLabelImage(event)">
         </div>
             <!-- Izmēri -->
         <div class="row">
@@ -348,9 +363,10 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
     <script src="app.js"></script>
-    <footer class="footerVersion">versija: v.2-0-64</footer>
+    <footer class="footerVersion">versija: v.2-0-65</footer>
 </body>
 </html>
