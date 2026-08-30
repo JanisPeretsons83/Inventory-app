@@ -19,6 +19,19 @@ let previousArea = null;
 let photoTargetArea = null;
 let photoBusy = false;
 
+window.addEventListener("load", () => {
+    const splash = document.getElementById("appSplash");
+        if (!splash) return;
+    setTimeout(() => {
+        splash.style.transition =
+            "opacity 0.25s ease";
+         splash.style.opacity = "0";
+        setTimeout(() => {
+            splash.remove();
+        }, 250);
+    }, 400);
+});
+
 function loadAreaPhotos() {
     try {
         const saved = localStorage.getItem("areaPhotos");
