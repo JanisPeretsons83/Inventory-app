@@ -1643,21 +1643,24 @@ if (calcInfo) {
   isGaliMode = false;
     document.getElementById("length").disabled = false;
     document.getElementById("galiBtn").classList.remove("active");
-  setTimeout(() => {
-    const field =
-      document.getElementById("packages");
+  const field =
+    document.getElementById("packages");
+    if (field) {
+    // SVARĪGI:
+    // focus uzliek uzreiz, kamēr vēl darbojas
+    // lietotāja klikšķis uz "Pievienot"
+    field.focus({
+        preventScroll: true
+    });
+    // Pārvieto vajadzīgajā vietā
     const y =
-      field.getBoundingClientRect().top +
+        field.getBoundingClientRect().top +
         window.scrollY - 80;
-        window.scrollTo({
-          top: y,
-          behavior: "smooth"
-          });
-    setTimeout(() => {
-      field.focus();
-      }, 300);
-    }, 1200);
-  }
+    window.scrollTo({
+        top: y,
+        behavior: "smooth"
+    });
+}
 
 // ✅ TABULAS SLĒPŠANA
   let tableVisible = true;
