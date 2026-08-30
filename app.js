@@ -832,8 +832,6 @@ function setHeaderInfo() {
     : "";
     document.getElementById("infoLine").innerText =
         `${location} | ${name}${testText} | ${date}`;
-    document.getElementById("infoLine").innerText =
-        `${location} | ${name} | ${date}`;
 }
 
 function saveUser() {
