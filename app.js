@@ -1660,8 +1660,8 @@ if (calcInfo) {
         top: y,
         behavior: "smooth"
     });
+    }
 }
-
 // ✅ TABULAS SLĒPŠANA
   let tableVisible = true;
 function toggleTable() {
