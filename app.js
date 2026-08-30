@@ -904,17 +904,24 @@ function updateYearFromMonth() {
       month > currentMonth
       ? currentYear - 1
       : currentYear;
-    document.getElementById("year").value = fullYear % 100;
+    document.getElementById("year").value = fullYear;
 }
 
-function getFullYear(shortYear) {
-    const year = Number(shortYear);
-    if (!Number.isInteger(year) ||
-        year < 0 ||
-        year > 99
-        ) {return null;
+function getFullYear(yearValue) {
+    const year =
+        Number(yearValue);
+    if (!Number.isInteger(year)) {
+        return null;
     }
-    return 2000 + year;
+    // 26 → 2026
+    if (year >= 20 && year <= 99) {
+        return 2000 + year;
+    }
+    // 2026 → 2026
+    if (year >= 2000 && year <= 2099) {
+        return year;
+    }
+    return null;
 }
 
 // ✅ PIEVIENO IERAKSTU
@@ -924,8 +931,8 @@ function add() {
   const thicknessVal = Number(document.getElementById("thickness").value);
   const widthVal = Number(document.getElementById("width").value);
   const monthVal = Number(document.getElementById("month").value);
-  const yearShortVal = Number(document.getElementById("year").value);
-  const yearVal = getFullYear(yearShortVal);
+  const yearInput = Number(document.getElementById("year").value);
+  const yearVal = getFullYear(yearInput);
   if (!areaVal)
     return error("Apgabals obligāts", "area");
   if (packagesVal <= 0 || isNaN(packagesVal))
@@ -949,16 +956,12 @@ function add() {
   );
   if (!monthVal || monthVal < 1 || monthVal > 12)
     return error("Mēnesis 1–12", "month");
-  if (
-    yearVal === null ||
-    yearShortVal < 20 ||
-    yearShortVal > 99
-    ) {
+  if (yearVal === null) {
     return error(
-        "Gads jāievada ar 2 cipariem, piem. 26",
+        "Nepareizs gads",
         "year"
-        );
-    }
+    );
+}
   if (!document.getElementById("grade").value)
     return error("Izvēlies šķiru", "gradeBtn");
   let rawLength =
