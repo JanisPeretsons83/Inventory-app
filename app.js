@@ -1687,24 +1687,7 @@ function error(msg, fieldId = null) {
     fieldId
   );
 }
-async function startLabelScan() {
-    if (!isTestMode()) {
-        return;
-    }
-   const thickness = 15;
-    const width = 82;
-    const length = 1027;
-    const pieces = 935;
-    const month = 3;
-    const year = 2024
-    setVoiceField("packages", 1);
-    setVoiceField("thickness", thickness);
-    setVoiceField("width", width);
-    setVoiceField("length", length);
-    setVoiceField("pieces", pieces);
-    setVoiceField("month", month);
-    setVoiceField("year", year);
-}  
+
 function checkBetaAccess() {
     const testMode = isTestMode();
     [
