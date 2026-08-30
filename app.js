@@ -887,7 +887,7 @@ function updateYearFromMonth() {
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
-    const fullyear =
+    const fullYear =
       month > currentMonth
       ? currentYear - 1
       : currentYear;
@@ -2194,19 +2194,6 @@ function restoreBackup() {
         Array.isArray(backup.entries)
             ? backup.entries
             : [];
-    if (!saveWorkingState()) {
-    showNotice(
-        "❌ Izvēlētos datus neizdevās saglabāt.",
-        "error"
-    );
-    return;
-}
-    // Atjauno apgabalu foto
-    areaPhotos =
-        backup.areaPhotos &&
-        typeof backup.areaPhotos === "object"
-            ? { ...backup.areaPhotos }
-            : {};
     let storedPhotos = {};
         try {storedPhotos = JSON.parse(
             localStorage.getItem("areaPhotos") || "{}"
@@ -2225,6 +2212,10 @@ areaPhotos =
                 : {}
         );
 if (!saveWorkingState()) {
+    showNotice(
+            "❌ Backup datus neizdevās atjaunot.",
+            "error"
+        );
     return;
 }
     dataChanged = false;
