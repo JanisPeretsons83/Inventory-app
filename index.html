@@ -88,12 +88,6 @@
 <!-- DARBA REŽĪMS -->
     <div id="appContent" style="display:none;">
         <h2>Inventarizācija</h2>
-        <button id="scanLabelBtn"
-            type="button"
-            style="display:none;"
-            onclick="startLabelScan()">
-            📷 Nolasīt lapiņu
-        </button>
       <div id="infoLine" class="info"></div>
         <!-- Apgabals -->
         <div id="mapsContainer" class="areaRow">
@@ -116,11 +110,19 @@
             >
             <div id="mapLinks"></div>
         </div>
-        <input  id="packages"
-                type="number"
-                inputmode="numeric"
-                min="0" step="1" 
-                placeholder="Paku skaits *">    
+        <div class="row">
+            <input  id="packages"
+                    type="number"
+                    inputmode="numeric"
+                    min="0" step="1" 
+                    placeholder="Paku skaits *">
+            <button id="scanLabelBtn"
+                type="button"
+                style="display:none;"
+                onclick="startLabelScan()">
+                📷 Nolasīt lapiņu
+            </button>
+        </div>
             <!-- Izmēri -->
         <div class="row">
             <input  id="thickness"
@@ -349,6 +351,6 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
     <script src="app.js"></script>
-    <footer class="footerVersion">versija: v.2-0-63</footer>
+    <footer class="footerVersion">versija: v.2-0-64</footer>
 </body>
 </html>
