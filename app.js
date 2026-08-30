@@ -29,7 +29,7 @@ window.addEventListener("load", () => {
         setTimeout(() => {
             splash.remove();
         }, 250);
-    }, 400);
+    }, 1700);
 });
 
 function loadAreaPhotos() {
