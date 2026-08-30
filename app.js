@@ -1227,7 +1227,7 @@ function edit(i) {
     document.getElementById("width").value = e.width;
     document.getElementById("length").value = e.length;
     document.getElementById("month").value = e.month;
-    document.getElementById("year").value = Number(e.year) % 100;
+    document.getElementById("year").value = Number(e.year);
     document.getElementById("pieces").value = e.pieces;
     document.getElementById("name").value = e.name;
     document.getElementById("productCode").value = e.code;
@@ -1387,7 +1387,7 @@ document.addEventListener("click", (e) => {
     // ✅ Ja gads tukšs, ieliek aktuālo
   if (!document.getElementById("year").value) {
         document.getElementById("year").value =
-      new Date().getFullYear() % 100;
+      new Date().getFullYear();
     }
   // ✅ LIVE APRĒĶINS
     document.getElementById("avgLength").addEventListener("input", calculateGali);
