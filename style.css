@@ -9,8 +9,8 @@
     z-index: 9999999;
 }
 #appSplash img {
-    width: 280px;
-    height: 280px;
+    width: 220px;
+    height: 220px;
     object-fit: contain;
 }
 .splashTitle {
