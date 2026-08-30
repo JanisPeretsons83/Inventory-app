@@ -1387,20 +1387,46 @@ function error(msg, fieldId = null) {
     fieldId
   );
 }
-  
+async function startLabelScan() {
+    if (!isTestMode()) {
+        return;
+    }
+   const thickness = 15;
+    const width = 82;
+    const length = 1027;
+    const pieces = 935;
+    const month = 3;
+    const year = 2024
+    setVoiceField("packages", 1);
+    setVoiceField("thickness", thickness);
+    setVoiceField("width", width);
+    setVoiceField("length", length);
+    setVoiceField("pieces", pieces);
+    setVoiceField("month", month);
+    setVoiceField("year", year);
+}  
 function checkBetaAccess() {
-    const testMode = isTestMode(); [
-            "betaFeatures",
-            "voiceBtn",
-            "betaImportView",
-            "betaAnalytics"
-        ].forEach(id => {
-    const el = document.getElementById(id);
-        if (el) {el.style.display = testMode
-            ? "block"
+    const testMode = isTestMode();
+    [
+        "betaFeatures",
+        "betaImportView",
+        "betaAnalytics"
+    ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.display = testMode
+                ? "block"
+                : "none";
+        }
+    });
+    // 📷 Lapiņas skenēšanas poga
+    const scanBtn =
+        document.getElementById("scanLabelBtn");
+    if (scanBtn) {
+        scanBtn.style.display = testMode
+            ? "inline-block"
             : "none";
-            }
-        });
+    }
 }
 
 function isTestMode() {
