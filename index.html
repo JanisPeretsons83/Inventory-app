@@ -110,34 +110,11 @@
             >
             <div id="mapLinks"></div>
         </div>
-        <!-- 📷 OCR rezultāts -->
-        <div id="scanResult"
-            style="display:none;
-                margin-top:8px;
-                padding:8px;
-                border-radius:6px;
-                background:#f3f3f3;
-                font-size:14px;">
-        </div>
-        <div class="row">
             <input  id="packages"
                     type="number"
                     inputmode="numeric"
                     min="0" step="1" 
                     placeholder="Paku skaits *">
-            <button id="scanLabelBtn"
-                type="button"
-                style="display:none;"
-                onclick="startLabelScan()">
-                📷 Nolasīt lapiņu
-            </button>
-                <input id="labelImageInput"
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    style="display:none;"
-                    onchange="handleLabelImage(event)">
-        </div>
             <!-- Izmēri -->
         <div class="row">
             <input  id="thickness"
