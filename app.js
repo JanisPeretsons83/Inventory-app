@@ -1255,6 +1255,7 @@ function startLabelScan() {
     input.value = "";
     input.click();
 }
+
 // ======================================================
 // 📷 SAŅEM NOFOTOGRAFĒTO ATTĒLU
 // ======================================================
@@ -1263,90 +1264,265 @@ async function handleLabelImage(event) {
         return;
     }
     const file = event.target.files?.[0];
-    if (!file) {
-        return;
-    }
-    const scanResult = document.getElementById("scanResult");
-        if (scanResult) {
-            scanResult.style.display = "block";
-            scanResult.innerHTML = "📷 Nolasa lapiņu...";
+        if (!file) {
+            return;
         }
+    const scanResult = document.getElementById("scanResult");
+    if (scanResult) {scanResult.style.display = "block";
+        scanResult.innerHTML =
+            "📷 Sagatavo attēlu...";
+    }
     showNotice(
         "📷 Notiek lapiņas nolasīšana...",
         "info"
     );
     try {
-        // ==================================================
-        // 🔎 OCR
-        // ==================================================
-        const result = await Tesseract.recognize(
-                file,
-                "eng",
-                {
-                    logger: info => {
-                        console.log(
-                            "OCR:",
-                            info
-                        );
-                        if (scanResult && info.status ===
-                                "recognizing text"
-                        ) {
-                            const percent = Math.round(
-                                    (info.progress || 0) * 100
-                                );
-                            scanResult.innerHTML = `📷 Nolasa lapiņu... ${percent}%`;
-                        }
-                    }
-                }
-            );
-        const text = result.data.text || "";
-        console.log(
-            "📷 OCR TEKSTS:"
+        // 1. IELĀDĒ ATTĒLU
+        const img = await loadImageFromFile(file);
+        // 2. IZVEIDO CANVAS AR VISU ATTĒLU
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0,
+            canvas.width,
+            canvas.height
         );
-        console.log(text);
-        // ==================================================
-        // 🧠 IZVELK VAJADZĪGOS DATUS
-        // ==================================================
-        const data =
-            parseLabelOCR(text);
-        // ==================================================
-        // 📝 AIZPILDA FORMU
-        // ==================================================
-        fillFormFromLabel(data);
-        // ==================================================
-        // 👁 PARĀDA REZULTĀTU
-        // ==================================================
-        showLabelScanResult(
-            data,
-            text
+        // 3. ETIĶETES ZONAS
+        // ŠIE PROCENTI IR STARTA VĒRTĪBAS.
+        // Tos vēl pielāgosim pēc testiem.
+        // x, y, width, height = proporcija no visa attēla
+        const zones = {
+            // Augšējā labā puse — datums + drukātais gads
+            date: {
+                x: 0.60,
+                y: 0.25,
+                w: 0.30,
+                h: 0.18
+            },
+            // Vidus kreisā puse — dimensija
+            dimension: {
+                x: 0.12,
+                y: 0.38,
+                w: 0.55,
+                h: 0.18
+            },
+            // Vidus labā puse — GB
+            pieces: {
+                x: 0.66,
+                y: 0.40,
+                w: 0.22,
+                h: 0.18
+            },
+            // Augšējā labā zona — gads
+            year: {
+                x: 0.63,
+                y: 0.27,
+                w: 0.20,
+                h: 0.08
+            }
+        };
+        // 4. IZGRIEŽ KATRU ZONU
+        const dimensionCanvas = cropCanvasByRatio(canvas,
+                zones.dimension);
+        const piecesCanvas = cropCanvasByRatio(canvas,
+                zones.pieces);
+        const dateCanvas = cropCanvasByRatio(canvas,
+                zones.date);
+        const yearCanvas = cropCanvasByRatio(canvas,
+                zones.year);
+        // 5. OCR PA ZONĀM
+        if (scanResult) {scanResult.innerHTML = "📏 Nolasa dimensiju...";
+            }
+        const dimensionText = await recognizeZone(
+                dimensionCanvas,
+                "0123456789xX×");
+        if (scanResult) {scanResult.innerHTML = "🔢 Nolasa gabalus...";
+            }
+        const piecesText = await recognizeZone(
+                piecesCanvas,
+                "0123456789");
+        if (scanResult) {scanResult.innerHTML = "📅 Nolasa datumu...";
+            }
+        const dateText = await recognizeZone(
+                dateCanvas,
+                "0123456789.");
+        if (scanResult) {
+            scanResult.innerHTML = "📆 Nolasa gadu...";
+        }
+        const yearText = await recognizeZone(
+                yearCanvas,
+                "0123456789");
+        console.log("📏 DIMENSIJA OCR:",
+            dimensionText
         );
+        console.log("🔢 GABALI OCR:",
+            piecesText
+        );
+        console.log("📅 DATUMS OCR:",
+            dateText
+        );
+        console.log("📆 GADS OCR:",
+            yearText
+        );
+        // ==================================================
+        // 6. ANALIZĒ KATRU ZONU
+        // ==================================================
+        const parsed =
+            parseLabelZones({
+                dimensionText,
+                piecesText,
+                dateText,
+                yearText
+            });
+        console.log("📷 ATRASTIE DATI:",
+            parsed
+        );
+        // ==================================================
+        // 7. AIZPILDA FORMU
+        // ==================================================
+        fillFormFromLabel(parsed);
+        // ==================================================
+        // 8. PARĀDA REZULTĀTU
+        // ==================================================
+        showLabelScanResult(parsed,"");
     }
     catch (error) {
-        console.error(
-            "📷 OCR kļūda:",
+        console.error("📷 OCR kļūda:",
             error
         );
         if (scanResult) {
             scanResult.innerHTML = "❌ Lapiņu neizdevās nolasīt.";
         }
-        showNotice( "❌ Lapiņu neizdevās nolasīt.",
-            "error");
+        showNotice(
+            "❌ Lapiņu neizdevās nolasīt.",
+            "error"
+        );
     }
 }
-
 // ======================================================
-// 🧠 ANALIZĒ OCR TEKSTU
+// 📷 IELĀDĒ ATTĒLU NO FILE
 // ======================================================
-function parseLabelOCR(text) {
-    let normalized = String(text || "")
-            .replace(/\r/g, "\n")
-            .replace(/[×X]/g, "x")
-            .replace(/\s+/g, " ")
-            .trim();
-    console.log(
-        "📷 Normalizēts OCR:",
-        normalized
+function loadImageFromFile(file) {
+    return new Promise(
+        (resolve, reject) => {
+            const img =
+                new Image();
+            const url =
+                URL.createObjectURL(file);
+            img.onload = function() {
+                URL.revokeObjectURL(url);
+                resolve(img);
+            };
+            img.onerror = function(error) {
+                URL.revokeObjectURL(url);
+                reject(error);
+            };
+            img.src = url;
+        }
     );
+}
+// ======================================================
+// ✂️ IZGRIEŽ ZONU PĒC PROCENTIEM
+// ======================================================
+
+function cropCanvasByRatio(
+    sourceCanvas,
+    zone
+) {
+    const sx =
+        Math.round(
+            sourceCanvas.width *
+            zone.x
+        );
+    const sy =
+        Math.round(
+            sourceCanvas.height *
+            zone.y
+        );
+    const sw =
+        Math.round(
+            sourceCanvas.width *
+            zone.w
+        );
+    const sh =
+        Math.round(
+            sourceCanvas.height *
+            zone.h
+        );
+    const target =
+        document.createElement("canvas");
+    target.width =
+        sw;
+    target.height =
+        sh;
+    const ctx =
+        target.getContext("2d");
+    ctx.drawImage(
+        sourceCanvas,
+        sx,
+        sy,
+        sw,
+        sh,
+        0,
+        0,
+        sw,
+        sh
+    );
+    return target;
+}
+// ======================================================
+// 🔎 OCR VIENAI ZONAI
+// ======================================================
+async function recognizeZone(
+    canvas,
+    whitelist
+) {
+    const result =
+        await Tesseract.recognize(
+            canvas,
+            "eng",
+            {
+                logger: info => {
+                    console.log(
+                        "OCR zona:",
+                        info
+                    );
+                }
+            }
+        );
+    let text =
+        result.data.text || "";
+    // ==================================================
+    // ATSTĀJ TIKAI VAJADZĪGĀS ZĪMES
+    // ==================================================
+    if (whitelist) {
+        const escaped =
+            whitelist
+                .replace(
+                    /[-[\]{}()*+?.,\\^$|#\s]/g,
+                    "\\$&"
+                );
+        text =
+            text.replace(
+                new RegExp(
+                    `[^${escaped}]`,
+                    "g"
+                ),
+                ""
+            );
+    }
+    return text.trim();
+}
+// ======================================================
+// 🧠 ANALIZĒ ZONU REZULTĀTUS
+// ======================================================
+function parseLabelZones({
+    dimensionText,
+    piecesText,
+    dateText,
+    yearText
+}) {
     const result = {
         packages: 1,
         thickness: null,
@@ -1359,73 +1535,88 @@ function parseLabelOCR(text) {
     };
     // ==================================================
     // 📏 DIMENSIJA
-    //
-    // Piem:
-    // 15x82x1027
-    // 15 x 82 x 1027
     // ==================================================
-    const dimensionMatch = normalized.match(
-            /(\d{1,3})\s*x\s*(\d{1,3})\s*x\s*(\d{2,5})/i
+    const dimensionNormalized =
+        String(dimensionText || "")
+            .replace(/[×X]/g, "x")
+            .replace(/\s+/g, "");
+    const dimensionMatch =
+        dimensionNormalized.match(
+            /(\d{1,3})x(\d{1,3})x(\d{2,5})/
         );
     if (dimensionMatch) {
-        result.thickness = Number(dimensionMatch[1]);
-        result.width = Number(dimensionMatch[2]);
-        result.length = Number(dimensionMatch[3]);
+        result.thickness =
+            Number(dimensionMatch[1]);
+        result.width =
+            Number(dimensionMatch[2]);
+        result.length =
+            Number(dimensionMatch[3]);
     }
     // ==================================================
-    // 📦 GABALI
-    //
-    // Meklē:
-    // GB 935
-    // GB: 935
-    // GAB 935
-    // GABALI 935
+    // 🔢 GABALI
     // ==================================================
-    const piecesMatch = normalized.match(
-            /\b(?:GB|GAB|GABALI)\b\s*[:\-]?\s*(\d{1,5})/i
-        );
-    if (piecesMatch) {
-        result.pieces = Number(piecesMatch[1]);
+    const piecesOnly =
+        String(piecesText || "")
+            .replace(/\D/g, "");
+    if (piecesOnly) {
+        const value =
+            Number(piecesOnly);
+        if (
+            Number.isFinite(value) &&
+            value > 0
+        ) {
+            result.pieces =
+                value;
+        }
     }
     // ==================================================
     // 📅 DATUMS
-    //
-    // Piem:
-    // 27.03
-    // 27/03
-    // 27-03
     // ==================================================
-    const dateMatch = normalized.match(
-            /\b([0-3]?\d)\s*[.\/-]\s*([01]?\d)\b/
+    const dateNormalized =
+        String(dateText || "")
+            .replace(/,/g, ".")
+            .replace(/\s+/g, "");
+    const dateMatch =
+        dateNormalized.match(
+            /([0-3]?\d)[.\/-]([01]?\d)/
         );
     if (dateMatch) {
-        const day = Number(dateMatch[1]);
-        const month = Number(dateMatch[2]);
-        if (day >= 1 &&
+        const day =
+            Number(dateMatch[1]);
+        const month =
+            Number(dateMatch[2]);
+        if (
+            day >= 1 &&
             day <= 31
-            ) {result.day = day;
-            }
-        if (month >= 1 &&
+        ) {
+            result.day =
+                day;
+        }
+        if (
+            month >= 1 &&
             month <= 12
-            ) {result.month = month;
-            }
+        ) {
+            result.month =
+                month;
+        }
     }
     // ==================================================
     // 📆 GADS
-    // 2024
-    // 2025
-    // 2026...
     // ==================================================
-    const yearMatch = normalized.match(
-            /\b20\d{2}\b/
+    const yearOnly =
+        String(yearText || "")
+            .replace(/\D/g, "");
+    const yearMatch =
+        yearOnly.match(
+            /20\d{2}/
         );
     if (yearMatch) {
-        result.year = Number(yearMatch[0]);
+        result.year =
+            Number(yearMatch[0]);
     }
-    console.log("📷 Atrastie dati:",
-        result);
     return result;
 }
+
 // ======================================================
 // 📝 IELIEK VĒRTĪBU FORMAS LAUKĀ
 // ======================================================
