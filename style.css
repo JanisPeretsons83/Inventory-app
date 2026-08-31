@@ -597,3 +597,18 @@ padding: 2px 4px;
 font-size: 10px;
 line-height: 1.1;
 }
+.packagesRow {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 4px;
+margin-bottom: 2px;
+}
+.packagesRow input {
+width: 30%;
+}
+#scanLabelBtn {
+margin-top: 0;
+min-width: 55px;
+padding: 2px 4px;
+font-size: 10px;
+}
