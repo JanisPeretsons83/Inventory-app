@@ -3106,6 +3106,150 @@ function restoreSelectedAreas() {
         "success"
     );
 }
+
+// ======================================================
+// 🤖 AI PIEPRASĪJUMS — TEST REŽĪMS
+// ======================================================
+
+// 1. Sagatavo attēlu AI
+async function prepareLabelImageForAI(file) {
+    if (!file) {
+        throw new Error("Nav izvēlēts attēls");
+    }
+    if (!file.type.startsWith("image/")) {
+        throw new Error("Izvēlētais fails nav attēls");
+    }
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        const img = new Image();
+        reader.onload = event => {
+            img.onload = () => {
+                try {
+                    // AI attēlam izmantojam atsevišķus parametrus.
+                    // Esošo areaPhotos sistēmu tas NEIETEKMĒ.
+                    const MAX_SIZE = 1000;
+                    const JPEG_QUALITY = 0.60;
+                    let width =
+                        img.naturalWidth || img.width;
+                    let height =
+                        img.naturalHeight || img.height;
+                    // ------------------------------
+                    // Samazina attēlu proporcionāli
+                    // ------------------------------
+                    const scale = Math.min(
+                        1,
+                        MAX_SIZE / width,
+                        MAX_SIZE / height
+                    );
+                    width =
+                        Math.round(width * scale);
+                    height =
+                        Math.round(height * scale);
+                    // ------------------------------
+                    // Izveido pagaidu canvas RAM
+                    // ------------------------------
+                    const canvas =
+                        document.createElement("canvas");
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx =
+                        canvas.getContext("2d");
+                    if (!ctx) {
+                        throw new Error(
+                            "Neizdevās izveidot Canvas"
+                        );
+                    }
+                    // Balts fons JPEG attēlam
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+                    // Ievieto samazināto attēlu
+                    ctx.drawImage(
+                        img,
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+                    // ------------------------------
+                    // Canvas → JPEG Blob
+                    // ------------------------------
+                    canvas.toBlob(
+                        blob => {
+                            if (!blob) {
+                                reject(
+                                    new Error("Neizdevās izveidot AI attēlu")
+                                );
+                                return;
+                            }
+                            console.log(
+                                "🤖 AI attēls sagatavots:",
+                                { originalSize: Math.round(file.size / 1024) + " KB",
+                                    aiSize: Math.round(blob.size / 1024) + " KB",
+                                    width: width,
+                                    height: height,
+                                    type:
+                                        blob.type
+                                }
+                            );
+                            // ⚠️ Tikai atgriež Blob.
+                            // localStorage NETIEK izmantots.
+                            resolve(blob);
+                        },
+                        "image/jpeg",
+                        JPEG_QUALITY
+                    );
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            img.onerror = () => {
+                reject(
+                    new Error("Neizdevās ielādēt attēlu"));
+            };
+            img.src = event.target.result;
+        };
+        reader.onerror = () => {reject(
+                new Error("Neizdevās nolasīt attēla failu"));
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// 2. Nosūta attēlu serverless funkcijai
+async function sendLabelToAI(blob) {
+    // ...
+}
+
+// 3. Validē saņemto JSON
+function validateAIResult(result) {
+    // ...
+}
+
+// 4. Parāda AI rezultātu lietotājam
+function showAIResult(result) {
+    // ...
+}
+
+// 5. Pēc apstiprinājuma aizpilda formu
+function applyAIResult(result) {
+    // ...
+}
+
+// 6. Galvenā AI lapiņas funkcija
+async function startAILabelScan() {
+    // ...
+}
+
+
+// ======================================================
+// SERVICE WORKER
+// ======================================================
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/Inventory-app/sw.js")
         .then(reg => {
