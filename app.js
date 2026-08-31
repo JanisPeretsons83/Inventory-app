@@ -1457,6 +1457,7 @@ function checkBetaAccess() {
         "betaFeatures",
         "betaImportView",
         "betaAnalytics"
+        "aiLabelBtn"
     ].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -3196,6 +3197,13 @@ async function prepareLabelImageForAI(file) {
                                         blob.type
                                 }
                             );
+                            showAITestInfo(
+                                file.size,
+                                blob.size,
+                                width,
+                                height,
+                                blob.type
+                                );
                             // ⚠️ Tikai atgriež Blob.
                             // localStorage NETIEK izmantots.
                             resolve(blob);
@@ -3220,6 +3228,94 @@ async function prepareLabelImageForAI(file) {
     });
 }
 
+function startAILabelScan() {
+    if (!isTestMode()) {
+        return;
+    }
+    const input =
+        document.getElementById("aiLabelCamera");
+    if (!input) {
+        showNotice(
+            "❌ AI kameras lauks nav atrasts.",
+            "error"
+        );
+        return;
+    }
+    input.value = "";
+    input.click();
+}
+
+// ======================================================
+// 🧪 AI TESTA INFORMĀCIJA
+// ======================================================
+
+function showAITestInfo(
+    originalBytes,
+    aiBytes,
+    width,
+    height,
+    type
+) {
+    const originalKB =
+        Math.round(originalBytes / 1024);
+    const aiKB =
+        Math.round(aiBytes / 1024);
+    alert(
+        "📷 AI attēls sagatavots\n\n" +
+        `Oriģināls: ${originalKB} KB\n` +
+        `AI bilde: ${aiKB} KB\n\n` +
+        `Izmērs: ${width} × ${height}\n` +
+        `Formāts: ${type}\n\n` +
+        "✅ Attēls netika saglabāts localStorage"
+    );
+}
+
+// ======================================================
+// 📷 SAŅEM NOFOTOGRAFĒTO LABEL
+// ======================================================
+async function handleAILabelPhoto(event) {
+    if (!isTestMode()) {
+        return;
+    }
+    const file = event.target.files?.[0];
+    if (!file) {
+        return;
+    }
+    try {
+        console.log(
+            "📷 Oriģinālais AI foto:",
+            {
+                name: file.name,
+                type: file.type,
+                size:
+                    Math.round(file.size / 1024) +
+                    " KB"
+            }
+        );
+        const aiImageBlob =
+            await prepareLabelImageForAI(file);
+        console.log(
+            "✅ AI bilde gatava nosūtīšanai:",
+            Math.round(
+                aiImageBlob.size / 1024
+            ) + " KB"
+        );
+        // ==========================================
+        // ŠEIT VĒLĀK:
+        //
+        // await sendLabelToAI(aiImageBlob);
+        //
+        // ==========================================
+    } catch (error) {
+        console.error("❌ AI bildes sagatavošanas kļūda:",
+            error
+        );
+        showNotice("❌ Neizdevās sagatavot lapiņas attēlu", "error");
+    }
+    // Vairs neturam failu input elementā
+    event.target.value = "";
+}
+
 // 2. Nosūta attēlu serverless funkcijai
 async function sendLabelToAI(blob) {
     // ...
@@ -3241,8 +3337,20 @@ function applyAIResult(result) {
 }
 
 // 6. Galvenā AI lapiņas funkcija
-async function startAILabelScan() {
-    // ...
+function startAILabelScan() {
+    // Tikai TEST lietotājiem
+    if (!isTestMode()) {
+        return;
+    }
+    const input = document.getElementById("aiLabelCamera");
+    if (!input) {
+        console.error("aiLabelCamera nav atrasts");
+        return;
+    }
+    // Notīra iepriekšējo izvēli.
+    // Tas ļauj fotografēt atkārtoti.
+    input.value = "";
+    input.click();
 }
 
 
