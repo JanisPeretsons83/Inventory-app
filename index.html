@@ -403,6 +403,29 @@
             </button>
         </div>
     </div>
+        <!-- ==========================================
+         🤖 AI LABEL PRIEKŠSKATĪJUMS
+        =========================================== -->
+    <div id="aiPreviewModal" class="aiPreviewModal">
+        <div class="aiPreviewContent">
+            <h3>📷 AI saņems šo attēlu</h3>
+            <img id="aiPreviewImage"
+                alt="AI label priekšskatījums">
+            <div id="aiPreviewInfo"></div>
+            <div class="aiPreviewButtons">
+                <button
+                    type="button"
+                    onclick="retakeAILabel()">
+                    🔄 Fotografēt vēlreiz
+                </button>
+                <button
+                    type="button"
+                    onclick="acceptAILabelPreview()">
+                    ✅ Izmantot
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
@@ -419,6 +442,6 @@
                 }, 4000);
         </script>
     <script src="app.js"></script>
-    <footer class="footerVersion">versija: v.2-0-78</footer>
+    <footer class="footerVersion">versija: v.2-0-82</footer>
 </body>
 </html>
