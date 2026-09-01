@@ -521,18 +521,31 @@ function retakeAILabel() {
 
 function acceptAILabelPreview() {
     if (!aiPendingBlob) {
-        showNotice("❌ AI attēls nav pieejams.",
+        showNotice(
+            "❌ AI attēls vairs nav pieejams.\n" +
+            "Nofotografē lapiņu vēlreiz.",
             "error"
         );
         return;
     }
-    showNotice("✅ AI attēls gatavs nosūtīšanai.",
+    
+    // 2. Vai ir internets
+
+    if (!canUseAIOnline()) {
+        return;
+    }
+    showNotice("✅ Attēls gatavs AI nolasīšanai.",
         "success"
     );
     // VĒLĀK:
+    // try {
     //
-    // sendLabelToAI(aiPendingBlob);
+    //     const result =
+    //         await sendLabelToAI(aiPendingBlob);
     //
+    // } catch (error) {
+    //
+    //     handleAIError(error);
 }
 
 function closeAILabelPreview() {
@@ -639,3 +652,59 @@ function applyAIResult(result) {
         }
 }
 
+// ======================================================
+// 🌐 AI INTERNETA PĀRBAUDE
+// ======================================================
+
+function canUseAIOnline() {
+    if (!navigator.onLine) {
+        showNotice(
+            "📵 AI nolasīšanai nepieciešams internets.\n" +
+            "Datus vari ievadīt manuāli.",
+            "error"
+        );
+        return false;
+    }
+    return true;
+}
+// ======================================================
+// ⚠️ AI KĻŪDU APSTRĀDE
+// ======================================================
+
+function handleAIError(error) {
+    console.error(
+        "❌ AI kļūda:",
+        error
+    );
+    let message = "❌ Neizdevās nolasīt lapiņu.";
+    // Nav interneta
+    if (!navigator.onLine) {
+        message = "📵 Nav interneta savienojuma.\n" +
+            "AI nolasīšanai nepieciešams internets.";
+    }
+    // Pieprasījums pārāk ilgs
+    else if (
+        error?.name === "AbortError"
+    ) {
+        message = "⏱️ AI neatbildēja laikā.\n" +
+            "Mēģini vēlreiz.";
+    }
+    // Servera / Worker kļūda
+    else if (
+        error?.type === "server"
+    ) {
+        message = "⚠️ AI serviss pašlaik nav pieejams.\n" +
+            "Datus vari ievadīt manuāli.";
+    }
+    // Nederīga AI atbilde
+    else if (
+        error?.type === "invalid-response"
+    ) {
+        message = "⚠️ AI atbilde nebija derīga.\n" +
+            "Mēģini lapiņu nofotografēt vēlreiz.";
+    }
+    showNotice(
+        message,
+        "error"
+    );
+}
