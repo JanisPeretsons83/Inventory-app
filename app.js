@@ -1458,35 +1458,27 @@ function saveWorkingState() {
 }
 
 function checkBetaAccess() {
+
     const testMode = isTestMode();
+
     [
         "betaFeatures",
         "betaImportView",
         "betaAnalytics",
-        "aiLabelBtn"
+        "aiLabelBtn",
+        "aiResultTestBtn"
     ].forEach(id => {
-        const el = document.getElementById(id);
+
+        const el =
+            document.getElementById(id);
+
         if (el) {
-            el.style.display = testMode
-                ? "block"
-                : "none";
+            el.style.display =
+                testMode
+                    ? "block"
+                    : "none";
         }
     });
-     // AI pogu šeit tikai paslēpjam
-    const aiBtn =
-        document.getElementById("aiLabelBtn");
-
-    if (aiBtn) {
-        aiBtn.style.display = "none";
-    }
-
-    // Pagaidu AI testa pogu arī paslēpjam
-    const aiTestBtn =
-        document.getElementById("aiResultTestBtn");
-
-    if (aiTestBtn) {
-        aiTestBtn.style.display = "none";
-    }
 }
 
 function isTestMode() {
