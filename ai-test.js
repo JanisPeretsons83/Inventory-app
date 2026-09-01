@@ -749,37 +749,16 @@ function showAIResult(result) {
 }
 
 // 5. Pēc apstiprinājuma aizpilda formu
+// ======================================================
+// 📝 AIZPILDA FORMAS LAUKUS
+// ======================================================
+
 function applyAIResult(result) {
-    // 🪵 Biezums
-    const thickness = document.getElementById("thickness");
-        if (thickness) {thickness.value = result.thickness ?? "";
-        }
-    // 📏 Platums
-    const width = document.getElementById("width");
-        if (width) {width.value = result.width ?? "";
-        }
-    // 📐 Garums
-    const length = document.getElementById("length");
-        if (length) {length.value = result.length ?? "";
-        }
-    // 🔢 Gabali pakā
-    const pieces = document.getElementById("pieces");
-        if (pieces) {
-            pieces.value = result.pieces ?? "";
-        }
-    // 📅 Mēnesis
-    const month = document.getElementById("month");
-        if (month) {
-            month.value = result.month ?? "";
-        }
-    // 📅 Gads
-    const year = document.getElementById("year");
-        if (year) {
-            year.value = result.year ?? "";
-        }
-    //📝 AIZPILDA FORMAS LAUKUS
+
     const setField = (id, value) => {
 
+        // Ja AI lauku nenolasīja,
+        // esošo formas vērtību neaiztiekam.
         if (value === null) {
             return;
         }
@@ -792,13 +771,38 @@ function applyAIResult(result) {
         }
     };
 
-    // packages APZINĀTI neaiztiekam
-    setField("thickness", result.thickness);
-    setField("width", result.width);
-    setField("length", result.length);
-    setField("pieces", result.pieces);
-    setField("month", result.month);
-    setField("year", result.year);
+
+    // 📦 packages APZINĀTI neaiztiekam
+
+    setField(
+        "thickness",
+        result.thickness
+    );
+
+    setField(
+        "width",
+        result.width
+    );
+
+    setField(
+        "length",
+        result.length
+    );
+
+    setField(
+        "pieces",
+        result.pieces
+    );
+
+    setField(
+        "month",
+        result.month
+    );
+
+    setField(
+        "year",
+        result.year
+    );
 }
 
 function closeAIResultModal() {
