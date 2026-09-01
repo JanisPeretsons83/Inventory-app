@@ -19,6 +19,8 @@ let previousArea = null;
 let photoTargetArea = null;
 let photoBusy = false;
 
+window.APP_STARTED = true;
+
 window.addEventListener("load", () => {
     const splash = document.getElementById("appSplash");
         if (!splash) return;
