@@ -32,6 +32,20 @@
             Inventarizācija
             </div>
     </div>
+    <div id="appErrorScreen" style="display:none;">
+        <div class="errorScreenContent">
+            <h2>🔧 Tiek veikti app uzlabojumi</h2>
+                <p>
+                Inventarizācijas sistēma pašlaik nav pieejama.
+            </p>
+                <p>
+                Lūdzu, mēģiniet vēlreiz pēc brīža.
+            </p>
+            <button onclick="location.reload()">
+                🔄 Mēģināt vēlreiz
+            </button>
+        </div>
+    </div>
   <!-- Login -->
     <div id="notice"></div>
         <div id="locationSelect">
@@ -364,7 +378,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
+        <script>
+            window.APP_STARTED = false;
+                setTimeout(function () {
+                    if (window.APP_STARTED) {
+                    return;
+                    }
+                var screen = document.getElementById("appErrorScreen");
+                    if (screen) {
+                    screen.style.display = "flex";
+                    }
+                }, 4000);
+        </script>
     <script src="app.js"></script>
+    <script src="ai-test.js"></script>
     <footer class="footerVersion">versija: v.2-0-74</footer>
 </body>
 </html>
