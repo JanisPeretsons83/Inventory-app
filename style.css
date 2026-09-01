@@ -630,3 +630,118 @@ min-width: 55px;
 padding: 2px 4px;
 font-size: 10px;
 }
+/* ==========================================
+   🤖 AI LABEL CAMERA — TEST
+========================================== */
+.aiCameraModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999999;
+    overflow: hidden;
+}
+/* LIVE CAMERA */
+#aiCameraVideo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    inset: 0;
+}
+/* OVERLAY */
+.aiCameraOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+/* ==========================================
+   LABEL RĀMIS
+   Reālā lapiņa: 123 × 100 mm
+========================================== */
+.aiLabelFrame {
+    position: relative;
+    width: 88%;
+    max-width: 520px;
+    aspect-ratio: 123 / 100;
+    border: 2px solid rgba(255,255,255,.8);
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow:
+        0 0 0 9999px rgba(0,0,0,.40);
+}
+/* ==========================================
+   RĀMJA STŪRI
+========================================== */
+.aiFrameCorner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-color: white;
+    border-style: solid;
+}
+.aiFrameCorner.topLeft {
+    top: -3px;
+    left: -3px;
+    border-width: 4px 0 0 4px;
+}
+.aiFrameCorner.topRight {
+    top: -3px;
+    right: -3px;
+    border-width: 4px 4px 0 0;
+}
+.aiFrameCorner.bottomLeft {
+    bottom: -3px;
+    left: -3px;
+    border-width: 0 0 4px 4px;
+}
+.aiFrameCorner.bottomRight {
+    bottom: -3px;
+    right: -3px;
+    border-width: 0 4px 4px 0;
+}
+/* INSTRUKCIJA */
+.aiCameraHint {
+    margin-top: 20px;
+    padding: 8px 14px;
+    background: rgba(0,0,0,.55);
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+/* ==========================================
+   KAMERAS POGAS
+========================================== */
+.aiCameraControls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding:
+        0 20px
+        env(safe-area-inset-bottom);
+    z-index: 10;
+}
+.aiCameraControls button {
+    width: auto;
+    min-width: 130px;
+    margin: 0;
+    padding: 14px 18px;
+}
+.aiCameraCancel {
+    background: rgba(80,80,80,.9);
+    color: white;
+}
+.aiCameraCapture {
+    background: white;
+    color: #222;
+}
