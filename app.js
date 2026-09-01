@@ -1472,7 +1472,21 @@ function checkBetaAccess() {
                 : "none";
         }
     });
-    
+     // AI pogu šeit tikai paslēpjam
+    const aiBtn =
+        document.getElementById("aiLabelBtn");
+
+    if (aiBtn) {
+        aiBtn.style.display = "none";
+    }
+
+    // Pagaidu AI testa pogu arī paslēpjam
+    const aiTestBtn =
+        document.getElementById("aiResultTestBtn");
+
+    if (aiTestBtn) {
+        aiTestBtn.style.display = "none";
+    }
 }
 
 function isTestMode() {
