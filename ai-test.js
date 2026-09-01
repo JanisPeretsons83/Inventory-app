@@ -3,6 +3,8 @@
 // ======================================================
 
 let aiCameraStream = null;
+let aiPendingBlob = null;
+let aiPendingPreviewUrl = null;
 
 // 1. Sagatavo attēlu AI
 async function prepareLabelImageForAI(file) {
@@ -430,20 +432,12 @@ async function captureAILabel() {
         // ==========================================
         
         closeAILabelCamera();
-        alert(
-            "📷 Label foto gatavs\n\n" +
-            `Izmērs: ${outputWidth} × ${outputHeight}\n` +
-            `Proporcija: ${ratio.toFixed(3)}\n` +
-            `Jābūt: ${(123 / 100).toFixed(3)}\n\n` +
-            `Fails: ${
-                Math.round(aiImageBlob.size / 1024)
-            } KB\n\n` +
-            "✅ Tikai RAM"
+        showAILabelPreview(
+            aiImageBlob,
+            outputWidth,
+            outputHeight
         );
         // VĒLĀK:
-        //
-        // showAILabelPreview(aiImageBlob);
-        //
         // await sendLabelToAI(aiImageBlob);
     }
     catch (error) {
@@ -476,6 +470,83 @@ function showAITestInfo(
         `Formāts: ${type}\n\n` +
         "✅ Attēls netika saglabāts localStorage"
     );
+}
+
+// ======================================================
+// 👁️ PARĀDA AI ATTĒLA PRIEKŠSKATĪJUMU
+// ======================================================
+
+function showAILabelPreview(
+    blob,
+    width,
+    height
+) {
+    const modal = document.getElementById("aiPreviewModal");
+    const image = document.getElementById("aiPreviewImage");
+    const info = document.getElementById("aiPreviewInfo");
+    if (!modal || !image || !info) {
+        return;
+    }
+    // Veco URL atbrīvo
+    if (aiPendingPreviewUrl) {
+        URL.revokeObjectURL(
+            aiPendingPreviewUrl
+        );
+    }
+    aiPendingBlob = blob;
+    aiPendingPreviewUrl = URL.createObjectURL(blob);
+    image.src = aiPendingPreviewUrl;
+    info.innerHTML =
+        `Izmērs: ${width} × ${height}<br>` +
+        `Fails: ${Math.round(blob.size / 1024)} KB<br>` +
+        `Proporcija: ${(width / height).toFixed(3)}`;
+    modal.style.display =
+        "block";
+}
+
+// ======================================================
+// 🔄 FOTOGRAFĒ VĒLREIZ
+// ======================================================
+
+function retakeAILabel() {
+
+    closeAILabelPreview();
+
+    startAILabelScan();
+}
+
+// ======================================================
+// ✅ APSTIPRINA AI ATTĒLU
+// ======================================================
+
+function acceptAILabelPreview() {
+    if (!aiPendingBlob) {
+        showNotice("❌ AI attēls nav pieejams.",
+            "error"
+        );
+        return;
+    }
+    showNotice("✅ AI attēls gatavs nosūtīšanai.",
+        "success"
+    );
+    // VĒLĀK:
+    //
+    // sendLabelToAI(aiPendingBlob);
+    //
+}
+
+function closeAILabelPreview() {
+    const modal = document.getElementById("aiPreviewModal");
+    const image = document.getElementById("aiPreviewImage");
+    if (modal) {modal.style.display = "none";}
+    if (image) {image.src = "";}
+    if (aiPendingPreviewUrl) {
+        URL.revokeObjectURL(
+            aiPendingPreviewUrl
+        );
+        aiPendingPreviewUrl = null;
+    }
+    aiPendingBlob = null;
 }
 
 // ======================================================
