@@ -3111,6 +3111,34 @@ function restoreSelectedAreas() {
 }
 
 // ======================================================
+// 🤖 IELĀDĒ AI TESTA KODU TIKAI TEST LIETOTĀJIEM
+// ======================================================
+function loadAITestScript() {
+    if (!isTestMode()) {
+        return;
+    }
+    if (document.querySelector(
+            'script[data-ai-test="true"]')
+        ) {
+        return;
+        }
+    const script = document.createElement("script");
+    script.src = "ai-test.js";
+    script.dataset.aiTest = "true";
+    script.onload = () => {
+        console.log( "🤖 AI testa modulis ielādēts"
+        );
+    };
+    script.onerror = () => {
+        console.error("❌ AI testa moduli neizdevās ielādēt"
+        );
+        showNotice("⚠️ AI testa funkcija pašlaik nav pieejama.",
+            "error");
+    };
+    document.body.appendChild(script);
+}
+
+// ======================================================
 // SERVICE WORKER
 // ======================================================
 
