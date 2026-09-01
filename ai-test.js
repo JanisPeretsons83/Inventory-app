@@ -238,7 +238,8 @@ function closeAILabelCamera() {
 }
 
 // ======================================================
-// 📷 NOFOTOGRAFĒ LABEL RĀMJA ZONU
+// 📷 NOFOTOGRAFĒ TIEŠI LABEL RĀMJA ZONU
+// ŅEM VĒRĀ object-fit: cover
 // ======================================================
 
 async function captureAILabel() {
@@ -251,7 +252,6 @@ async function captureAILabel() {
         );
         return;
     }
-    // Kamera vēl nav gatava
     if (
         !video.videoWidth ||
         !video.videoHeight
@@ -263,75 +263,117 @@ async function captureAILabel() {
         return;
     }
     try {
-
         // ==========================================
-        // 1. Nosaka VIDEO un RĀMJA pozīciju ekrānā
+        // 1. VIDEO izmēri
         // ==========================================
-
+        
         const videoRect = video.getBoundingClientRect();
         const frameRect = frame.getBoundingClientRect();
-
+        // Īstā kameras izšķirtspēja
+        const cameraWidth = video.videoWidth;
+        const cameraHeight = video.videoHeight;
+        
         // ==========================================
-        // 2. Aprēķina mērogu:
-        // ekrāna koordinātas → kameras pikseļi
-        // ==========================================
-
-        const scaleX = video.videoWidth / videoRect.width;
-        const scaleY = video.videoHeight / videoRect.height;
-
-        // ==========================================
-        // 3. Rāmja zona kameras attēlā
+        // 2. object-fit: cover mērogs
         // ==========================================
 
-        let sourceX = (frameRect.left - videoRect.left) * scaleX;
-        let sourceY = (frameRect.top - videoRect.top) * scaleY;
-        let sourceWidth = frameRect.width * scaleX;
-        let sourceHeight = frameRect.height * scaleY;
-
-        // ==========================================
-        // 4. Drošības pārbaude
-        // ==========================================
-
-        sourceX = Math.max(0, sourceX);
-        sourceY = Math.max(0, sourceY);
-        sourceWidth = Math.min(sourceWidth,
-                video.videoWidth - sourceX
+        const coverScale = Math.max(
+                videoRect.width / cameraWidth,
+                videoRect.height / cameraHeight
             );
-        sourceHeight = Math.min(
-                sourceHeight,
-                video.videoHeight - sourceY
+        
+        // Cik liels kameras attēls faktiski
+        // tiek uzzīmēts uz ekrāna
+        
+        const renderedWidth = cameraWidth * coverScale;
+        const renderedHeight = cameraHeight * coverScale;
+        
+        // ==========================================
+        // 3. Cik daudz COVER nogriež no malām
+        // ==========================================
+        
+        const cropOffsetX = (renderedWidth - videoRect.width) / 2;
+        const cropOffsetY = (renderedHeight - videoRect.height) / 2;
+        
+        // ==========================================
+        // 4. Rāmja pozīcija VIDEO elementā
+        // ==========================================
+        
+        const frameX = frameRect.left - videoRect.left;
+        const frameY = frameRect.top - videoRect.top;
+        
+        // ==========================================
+        // 5. Ekrāna koordinātas
+        //    → kameras īstie pikseļi
+        // ==========================================
+        
+        let sourceX = (frameX + cropOffsetX) /coverScale;
+        let sourceY = (frameY + cropOffsetY) /coverScale;
+        let sourceWidth = frameRect.width /coverScale;
+        let sourceHeight = frameRect.height /coverScale;
+        
+        // ==========================================
+        // 6. Drošības robežas
+        // ==========================================
+        
+        sourceX = Math.max(0,
+                Math.round(sourceX)
             );
-
+        sourceY = Math.max(0,
+                Math.round(sourceY)
+            );
+        sourceWidth = Math.round(sourceWidth);
+        sourceHeight = Math.round(sourceHeight);
+        if (
+            sourceX + sourceWidth >
+            cameraWidth
+            ) { sourceWidth = cameraWidth - sourceX;
+                }
+        if (sourceY + sourceHeight >
+            cameraHeight
+            ) { sourceHeight = cameraHeight - sourceY;
+                }
+        
         // ==========================================
-        // 5. AI attēla izmērs
+        // 7. AI ATTĒLA MAX IZMĒRS
         // ==========================================
+        
         const MAX_SIZE = 1000;
-        const scale = Math.min( 1,
+        const resizeScale = Math.min(1,
                 MAX_SIZE / sourceWidth,
                 MAX_SIZE / sourceHeight
             );
         const outputWidth = Math.round(
-                sourceWidth * scale
+                sourceWidth * resizeScale
             );
         const outputHeight = Math.round(
-                sourceHeight * scale
+                sourceHeight * resizeScale
             );
-
+        
         // ==========================================
-        // 6. Izveido pagaidu Canvas RAM
+        // 8. CANVAS — tikai RAM
         // ==========================================
+        
         const canvas = document.createElement("canvas");
         canvas.width = outputWidth;
         canvas.height = outputHeight;
         const ctx = canvas.getContext("2d");
         if (!ctx) {
             throw new Error(
-                "Neizdevās izveidot Canvas"
+                "Canvas nav pieejams"
             );
         }
+        // Balts fons
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0,
+            outputWidth,
+            outputHeight
+        );
+        
         // ==========================================
-        // 7. Izgriež TIKAI rāmī redzamo zonu
+        // 9. IZGRIEŽ TIKAI RĀMJA SATURU
         // ==========================================
+        
         ctx.drawImage(
             video,
             sourceX,
@@ -343,9 +385,11 @@ async function captureAILabel() {
             outputWidth,
             outputHeight
         );
+        
         // ==========================================
-        // 8. Canvas → JPEG Blob
+        // 10. JPEG BLOB
         // ==========================================
+        
         const aiImageBlob =
             await new Promise(
                 (resolve, reject) => {
@@ -353,63 +397,61 @@ async function captureAILabel() {
                         blob => {
                             if (!blob) {
                                 reject(
-                                    new Error(
-                                        "Neizdevās izveidot AI attēlu"
-                                    )
+                                    new Error("Neizdevās izveidot AI attēlu")
                                 );
                                 return;
                             }
                             resolve(blob);
                         },
-                        "image/jpeg",
-                        0.70
-                    );
+                        "image/jpeg", 0.70);
                 }
             );
+        
+        // ==========================================
+        // 11. TESTA INFORMĀCIJA
+        // ==========================================
+        
+        const ratio = outputWidth / outputHeight;
         console.log(
-            "🤖 AI LABEL FOTO:",
+            "🤖 AI LABEL:",
             {
-                size:
-                    Math.round(
+                camera: `${cameraWidth} × ${cameraHeight}`,
+                output: `${outputWidth} × ${outputHeight}`,
+                ratio: ratio.toFixed(3),
+                expectedRatio: (123 / 100).toFixed(3),
+                size: Math.round(
                         aiImageBlob.size / 1024
-                    ) + " KB",
-                width: outputWidth,
-                height: outputHeight
+                    ) + " KB"
             }
         );
+        
         // ==========================================
-        // 9. Aizver un IZSLĒDZ kameru
+        // 12. IZSLĒDZ KAMERU
         // ==========================================
+        
         closeAILabelCamera();
-        // ==========================================
-        // 10. Testa informācija
-        // ==========================================
         alert(
             "📷 Label foto gatavs\n\n" +
             `Izmērs: ${outputWidth} × ${outputHeight}\n` +
+            `Proporcija: ${ratio.toFixed(3)}\n` +
+            `Jābūt: ${(123 / 100).toFixed(3)}\n\n` +
             `Fails: ${
-                Math.round(
-                    aiImageBlob.size / 1024
-                )
+                Math.round(aiImageBlob.size / 1024)
             } KB\n\n` +
-            "✅ Saglabāts tikai RAM\n" +
-            "❌ Nav saglabāts localStorage\n" +
-            "❌ Nav saglabāts galerijā"
+            "✅ Tikai RAM"
         );
-        // ==========================================
         // VĒLĀK:
+        //
+        // showAILabelPreview(aiImageBlob);
+        //
         // await sendLabelToAI(aiImageBlob);
-        // ==========================================
     }
     catch (error) {
         console.error(
             "❌ Label foto kļūda:",
-            error
-        );
-        showNotice(
-            "❌ Neizdevās uzņemt lapiņas attēlu.",
-            "error"
-        );
+            error);
+        showNotice("❌ Neizdevās uzņemt lapiņas attēlu.",
+            "error");
     }
 }
 
