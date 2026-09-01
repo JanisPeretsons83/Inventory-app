@@ -518,33 +518,42 @@ function retakeAILabel() {
 // ✅ APSTIPRINA AI ATTĒLU
 // ======================================================
 
-function acceptAILabelPreview() {
+async function acceptAILabelPreview() {
     if (!aiPendingBlob) {
         showNotice(
-            "❌ AI attēls vairs nav pieejams.\n" +
-            "Nofotografē lapiņu vēlreiz.",
+            "❌ AI attēls vairs nav pieejams.",
             "error"
         );
         return;
     }
-    // 2. Vai ir internets
-
     if (!canUseAIOnline()) {
         return;
     }
-    showNotice("✅ Attēls gatavs AI nolasīšanai.",
-        "success"
+    // Saglabā Blob pirms preview aizvēršanas
+    const blob = aiPendingBlob;
+    closeAILabelPreview();
+    showNotice(
+        "🤖 Nosūta attēlu...",
+        "info"
     );
-     closeAILabelPreview();
-    // VĒLĀK:
-    // try {
-    //
-    //     const result =
-    //         await sendLabelToAI(aiPendingBlob);
-    //
-    // } catch (error) {
-    //
-    //     handleAIError(error);
+    try {
+        const result = await sendLabelToAI(blob);
+        alert(
+            "✅ Worker saņēma attēlu\n\n" +
+            `Izmērs: ${
+                Math.round(
+                    result.imageSize / 1024
+                )
+            } KB\n` +
+            `Tips: ${
+                result.imageType
+            }\n\n` +
+            `${result.message}`
+        );
+    }
+    catch (error) {
+        handleAIError(error);
+    }
 }
 
 function closeAILabelPreview() {
@@ -570,7 +579,53 @@ async function handleAILabelPhoto(event) {
 
 // 2. Nosūta attēlu serverless funkcijai
 async function sendLabelToAI(blob) {
-    // ...
+    if (!blob) {
+        throw new Error(
+            "AI attēls nav pieejams"
+        );
+    }
+    if (!navigator.onLine) {
+        const error = new Error("Nav interneta");
+        error.type = "offline";
+        throw error;
+    }
+    const formData = new FormData();
+    formData.append(
+        "image",
+        blob,
+        "label.jpg"
+    );
+    const controller = new AbortController();
+    const timeout =
+        setTimeout(() => {
+            controller.abort();
+        }, 20000);
+    try {
+        const response = await fetch(
+                "https://inventory-label-ai.janispetersons1983.workers.dev/",
+                {
+                    method: "POST",
+                    body: formData,
+                    signal: controller.signal
+                }
+            );
+        if (!response.ok) {
+            const error = new Error(
+                    `Worker kļūda: ${response.status}`
+                );
+            error.type = "server";
+            throw error;
+        }
+        const result = await response.json();
+        console.log(
+            "🤖 Worker atbilde:",
+            result
+        );
+        return result;
+    }
+    finally {
+        clearTimeout(timeout);
+    }
 }
 
 // 3. Validē saņemto JSON
@@ -701,7 +756,9 @@ function testAIResultFlow() {
     }
 }
 window.testAIResultFlow = testAIResultFlow;
+
 // 4. Parāda AI rezultātu lietotājam
+
 function showAIResult(result) {
     aiPendingResult = result;
     const modal = document.getElementById("aiResultModal");
