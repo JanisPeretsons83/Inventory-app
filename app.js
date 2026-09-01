@@ -21,16 +21,18 @@ let photoBusy = false;
 
 window.APP_STARTED = true;
 
-window.addEventListener("load", () => {
-    const splash = document.getElementById("appSplash");
-        if (!splash) return;
+// ✅ SPLASH SCREEN
+document.addEventListener("DOMContentLoaded", () => {
+    const splash =
+        document.getElementById("appSplash");
+    if (!splash) return;
     setTimeout(() => {
         splash.style.transition =
-            "opacity 0.25s ease";
-         splash.style.opacity = "0";
+            "opacity 0.35s ease";
+        splash.style.opacity = "0";
         setTimeout(() => {
             splash.remove();
-        }, 250);
+        }, 350);
     }, 2000);
 });
 
