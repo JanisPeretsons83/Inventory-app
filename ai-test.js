@@ -34,19 +34,15 @@ async function prepareLabelImageForAI(file) {
                         MAX_SIZE / width,
                         MAX_SIZE / height
                     );
-                    width =
-                        Math.round(width * scale);
-                    height =
-                        Math.round(height * scale);
+                    width = Math.round(width * scale);
+                    height = Math.round(height * scale);
                     // ------------------------------
                     // Izveido pagaidu canvas RAM
                     // ------------------------------
-                    const canvas =
-                        document.createElement("canvas");
+                    const canvas = document.createElement("canvas");
                     canvas.width = width;
                     canvas.height = height;
-                    const ctx =
-                        canvas.getContext("2d");
+                    const ctx = canvas.getContext("2d");
                     if (!ctx) {
                         throw new Error(
                             "Neizdevās izveidot Canvas"
@@ -54,20 +50,9 @@ async function prepareLabelImageForAI(file) {
                     }
                     // Balts fons JPEG attēlam
                     ctx.fillStyle = "#ffffff";
-                    ctx.fillRect(
-                        0,
-                        0,
-                        width,
-                        height
-                    );
+                    ctx.fillRect(0, 0, width, height);
                     // Ievieto samazināto attēlu
-                    ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        width,
-                        height
-                    );
+                    ctx.drawImage(img, 0, 0, width, height);
                     // ------------------------------
                     // Canvas → JPEG Blob
                     // ------------------------------
@@ -128,17 +113,13 @@ async function startAILabelScan() {
     if (!isTestMode()) {
         return;
     }
-    const modal =
-        document.getElementById("aiCameraModal");
-    const video =
-        document.getElementById("aiCameraVideo");
+    const modal = document.getElementById("aiCameraModal");
+    const video = document.getElementById("aiCameraVideo");
     // ==========================================
     // HTML pārbaude
     // ==========================================
     if (!modal) {
-        console.error(
-            "❌ aiCameraModal nav atrasts"
-        );
+        console.error("❌ aiCameraModal nav atrasts");
         showNotice(
             "❌ AI kameras logs nav atrasts.",
             "error"
@@ -162,10 +143,8 @@ async function startAILabelScan() {
         !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia
     ) {
-        showNotice(
-            "❌ Šī ierīce neatbalsta kameras režīmu.",
-            "error"
-        );
+        showNotice("❌ Šī ierīce neatbalsta kameras režīmu.",
+                    "error");
         return;
     }
     try {
@@ -175,18 +154,14 @@ async function startAILabelScan() {
         // ==========================================
         // Aizmugurējā kamera
         // ==========================================
-        aiCameraStream =
-            await navigator.mediaDevices
+        aiCameraStream = await navigator.mediaDevices
                 .getUserMedia({
-                    video: {
-                        facingMode: {
+                    video: {facingMode: {
                             ideal: "environment"
                         },
-                        width: {
-                            ideal: 1920
+                        width: {ideal: 1920
                         },
-                        height: {
-                            ideal: 1080
+                        height: {ideal: 1080
                         }
                     },
                     audio: false
@@ -194,13 +169,11 @@ async function startAILabelScan() {
         // ==========================================
         // Kamera → VIDEO
         // ==========================================
-        video.srcObject =
-            aiCameraStream;
+        video.srcObject = aiCameraStream;
         // ==========================================
         // Parāda mūsu kameras logu
         // ==========================================
-        modal.style.display =
-            "block";
+        modal.style.display = "block";
         await video.play();
         console.log(
             "✅ AI kamera palaista"
@@ -262,10 +235,8 @@ function showAITestInfo(
     height,
     type
 ) {
-    const originalKB =
-        Math.round(originalBytes / 1024);
-    const aiKB =
-        Math.round(aiBytes / 1024);
+    const originalKB = Math.round(originalBytes / 1024);
+    const aiKB = Math.round(aiBytes / 1024);
     alert(
         "📷 AI attēls sagatavots\n\n" +
         `Oriģināls: ${originalKB} KB\n` +
@@ -303,19 +274,4 @@ function applyAIResult(result) {
     // ...
 }
 
-// 6. Galvenā AI lapiņas funkcija
-function startAILabelScan() {
-    // Tikai TEST lietotājiem
-    if (!isTestMode()) {
-        return;
-    }
-    const input = document.getElementById("aiLabelCamera");
-    if (!input) {
-        console.error("aiLabelCamera nav atrasts");
-        return;
-    }
-    // Notīra iepriekšējo izvēli.
-    // Tas ļauj fotografēt atkārtoti.
-    input.value = "";
-    input.click();
-}
+
