@@ -1456,7 +1456,7 @@ function checkBetaAccess() {
     [
         "betaFeatures",
         "betaImportView",
-        "betaAnalytics"
+        "betaAnalytics",
         "aiLabelBtn"
     ].forEach(id => {
         const el = document.getElementById(id);
