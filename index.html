@@ -375,6 +375,40 @@
             </button>
         </div>
     </div>
+        <!-- ==========================================
+             🤖 AI LABEL KAMERA — TEST REŽĪMS
+        =========================================== -->
+    <div id="aiCameraModal" class="aiCameraModal">
+        <video id="aiCameraVideo"
+            autoplay
+            playsinline
+            muted>
+        </video>
+        <!-- Tumšais pārklājums + lapiņas rāmis -->
+        <div class="aiCameraOverlay">
+            <div class="aiLabelFrame">
+                <div class="aiFrameCorner topLeft"></div>
+                <div class="aiFrameCorner topRight"></div>
+                <div class="aiFrameCorner bottomLeft"></div>
+                <div class="aiFrameCorner bottomRight"></div>
+            </div>
+            <div class="aiCameraHint">
+                Novieto visu lapiņu rāmī
+            </div>
+        </div>
+        <div class="aiCameraControls">
+            <button type="button"
+                class="aiCameraCancel"
+                onclick="closeAILabelCamera()">
+                ✕ Atcelt
+            </button>
+            <button type="button"
+                class="aiCameraCapture"
+                onclick="captureAILabel()">
+                📷 Fotografēt
+            </button>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
