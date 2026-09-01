@@ -1,7 +1,8 @@
-
 // ======================================================
 // 🤖 AI PIEPRASĪJUMS — TEST REŽĪMS
 // ======================================================
+
+let aiCameraStream = null;
 
 // 1. Sagatavo attēlu AI
 async function prepareLabelImageForAI(file) {
@@ -119,21 +120,88 @@ async function prepareLabelImageForAI(file) {
     });
 }
 
-function startAILabelScan() {
+// ======================================================
+// 📷 ATVER AI LABEL KAMERU
+// ======================================================
+
+async function startAILabelScan() {
     if (!isTestMode()) {
         return;
     }
-    const input =
-        document.getElementById("aiLabelCamera");
-    if (!input) {
-        showNotice(
-            "❌ AI kameras lauks nav atrasts.",
-            "error"
-        );
+    const modal = document.getElementById("aiCameraModal");
+    const video = document.getElementById("aiCameraVideo");
+    if (!modal || !video) {
+        showNotice("❌ AI kameras logs nav atrasts.",
+            "error");
         return;
     }
-    input.value = "";
-    input.click();
+    // Pārbauda kameras API
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
+        showNotice("❌ Šī ierīce neatbalsta kameras režīmu.",
+            "error");
+        return;
+    }
+    try {
+        // Pieprasa AIZMUGURĒJO kameru
+        aiCameraStream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    },
+                    width: {
+                        ideal: 1920
+                    },
+                    height: {
+                        ideal: 1080
+                    }
+                },
+                audio: false
+            });
+        video.srcObject = aiCameraStream;
+        // Parāda mūsu kameras logu
+        modal.style.display =
+            "block";
+        // Īpaši svarīgi Safari/iPhone
+        await video.play();
+    }
+    catch (error) {
+        console.error("AI kamera:",
+            error);
+        // Ja kamera nav atļauta
+        if (
+            error.name === "NotAllowedError" ||
+            error.name === "PermissionDeniedError"
+        ) {
+            showNotice("⚠️ Kamerai nav dota piekļuve.",
+                        "error");
+            return;
+        }
+        showNotice("❌ Neizdevās atvērt kameru.",
+            "error");
+    }
+}
+
+// ======================================================
+// 📷 TESTA FOTO POGA
+// ======================================================
+
+function captureAILabel() {
+    const video = document.getElementById("aiCameraVideo");
+    if (!video) {
+        return;
+    }
+    if (!video.videoWidth ||
+        !video.videoHeight
+    ) {
+        showNotice("⚠️ Kamera vēl nav gatava.",
+            "error");
+        return;
+    }
+    showNotice("📷 Kamera darbojas korekti.",
+        "success");
 }
 
 // ======================================================
