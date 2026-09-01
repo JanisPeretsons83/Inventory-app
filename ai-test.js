@@ -533,26 +533,54 @@ async function acceptAILabelPreview() {
     const blob = aiPendingBlob;
     closeAILabelPreview();
     showNotice(
-        "🤖 Nosūta attēlu...",
+        "🤖 Nolasa lapiņu...",
         "info"
     );
     try {
-        const result = await sendLabelToAI(blob);
-        alert(
-            "✅ Worker saņēma attēlu\n\n" +
-            `Izmērs: ${
-                Math.round(
-                    result.imageSize / 1024
-                )
-            } KB\n` +
-            `Tips: ${
-                result.imageType
-            }\n\n` +
-            `${result.message}`
+        // ==========================================
+        // 1. Nosūta attēlu Worker
+        // ==========================================
+        const response =
+            await sendLabelToAI(blob);
+        // ==========================================
+        // 2. Worker atbildes pārbaude
+        // ==========================================
+        if (
+            !response ||
+            response.ok !== true ||
+            !response.result
+        ) {
+            const error =
+                new Error(
+                    response?.error ||
+                    "AI neatgrieza derīgu rezultātu"
+                );
+            error.type =
+                "invalid-response";
+            throw error;
+        }
+        // ==========================================
+        // 3. Validē AI JSON
+        // ==========================================
+        const validated =
+            validateAIResult(
+                response.result
+            );
+        // ==========================================
+        // 4. Parāda rezultāta logu
+        // ==========================================
+        showAIResult(
+            validated
+        );
+        console.log(
+            "✅ AI validētais rezultāts:",
+            validated
         );
     }
     catch (error) {
-        handleAIError(error);
+        handleAIError(
+            error
+        );
     }
 }
 
