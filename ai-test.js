@@ -205,23 +205,212 @@ async function startAILabelScan() {
 }
 
 // ======================================================
-// 📷 TESTA FOTO POGA
+// ❌ AIZVER AI KAMERU
 // ======================================================
 
-function captureAILabel() {
+function closeAILabelCamera() {
+    const modal = document.getElementById("aiCameraModal");
     const video = document.getElementById("aiCameraVideo");
-    if (!video) {
+    // ==========================================
+    // Aptur kameru
+    // ==========================================
+    if (aiCameraStream) {
+        aiCameraStream
+            .getTracks()
+            .forEach(track => {
+                track.stop();
+            });
+        aiCameraStream = null;
+    }
+    // ==========================================
+    // Atvieno video
+    // ==========================================
+    if (video) {
+        video.pause();
+        video.srcObject = null;
+    }
+    // ==========================================
+    // Aizver kameras logu
+    // ==========================================
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+// ======================================================
+// 📷 NOFOTOGRAFĒ LABEL RĀMJA ZONU
+// ======================================================
+
+async function captureAILabel() {
+    const video = document.getElementById("aiCameraVideo");
+    const frame = document.querySelector(".aiLabelFrame");
+    if (!video || !frame) {
+        showNotice(
+            "❌ Kameras rāmis nav atrasts.",
+            "error"
+        );
         return;
     }
-    if (!video.videoWidth ||
+    // Kamera vēl nav gatava
+    if (
+        !video.videoWidth ||
         !video.videoHeight
     ) {
-        showNotice("⚠️ Kamera vēl nav gatava.",
-            "error");
+        showNotice(
+            "⚠️ Kamera vēl nav gatava.",
+            "error"
+        );
         return;
     }
-    showNotice("📷 Kamera darbojas korekti.",
-        "success");
+    try {
+
+        // ==========================================
+        // 1. Nosaka VIDEO un RĀMJA pozīciju ekrānā
+        // ==========================================
+
+        const videoRect = video.getBoundingClientRect();
+        const frameRect = frame.getBoundingClientRect();
+
+        // ==========================================
+        // 2. Aprēķina mērogu:
+        // ekrāna koordinātas → kameras pikseļi
+        // ==========================================
+
+        const scaleX = video.videoWidth / videoRect.width;
+        const scaleY = video.videoHeight / videoRect.height;
+
+        // ==========================================
+        // 3. Rāmja zona kameras attēlā
+        // ==========================================
+
+        let sourceX = (frameRect.left - videoRect.left) * scaleX;
+        let sourceY = (frameRect.top - videoRect.top) * scaleY;
+        let sourceWidth = frameRect.width * scaleX;
+        let sourceHeight = frameRect.height * scaleY;
+
+        // ==========================================
+        // 4. Drošības pārbaude
+        // ==========================================
+
+        sourceX = Math.max(0, sourceX);
+        sourceY = Math.max(0, sourceY);
+        sourceWidth = Math.min(sourceWidth,
+                video.videoWidth - sourceX
+            );
+        sourceHeight = Math.min(
+                sourceHeight,
+                video.videoHeight - sourceY
+            );
+
+        // ==========================================
+        // 5. AI attēla izmērs
+        // ==========================================
+        const MAX_SIZE = 1000;
+        const scale = Math.min( 1,
+                MAX_SIZE / sourceWidth,
+                MAX_SIZE / sourceHeight
+            );
+        const outputWidth = Math.round(
+                sourceWidth * scale
+            );
+        const outputHeight = Math.round(
+                sourceHeight * scale
+            );
+
+        // ==========================================
+        // 6. Izveido pagaidu Canvas RAM
+        // ==========================================
+        const canvas = document.createElement("canvas");
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+            throw new Error(
+                "Neizdevās izveidot Canvas"
+            );
+        }
+        // ==========================================
+        // 7. Izgriež TIKAI rāmī redzamo zonu
+        // ==========================================
+        ctx.drawImage(
+            video,
+            sourceX,
+            sourceY,
+            sourceWidth,
+            sourceHeight,
+            0,
+            0,
+            outputWidth,
+            outputHeight
+        );
+        // ==========================================
+        // 8. Canvas → JPEG Blob
+        // ==========================================
+        const aiImageBlob =
+            await new Promise(
+                (resolve, reject) => {
+                    canvas.toBlob(
+                        blob => {
+                            if (!blob) {
+                                reject(
+                                    new Error(
+                                        "Neizdevās izveidot AI attēlu"
+                                    )
+                                );
+                                return;
+                            }
+                            resolve(blob);
+                        },
+                        "image/jpeg",
+                        0.70
+                    );
+                }
+            );
+        console.log(
+            "🤖 AI LABEL FOTO:",
+            {
+                size:
+                    Math.round(
+                        aiImageBlob.size / 1024
+                    ) + " KB",
+                width: outputWidth,
+                height: outputHeight
+            }
+        );
+        // ==========================================
+        // 9. Aizver un IZSLĒDZ kameru
+        // ==========================================
+        closeAILabelCamera();
+        // ==========================================
+        // 10. Testa informācija
+        // ==========================================
+        alert(
+            "📷 Label foto gatavs\n\n" +
+            `Izmērs: ${outputWidth} × ${outputHeight}\n` +
+            `Fails: ${
+                Math.round(
+                    aiImageBlob.size / 1024
+                )
+            } KB\n\n` +
+            "✅ Saglabāts tikai RAM\n" +
+            "❌ Nav saglabāts localStorage\n" +
+            "❌ Nav saglabāts galerijā"
+        );
+        // ==========================================
+        // VĒLĀK:
+        // await sendLabelToAI(aiImageBlob);
+        // ==========================================
+    }
+    catch (error) {
+        console.error(
+            "❌ Label foto kļūda:",
+            error
+        );
+        showNotice(
+            "❌ Neizdevās uzņemt lapiņas attēlu.",
+            "error"
+        );
+    }
 }
 
 // ======================================================
