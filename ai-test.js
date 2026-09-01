@@ -537,6 +537,7 @@ function acceptAILabelPreview() {
     showNotice("✅ Attēls gatavs AI nolasīšanai.",
         "success"
     );
+     closeAILabelPreview();
     // VĒLĀK:
     // try {
     //
