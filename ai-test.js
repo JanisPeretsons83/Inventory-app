@@ -162,8 +162,7 @@ async function startAILabelScan() {
             });
         video.srcObject = aiCameraStream;
         // Parāda mūsu kameras logu
-        modal.style.display =
-            "block";
+        modal.style.display = "block";
         // Īpaši svarīgi Safari/iPhone
         await video.play();
     }
@@ -233,46 +232,7 @@ function showAITestInfo(
 // 📷 SAŅEM NOFOTOGRAFĒTO LABEL
 // ======================================================
 async function handleAILabelPhoto(event) {
-    if (!isTestMode()) {
-        return;
-    }
-    const file = event.target.files?.[0];
-    if (!file) {
-        return;
-    }
-    try {
-        console.log(
-            "📷 Oriģinālais AI foto:",
-            {
-                name: file.name,
-                type: file.type,
-                size:
-                    Math.round(file.size / 1024) +
-                    " KB"
-            }
-        );
-        const aiImageBlob =
-            await prepareLabelImageForAI(file);
-        console.log(
-            "✅ AI bilde gatava nosūtīšanai:",
-            Math.round(
-                aiImageBlob.size / 1024
-            ) + " KB"
-        );
-        // ==========================================
-        // ŠEIT VĒLĀK:
-        //
-        // await sendLabelToAI(aiImageBlob);
-        //
-        // ==========================================
-    } catch (error) {
-        console.error("❌ AI bildes sagatavošanas kļūda:",
-            error
-        );
-        showNotice("❌ Neizdevās sagatavot lapiņas attēlu", "error");
-    }
-    // Vairs neturam failu input elementā
-    event.target.value = "";
+    //...
 }
 
 // 2. Nosūta attēlu serverless funkcijai
