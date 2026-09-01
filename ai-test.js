@@ -510,9 +510,7 @@ function showAILabelPreview(
 // ======================================================
 
 function retakeAILabel() {
-
     closeAILabelPreview();
-
     startAILabelScan();
 }
 
@@ -529,7 +527,6 @@ function acceptAILabelPreview() {
         );
         return;
     }
-    
     // 2. Vai ir internets
 
     if (!canUseAIOnline()) {
@@ -703,6 +700,7 @@ function testAIResultFlow() {
         handleAIError(error);
     }
 }
+window.testAIResultFlow = testAIResultFlow;
 // 4. Parāda AI rezultātu lietotājam
 function showAIResult(result) {
     aiPendingResult = result;
@@ -762,47 +760,18 @@ function applyAIResult(result) {
         if (value === null) {
             return;
         }
-
-        const field =
-            document.getElementById(id);
-
+        const field = document.getElementById(id);
         if (field) {
             field.value = value;
         }
     };
-
-
     // 📦 packages APZINĀTI neaiztiekam
-
-    setField(
-        "thickness",
-        result.thickness
-    );
-
-    setField(
-        "width",
-        result.width
-    );
-
-    setField(
-        "length",
-        result.length
-    );
-
-    setField(
-        "pieces",
-        result.pieces
-    );
-
-    setField(
-        "month",
-        result.month
-    );
-
-    setField(
-        "year",
-        result.year
-    );
+    setField("thickness", result.thickness);
+    setField("width", result.width);
+    setField("length", result.length);
+    setField("pieces", result.pieces);
+    setField("month", result.month);
+    setField("year", result.year);
 }
 
 function closeAIResultModal() {
