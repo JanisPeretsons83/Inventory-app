@@ -113,6 +113,9 @@ async function prepareLabelImageForAI(file) {
 // ======================================================
 
 async function startAILabelScan() {
+
+    aiPendingResult = null;
+    
     if (!isTestMode()) {
         return;
     }
@@ -519,6 +522,11 @@ function retakeAILabel() {
 // ======================================================
 
 async function acceptAILabelPreview() {
+    // ✅ Vienmēr izmet veco AI rezultātu
+    aiPendingResult = null;
+    // ==========================================
+    // 1. Vai attēls ir pieejams
+    // ==========================================
     if (!aiPendingBlob) {
         showNotice(
             "❌ AI attēls vairs nav pieejams.",
@@ -526,11 +534,20 @@ async function acceptAILabelPreview() {
         );
         return;
     }
+    // ==========================================
+    // 2. Vai ir internets
+    // ==========================================
     if (!canUseAIOnline()) {
         return;
     }
-    // Saglabā Blob pirms preview aizvēršanas
-    const blob = aiPendingBlob;
+    // ==========================================
+    // 3. Saglabā Blob lokālā mainīgajā
+    // ==========================================
+    const blob =
+        aiPendingBlob;
+    // Tagad preview drīkst aizvērt.
+    // aiPendingBlob kļūs null,
+    // bet mums bilde jau ir mainīgajā blob.
     closeAILabelPreview();
     showNotice(
         "🤖 Nolasa lapiņu...",
@@ -538,12 +555,12 @@ async function acceptAILabelPreview() {
     );
     try {
         // ==========================================
-        // 1. Nosūta attēlu Worker
+        // 4. Nosūta attēlu Worker
         // ==========================================
         const response =
             await sendLabelToAI(blob);
         // ==========================================
-        // 2. Worker atbildes pārbaude
+        // 5. Worker atbildes pārbaude
         // ==========================================
         if (
             !response ||
@@ -560,14 +577,14 @@ async function acceptAILabelPreview() {
             throw error;
         }
         // ==========================================
-        // 3. Validē AI JSON
+        // 6. Validē AI JSON
         // ==========================================
         const validated =
             validateAIResult(
                 response.result
             );
         // ==========================================
-        // 4. Parāda rezultāta logu
+        // 7. Parāda AI rezultāta logu
         // ==========================================
         showAIResult(
             validated
@@ -613,23 +630,27 @@ async function sendLabelToAI(blob) {
         );
     }
     if (!navigator.onLine) {
-        const error = new Error("Nav interneta");
+        const error =
+            new Error("Nav interneta");
         error.type = "offline";
         throw error;
     }
-    const formData = new FormData();
+    const formData =
+        new FormData();
     formData.append(
         "image",
         blob,
         "label.jpg"
     );
-    const controller = new AbortController();
+    const controller =
+        new AbortController();
     const timeout =
         setTimeout(() => {
             controller.abort();
-        }, 20000);
+        }, 30000);
     try {
-        const response = await fetch(
+        const response =
+            await fetch(
                 "https://inventory-label-ai.janispetersons1983.workers.dev/",
                 {
                     method: "POST",
@@ -637,14 +658,41 @@ async function sendLabelToAI(blob) {
                     signal: controller.signal
                 }
             );
+        const responseText =
+            await response.text();
+        let result;
+        try {
+            result =
+                JSON.parse(responseText);
+        }
+        catch {
+            result = null;
+        }
         if (!response.ok) {
-            const error = new Error(
+            console.error(
+                "❌ Worker atbilde:",
+                response.status,
+                responseText
+            );
+            const error =
+                new Error(
+                    result?.error ||
                     `Worker kļūda: ${response.status}`
                 );
             error.type = "server";
+            error.status = response.status;
+            error.workerResponse = responseText;
             throw error;
         }
-        const result = await response.json();
+        if (!result) {
+            const error =
+                new Error(
+                    "Worker neatgrieza derīgu JSON"
+                );
+            error.type =
+                "invalid-response";
+            throw error;
+        }
         console.log(
             "🤖 Worker atbilde:",
             result
@@ -921,10 +969,12 @@ function handleAIError(error) {
     }
     // Servera / Worker kļūda
     else if (
-        error?.type === "server"
+    error?.type === "server"
     ) {
-        message = "⚠️ AI serviss pašlaik nav pieejams.\n" +
-            "Datus vari ievadīt manuāli.";
+
+    message =
+        "⚠️ AI servisa kļūda\n\n" +
+        (error.message || "Nezināma kļūda");
     }
     // Nederīga AI atbilde
     else if (
