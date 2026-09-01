@@ -1,61 +1,95 @@
+// ======================================================
+// 🤖 INVENTORY LABEL AI WORKER
+// ======================================================
+
+
+// ======================================================
+// 📋 AI INSTRUKCIJA
+// ======================================================
+
 const LABEL_AI_PROMPT = `
 You are reading a standardized wooden pallet inventory label.
 
-Extract ONLY the required inventory values described below.
+Extract ONLY the following inventory values:
 
-LABEL LAYOUT:
-
-1. DIMENSION
-   Find the field labeled "Dimensija".
-   It is located in the middle-left part of the label.
-
-   The handwritten value represents:
-
-   thickness × width × length
-
-   Example:
-   27x95x4200
-
-   Return:
-   thickness = 27
-   width = 95
-   length = 4200
+1. thickness
+2. width
+3. length
+4. pieces
+5. month
+6. year
 
 
-2. PIECES
-   Find the field labeled "GB:".
-   It is located to the right of the "Dimensija" field.
+LABEL STRUCTURE:
 
-   This handwritten number is the number of pieces
-   in the pallet.
+DIMENSION
+---------
 
-   Example:
-   GB: 600
+Find the field labeled "Dimensija".
 
-   Return:
-   pieces = 600
+It is located in the middle-left part of the label.
+
+The handwritten value represents:
+
+thickness × width × length
+
+Example:
+
+27x95x4200
+
+Return:
+
+thickness = 27
+width = 95
+length = 4200
 
 
-3. MONTH AND YEAR
-   Find the field labeled "Datums:".
-   It is located in the upper-right part of the label.
+PIECES
+------
 
-   The year may already be printed after "Datums:".
-   Example:
-   Datums: 2026
+Find the field labeled "GB:".
 
-   Return the full four-digit year:
-   year = 2026
+It is located to the right of the "Dimensija" field.
 
-   A handwritten date or month may also be present
-   in this field.
+The handwritten number in this field represents
+the number of pieces in the pallet.
 
-   If a date is written as:
-   27.08
-   return:
-   month = 8
+Example:
 
-   If only the month is written, return that month.
+GB: 600
+
+Return:
+
+pieces = 600
+
+
+DATE
+----
+
+Find the field labeled "Datums:".
+
+It is located in the upper-right part of the label.
+
+The year may already be printed on the label.
+
+Example:
+
+Datums: 2026
+
+Return:
+
+year = 2026
+
+
+A handwritten date may also be present.
+
+Example:
+
+27.08
+
+Return ONLY the month:
+
+month = 8
 
 
 IGNORE COMPLETELY:
@@ -64,25 +98,24 @@ IGNORE COMPLETELY:
 - Nākošā operācija
 - m3
 - Detaļas Nr.
-- other text
 - barcode
-- number printed below the barcode
-- large identification number at the bottom of the label
+- barcode number
+- large identification number at the bottom
+- all other unrelated text and numbers
+
 
 IMPORTANT:
 
-The large number at the bottom of the label and the
-barcode number are NOT inventory dimensions, pieces,
-month or year.
+Never use the barcode or the large identification
+number at the bottom as inventory data.
 
-Never use them for the requested fields.
+Do NOT guess unclear or missing digits.
 
-Do NOT guess missing or unclear digits.
-
-If a required value cannot be read reliably,
+If a value cannot be read reliably,
 return null for that field.
 
-Return ONLY valid JSON in exactly this structure:
+
+Return ONLY valid JSON:
 
 {
     "thickness": null,
@@ -93,3 +126,16 @@ Return ONLY valid JSON in exactly this structure:
     "year": null
 }
 `;
+
+
+// ======================================================
+// 🌐 CLOUDFLARE WORKER
+// ======================================================
+//
+// ŠO DAĻU IZVEIDOSIM VĒLĀK.
+//
+// Worker saņems attēlu no ai-test.js,
+// nosūtīs attēlu + LABEL_AI_PROMPT AI,
+// un atgriezīs JSON.
+//
+// ======================================================
