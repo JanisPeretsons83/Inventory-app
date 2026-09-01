@@ -52,11 +52,8 @@
             <div id="error"></div>      
                 <button onclick="setLocation('Cecīļu', this)">Cecīļu ražotne</button>
                 <button onclick="setLocation('Dārdu', this)">Dārdu ražotne</button>
-  
-                <input id="userNameInput" placeholder="Vārds Uzvārds">
-
+                    <input id="userNameInput" placeholder="Vārds Uzvārds">
                 <button onclick="saveUser()">Turpināt</button>
-    
                 <button onclick="startDataViewMode()">
                     📊 Inventarizācijas analītikas skats
                 </button>
@@ -109,27 +106,28 @@
     
 <!-- DARBA REŽĪMS -->
     <div id="appContent" style="display:none;">
+        
         <h2>Inventarizācija</h2>
+        
       <div id="infoLine" class="info"></div>
+        
         <!-- Apgabals -->
+        
         <div id="mapsContainer" class="areaRow">
             <select id="area"
                     onchange="handleAreaChange()">
                 <option value="">Apgabals *</option>
             </select>
-            <div
-                id="areaPhotoPanel"
+            <div id="areaPhotoPanel"
                 class="areaPhotoPanel"
                 style="display:none;">
             </div>
-            <input
-                type="file"
+            <input type="file"
                 id="areaPhotoInput"
                 accept="image/*"
                 capture="environment"
                 onchange="saveAreaPhoto(event)"
-                style="display:none;"
-            >
+                style="display:none;">
             <div id="mapLinks"></div>
         </div>
             <div class="packagesRow">
@@ -145,7 +143,9 @@
                     🤖 AI nolasīt lapiņu
                 </button>
             </div>
+        
             <!-- Izmēri -->
+        
         <div class="row">
             <input  id="thickness"
                     type="number"
@@ -173,7 +173,9 @@
                 </button>
             </div>
        </div>
+        
         <!-- GALI (pakas izmēri) -->
+        
         <div id="galiInputs"
              class="row" 
              style="display:none">
@@ -198,7 +200,9 @@
               min="0" step="1" 
               placeholder="Vidējais detaļas garums(mm)">
         </div>
+        
             <!-- Gabali -->
+        
         <div class="piecesRow">
           <input id="pieces" 
               type="text" 
@@ -209,7 +213,9 @@
             * Aprēķini veikti ar 95% aizpildījuma efektivitāti
           </div>
         </div>
+        
           <!-- Pakas + datums -->
+        
         <div class="row">
           <input id="month" 
               type="number" 
@@ -222,17 +228,23 @@
               min="2000" max="2099" 
               placeholder="Gads *">
         </div>
+        
           <!-- Nosaukums + kods -->
+        
         <div class="row">
           <input id="name" 
               placeholder="Detaļas nosaukums">
           <input id="productCode" 
               placeholder="Produkta kods">
         </div>
+        
             <!-- Šķira -->
+        
         <div class="dropdown">
           <button id="gradeBtn">
+        
               Izvēlies šķiru ▼
+          
           </button>
           <input type="hidden" id="grade">
             <div class="menu">
@@ -426,23 +438,37 @@
             </div>
         </div>
     </div>
-    <div class="aiResultButtons">
-            <button type="button"
-                id="aiResultTestBtn"
-                onclick="closeAIResultModal()">
-                ❌ Atcelt
-            </button>
-            <button type="button"
-                id="aiResultTestBtn"
-                onclick="applyPendingAIResult()">
-                ✅ Ievietot laukos
-            </button>
-            <button type="button"
-                id="aiResultTestBtn"
-                onclick="testAIResultFlow()">
-                🧪 Testēt AI rezultātu
-            </button>
+    <!-- ==========================================
+     🤖 AI REZULTĀTA APSTIPRINĀJUMS
+    =========================================== -->
+    <div id="aiResultModal"
+             class="aiResultModal"
+             style="display:none;">
+        <div class="aiResultBox">
+            <h3>🤖 AI nolasītie dati</h3>
+            <div id="aiResultContent"></div>
+                <div class="aiResultButtons">
+                    <button type="button"
+                        onclick="closeAIResultModal()">
+                        ❌ Atcelt
+                    </button>
+                    <button type="button"
+                        onclick="applyPendingAIResult()">
+                        ✅ Ievietot laukos
+                    </button>
+                </div>
+        </div>
     </div>
+        <!-- ==========================================
+         🧪 PAGaidu AI TESTA POGA
+        =========================================== -->
+<button
+    id="aiResultTestBtn"
+    type="button"
+    onclick="testAIResultFlow()"
+    style="display:none;">
+    🧪 Testēt AI rezultātu
+</button>
 </div>
     <script src="libs/exceljs.min.js"></script>
     <script src="libs/FileSaver.min.js"></script>
@@ -459,6 +485,6 @@
                 }, 4000);
         </script>
     <script src="app.js"></script>
-    <footer class="footerVersion">versija: v.2-0-88</footer>
+    <footer class="footerVersion">versija: v.2-0-89</footer>
 </body>
 </html>
