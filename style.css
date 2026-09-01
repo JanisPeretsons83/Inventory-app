@@ -786,3 +786,42 @@ font-size: 10px;
 .aiPreviewButtons button {
     flex: 1;
 }
+/* ==========================================
+   🤖 AI REZULTĀTA LOGS
+========================================== */
+.aiResultModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999999;
+    background: rgba(0,0,0,.75);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.aiResultBox {
+    width: min(92vw, 420px);
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.aiResultBox h3 {
+    text-align: center;
+    margin-top: 0;
+}
+.aiResultRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+.aiResultButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+.aiResultButtons button {
+    flex: 1;
+}
