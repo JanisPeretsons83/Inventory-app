@@ -777,8 +777,53 @@ function applyAIResult(result) {
         if (year) {
             year.value = result.year ?? "";
         }
+    //📝 AIZPILDA FORMAS LAUKUS
+    const setField = (id, value) => {
+
+        if (value === null) {
+            return;
+        }
+
+        const field =
+            document.getElementById(id);
+
+        if (field) {
+            field.value = value;
+        }
+    };
+
+    // packages APZINĀTI neaiztiekam
+    setField("thickness", result.thickness);
+    setField("width", result.width);
+    setField("length", result.length);
+    setField("pieces", result.pieces);
+    setField("month", result.month);
+    setField("year", result.year);
 }
 
+function closeAIResultModal() {
+    const modal = document.getElementById("aiResultModal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+    aiPendingResult = null;
+}
+
+function applyPendingAIResult() {
+    if (!aiPendingResult) {
+        showNotice(
+            "❌ AI dati nav pieejami.",
+            "error"
+        );
+        return;
+    }
+    applyAIResult(aiPendingResult);
+    closeAIResultModal();
+    showNotice(
+        "✅ AI dati ievietoti laukos.",
+        "success"
+    );
+}
 // ======================================================
 // 🌐 AI INTERNETA PĀRBAUDE
 // ======================================================
