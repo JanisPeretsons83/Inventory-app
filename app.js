@@ -713,7 +713,7 @@ function showNotice(message, type = "info", fieldId = null) {
             }
           }
         }, 250);
-      }, 1000);
+      }, type === "error" ? 5000 : 2000);
 }
 
   function toggleGali() {
@@ -1464,9 +1464,7 @@ function checkBetaAccess() {
     [
         "betaFeatures",
         "betaImportView",
-        "betaAnalytics",
-        "aiLabelBtn",
-        "aiResultTestBtn"
+        "betaAnalytics"
     ].forEach(id => {
 
         const el =
@@ -1479,6 +1477,27 @@ function checkBetaAccess() {
                     : "none";
         }
     });
+
+
+    // 🤖 AI poga pagaidām paslēpta.
+    // To parādīs tikai tad,
+    // kad ai-test.js būs veiksmīgi ielādējies.
+
+    const aiBtn =
+        document.getElementById("aiLabelBtn");
+
+    if (aiBtn) {
+        aiBtn.style.display = "none";
+    }
+
+
+    // 🧪 Veco fake JSON testa pogu vairs nerādām
+    const testBtn =
+        document.getElementById("aiResultTestBtn");
+
+    if (testBtn) {
+        testBtn.style.display = "none";
+    }
 }
 
 function isTestMode() {
@@ -3138,6 +3157,12 @@ function loadAITestScript() {
     script.onload = () => {
         console.log( "🤖 AI testa modulis ielādēts"
         );
+         const aiBtn =
+            document.getElementById("aiLabelBtn");
+
+        if (aiBtn) {
+            aiBtn.style.display = "block";
+        }
     };
     script.onerror = () => {
         console.error("❌ AI testa moduli neizdevās ielādēt"
