@@ -563,7 +563,44 @@ async function sendLabelToAI(blob) {
 
 // 3. Validē saņemto JSON
 function validateAIResult(result) {
-    // ...
+    return {
+        thickness:
+            Number.isFinite(result?.thickness) &&
+            result.thickness > 0 &&
+            result.thickness < 300
+                ? result.thickness
+                : null,
+        width:
+            Number.isFinite(result?.width) &&
+            result.width > 0 &&
+            result.width < 500
+                ? result.width
+                : null,
+        length:
+            Number.isFinite(result?.length) &&
+            result.length > 0 &&
+            result.length < 10000
+                ? result.length
+                : null,
+        pieces:
+            Number.isFinite(result?.pieces) &&
+            result.pieces > 0 &&
+            result.pieces < 100000
+                ? result.pieces
+                : null,
+        month:
+            Number.isInteger(result?.month) &&
+            result.month >= 1 &&
+            result.month <= 12
+                ? result.month
+                : null,
+        year:
+            Number.isInteger(result?.year) &&
+            result.year >= 2000 &&
+            result.year <= 2099
+                ? result.year
+                : null
+    };
 }
 
 // 4. Parāda AI rezultātu lietotājam
@@ -573,7 +610,32 @@ function showAIResult(result) {
 
 // 5. Pēc apstiprinājuma aizpilda formu
 function applyAIResult(result) {
-    // ...
+    // 🪵 Biezums
+    const thickness = document.getElementById("thickness");
+        if (thickness) {thickness.value = result.thickness ?? "";
+        }
+    // 📏 Platums
+    const width = document.getElementById("width");
+        if (width) {width.value = result.width ?? "";
+        }
+    // 📐 Garums
+    const length = document.getElementById("length");
+        if (length) {length.value = result.length ?? "";
+        }
+    // 🔢 Gabali pakā
+    const pieces = document.getElementById("pieces");
+        if (pieces) {
+            pieces.value = result.pieces ?? "";
+        }
+    // 📅 Mēnesis
+    const month = document.getElementById("month");
+        if (month) {
+            month.value = result.month ?? "";
+        }
+    // 📅 Gads
+    const year = document.getElementById("year");
+        if (year) {
+            year.value = result.year ?? "";
+        }
 }
-
 
