@@ -884,6 +884,7 @@ function saveUser() {
     photoTargetArea = null;
         renderAreaPhotoPanel(null);
   checkBetaAccess();
+    loadAITestScript();
 }
 
 function safeFileName(text) {
@@ -1375,6 +1376,7 @@ document.addEventListener("click", (e) => {
     updateAreas();
     updateMaps();
     checkBetaAccess();
+    loadAITestScript();
   }
     
   // LOAD DATA
