@@ -687,10 +687,10 @@ function validateAIResult(result) {
 function testAIResultFlow() {
     const fakeResult = {
         thickness: 27,
-        width: 95,
+        width: 2616513515,
         length: 4200,
         pieces: 600,
-        month: 8,
+        month: 18,
         year: 2026
     };
     try {
