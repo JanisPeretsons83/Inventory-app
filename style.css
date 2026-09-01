@@ -13,6 +13,24 @@
     height: 220px;
     object-fit: contain;
 }
+#appErrorScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999999;
+    background: #f2f4f7;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.errorScreenContent {
+    width: min(90vw, 420px);
+    background: white;
+    padding: 30px 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.2);
+}
 .splashTitle {
     margin-top: 20px;
     font-size: 28px;
