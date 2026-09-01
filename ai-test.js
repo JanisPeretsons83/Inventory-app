@@ -5,6 +5,7 @@
 let aiCameraStream = null;
 let aiPendingBlob = null;
 let aiPendingPreviewUrl = null;
+let aiPendingResult = null;
 
 // 1. Sagatavo attēlu AI
 async function prepareLabelImageForAI(file) {
@@ -577,49 +578,174 @@ async function sendLabelToAI(blob) {
 
 // 3. Validē saņemto JSON
 function validateAIResult(result) {
-    return {
-        thickness:
-            Number.isFinite(result?.thickness) &&
-            result.thickness > 0 &&
-            result.thickness < 300
-                ? result.thickness
-                : null,
-        width:
-            Number.isFinite(result?.width) &&
-            result.width > 0 &&
-            result.width < 500
-                ? result.width
-                : null,
-        length:
-            Number.isFinite(result?.length) &&
-            result.length > 0 &&
-            result.length < 10000
-                ? result.length
-                : null,
-        pieces:
-            Number.isFinite(result?.pieces) &&
-            result.pieces > 0 &&
-            result.pieces < 100000
-                ? result.pieces
-                : null,
-        month:
-            Number.isInteger(result?.month) &&
-            result.month >= 1 &&
-            result.month <= 12
-                ? result.month
-                : null,
-        year:
-            Number.isInteger(result?.year) &&
-            result.year >= 2000 &&
-            result.year <= 2099
-                ? result.year
-                : null
+
+    // AI atbildei jābūt objektam
+    if (!result ||
+        typeof result !== "object" ||
+        Array.isArray(result)
+    ) {
+        const error = new Error("AI atbilde nav derīgs objekts");
+        error.type = "invalid-response";
+        throw error;
+    }
+
+    // ==========================================
+    // Palīgfunkcija skaitļu pārbaudei
+    // ==========================================
+
+    function validNumber(
+        value,
+        min,
+        max
+    ) {
+        // AI nav spējis nolasīt
+        if (value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return null;
+        }
+        const number = Number(value);
+            if (!Number.isFinite(number) ||
+                number < min ||
+                number > max
+            ) {
+            return null;
+        }
+        return number;
+    }
+
+    // ==========================================
+    // Pārbaudām katru lauku
+    // ==========================================
+
+    const validated = {thickness: validNumber(
+            result.thickness,
+            1,
+            300
+        ),
+        width: validNumber(result.width,
+            1,
+            500
+        ),
+        length: validNumber(result.length,
+            1,
+            10000
+        ),
+        pieces: validNumber(result.pieces,
+            1,
+            100000
+        ),
+        month: validNumber(result.month,
+            1,
+            12
+        ),
+        year: validNumber(
+            result.year,
+            2000,
+            2099
+        )
     };
+
+    // ==========================================
+    // Veseli skaitļi
+    // ==========================================
+
+    [
+        "thickness",
+        "width",
+        "length",
+        "pieces",
+        "month",
+        "year"
+    ].forEach(key => {
+        if (
+            validated[key] !== null &&
+            !Number.isInteger(validated[key])
+        ) {
+            validated[key] = null;
+        }
+    });
+
+    // ==========================================
+    // Vai AI vispār kaut ko nolasīja?
+    // ==========================================
+
+    const hasAnyValue = Object.values(validated)
+            .some(value => value !== null);
+    if (!hasAnyValue) {
+        const error =
+            new Error("AI nenolasīja nevienu derīgu vērtību"
+            );
+        error.type = "invalid-response";
+        throw error;
+    }
+    return validated;
 }
 
+// ======================================================
+// 🧪 TESTA AI ATBILDE
+// ======================================================
+
+function testAIResultFlow() {
+    const fakeResult = {
+        thickness: 27,
+        width: 95,
+        length: 4200,
+        pieces: 600,
+        month: 8,
+        year: 2026
+    };
+    try {
+        const validated = validateAIResult(fakeResult);
+        showAIResult(validated);
+    } catch (error) {
+        handleAIError(error);
+    }
+}
 // 4. Parāda AI rezultātu lietotājam
 function showAIResult(result) {
-    // ...
+    aiPendingResult = result;
+    const modal = document.getElementById("aiResultModal");
+    const content = document.getElementById("aiResultContent");
+    if (!modal || !content) {
+        showNotice(
+            "❌ AI rezultāta logs nav atrasts.",
+            "error"
+        );
+        return;
+    }
+    const showValue = value =>
+        value === null
+            ? "⚠️ Nav nolasīts"
+            : value;
+    content.innerHTML = `
+        <div class="aiResultRow">
+            <span>Biezums:</span>
+            <strong>${showValue(result.thickness)}</strong>
+        </div>
+        <div class="aiResultRow">
+            <span>Platums:</span>
+            <strong>${showValue(result.width)}</strong>
+        </div>
+        <div class="aiResultRow">
+            <span>Garums:</span>
+            <strong>${showValue(result.length)}</strong>
+        </div>
+        <div class="aiResultRow">
+            <span>Gabali:</span>
+            <strong>${showValue(result.pieces)}</strong>
+        </div>
+        <div class="aiResultRow">
+            <span>Mēnesis:</span>
+            <strong>${showValue(result.month)}</strong>
+        </div>
+        <div class="aiResultRow">
+            <span>Gads:</span>
+            <strong>${showValue(result.year)}</strong>
+        </div>
+    `;
+    modal.style.display = "flex";
 }
 
 // 5. Pēc apstiprinājuma aizpilda formu
