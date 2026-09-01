@@ -125,6 +125,11 @@ async function prepareLabelImageForAI(file) {
 // ======================================================
 
 async function startAILabelScan() {
+     showNotice(
+        "📷 AI kameras funkcija palaista",
+        "info"
+    );
+
     if (!isTestMode()) {
         return;
     }
@@ -136,6 +141,20 @@ async function startAILabelScan() {
         return;
     }
     // Pārbauda kameras API
+    if (!modal) {
+        showNotice(
+            "❌ Nav aiCameraModal",
+            "error"
+        );
+        return;
+    }
+    if (!video) {
+        showNotice(
+            "❌ Nav aiCameraVideo",
+            "error"
+        );
+        return;
+    }
     if (
         !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia
