@@ -619,7 +619,55 @@ function closeAILabelPreview() {
 // 📷 SAŅEM NOFOTOGRAFĒTO LABEL
 // ======================================================
 async function handleAILabelPhoto(event) {
-    //...
+    const file =
+        event.target.files?.[0];
+    if (!file) {
+        return;
+    }
+    // ✅ Notīra veco AI rezultātu
+    aiPendingResult = null;
+    try {
+        // Sagatavo AI attēlu
+        const blob =
+            await prepareLabelImageForAI(file);
+        // Izveido pagaidu Image,
+        // lai uzzinātu attēla izmērus
+        const tempUrl =
+            URL.createObjectURL(blob);
+        const img =
+            new Image();
+        img.onload = () => {
+            const width =
+                img.naturalWidth || img.width;
+            const height =
+                img.naturalHeight || img.height;
+            URL.revokeObjectURL(tempUrl);
+            showAILabelPreview(
+                blob,
+                width,
+                height
+            );
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(tempUrl);
+            throw new Error(
+                "Neizdevās noteikt AI attēla izmēru"
+            );
+        };
+        img.src = tempUrl;
+    }
+    catch (error) {
+        console.error(
+            "❌ AI attēla sagatavošanas kļūda:",
+            error
+        );
+        showNotice(
+            "❌ Neizdevās sagatavot lapiņas attēlu.",
+            "error"
+        );
+    }
+    // Ļauj to pašu failu izvēlēties atkārtoti
+    event.target.value = "";
 }
 
 // 2. Nosūta attēlu serverless funkcijai
