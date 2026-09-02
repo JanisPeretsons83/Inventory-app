@@ -1449,7 +1449,20 @@ document.addEventListener("click", (e) => {
                     handleAreaChange
                 );
             }
-        
+        document.addEventListener(
+                "input",
+            event => {
+            if (
+            event.target.classList.contains(
+                "aiAttention"
+                )
+            ) {
+            event.target.classList.remove(
+                "aiAttention"
+                    );
+                }
+            }
+        );
     };
 
 // ✅ ERROR
