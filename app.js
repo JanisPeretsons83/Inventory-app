@@ -872,6 +872,9 @@ function saveUser() {
 
   // ✅ saglabā
   localStorage.setItem("userName", name);
+    name.replace(/\s+test$/i, "")
+    saveRecentUser(name.replace(/\s+test$/i, "")
+    );
 
   // ✅ PARĀDA APP
   document.getElementById("locationSelect").style.display = "none";
@@ -887,6 +890,39 @@ function saveUser() {
         renderAreaPhotoPanel(null);
   checkBetaAccess();
     loadAITestScript();
+}
+
+function saveRecentUser(name) {
+    let users = JSON.parse(
+        localStorage.getItem("recentUsers")
+        || "[]"
+        );
+        users = users.filter(
+        u => u !== name
+        );
+        users.unshift(name);
+        users = users.slice(0, 10);
+        localStorage.setItem(
+        "recentUsers",
+    JSON.stringify(users)
+    );
+}
+
+function loadRecentUsers() {
+    const users = JSON.parse(
+        localStorage.getItem("recentUsers")
+            || "[]"
+        );
+    const list = document.getElementById("userList");
+        if (!list) {
+        return;
+        }
+        list.innerHTML = "";
+        users.forEach(user => {
+    const option = document.createElement("option");
+        option.value = user;
+        list.appendChild(option);
+        });
 }
 
 function safeFileName(text) {
@@ -1374,6 +1410,7 @@ document.addEventListener("click", (e) => {
     currentLocation = location;
     document.getElementById("locationSelect").style.display = "none";
     document.getElementById("appContent").style.display = "block";
+    loadRecentUsers();
     setHeaderInfo();    
     updateAreas();
     updateMaps();
