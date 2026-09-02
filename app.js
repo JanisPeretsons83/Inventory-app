@@ -1478,20 +1478,7 @@ function checkBetaAccess() {
                     : "none";
         }
     });
-
-
-    // 🤖 AI poga pagaidām paslēpta.
-    // To parādīs tikai tad,
-    // kad ai-test.js būs veiksmīgi ielādējies.
-
-    const aiBtn =
-        document.getElementById("aiLabelBtn");
-
-    if (aiBtn) {
-        aiBtn.style.display = "none";
-    }
-
-
+    
     // 🧪 Veco fake JSON testa pogu vairs nerādām
     const testBtn =
         document.getElementById("aiResultTestBtn");
