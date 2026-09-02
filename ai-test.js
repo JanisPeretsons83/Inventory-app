@@ -583,12 +583,9 @@ async function acceptAILabelPreview() {
             validateAIResult(
                 response.result
             );
-        // ==========================================
-        // 7. Parāda AI rezultāta logu
-        // ==========================================
-        showAIResult(
+       applyAIResult(
             validated
-        );
+            );
         console.log(
             "✅ AI validētais rezultāts:",
             validated
