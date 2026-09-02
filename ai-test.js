@@ -878,15 +878,18 @@ function applyAIResult(result) {
 
     const setField = (id, value) => {
 
-        // Ja AI lauku nenolasīja,
-        // esošo formas vērtību neaiztiekam.
+        const field = document.getElementById(id);
+            if (!field) {
+                return;
+                }
+            field.classList.remove("aiAttention");
         if (value === null) {
+            field.classList.add("aiAttention");
             return;
         }
-        const field = document.getElementById(id);
-        if (field) {
+       
             field.value = value;
-        }
+        
     };
     // 📦 packages APZINĀTI neaiztiekam
     setField("thickness", result.thickness);
