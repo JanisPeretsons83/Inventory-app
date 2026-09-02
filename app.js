@@ -1464,6 +1464,7 @@ function checkBetaAccess() {
     [
         "betaFeatures",
         "betaImportView",
+        "aiLabelBtn",
         "betaAnalytics"
     ].forEach(id => {
 
