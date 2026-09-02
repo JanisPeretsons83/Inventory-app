@@ -3152,7 +3152,7 @@ function loadAITestScript() {
         return;
         }
     const script = document.createElement("script");
-    script.src = "ai-test.js";
+    script.src = "/Inventory-app/ai-test.js";
     script.dataset.aiTest = "true";
     script.onload = () => {
         console.log( "🤖 AI testa modulis ielādēts"
