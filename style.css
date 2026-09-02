@@ -825,3 +825,6 @@ font-size: 10px;
 .aiResultButtons button {
     flex: 1;
 }
+.aiAttention {
+background-color: #fff8d6 !important;
+}
