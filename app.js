@@ -740,6 +740,46 @@ function showNotice(message, type = "info", fieldId = null) {
     }
   }
 
+function validateDimensionFields() {
+    const thicknessField = document.getElementById("thickness");
+    const widthField = document.getElementById("width");
+        if (!thicknessField || !widthField) {
+            return;
+        }
+    const thickness = thicknessField.value.trim();
+    const width = widthField.value.trim();
+            // Noņem iepriekšējo krāsojumu
+            thicknessField.classList.remove("aiAttention");
+            widthField.classList.remove("aiAttention");
+        if (!thickness && !width) {
+        return;
+        }
+    const knownThicknesses = new Set(
+        dimensionsLibrary.map(
+        size => size.split("x")[0]
+            )
+        );
+    const knownWidths = new Set(
+        dimensionsLibrary.map(
+        size => size.split("x")[1]
+            )
+        );
+            // Jauns biezums
+        if (thickness && !knownThicknesses.has(thickness)
+            ) {
+            thicknessField.classList.add(
+                "aiAttention"
+                );
+            }
+            // Jauns platums
+        if (width && !knownWidths.has(width)
+            ) {
+            widthField.classList.add(
+                "aiAttention"
+                );
+            }
+}
+
 function showSizeSuggestions() {
   const thickness =
     document.getElementById("thickness").value.trim();
@@ -1348,6 +1388,10 @@ window.onload = () => {
 
       document.getElementById("thickness")
         .addEventListener("input", showSizeSuggestions);
+      document.getElementById("thickness")
+        .addEventListener("input", validateDimensionFields);
+      document.getElementById("width")
+        .addEventListener("input", validateDimensionFields);
       document.getElementById("width")
         .addEventListener("focus", () => {
   const container =
