@@ -898,38 +898,71 @@ function saveRecentUser(name) {
     }
 }
 
-function loadRecentUsers() {
-    const list = document.getElementById("userList");
-    if (!list) {
-        return;
-    }
-    let users = [];
+function getRecentUsers() {
     try {
         const saved = JSON.parse(
             localStorage.getItem("recentUsers") || "[]"
+            );
+        if (!Array.isArray(saved)) {
+            return [];}
+        return saved.filter(user =>
+            typeof user === "string" &&
+            user.trim()
         );
-        users = Array.isArray(saved)
-            ? saved
-            : [];
     } catch (error) {
-        console.warn(
-            "Neizdevās ielādēt lietotāju sarakstu:",
-            error
-        );
-        localStorage.removeItem("recentUsers");
+        console.warn("Neizdevās ielādēt lietotāju sarakstu:",
+            error);
+        return [];
     }
-    list.innerHTML = "";
-    users.forEach(user => {
-        if (
-            typeof user !== "string" ||
-            !user.trim()
-        ) {
+}
+
+function loadRecentUsers(filterText = "") {
+    const list = document.getElementById("recentUsersList");
+        if (!list) {
             return;
         }
-        const option = document.createElement("option");
-        option.value = user.trim();
-        list.appendChild(option);
+    const search = filterText.trim().toLowerCase();
+    const users = getRecentUsers().filter(user =>
+        user.toLowerCase().includes(search)
+        );
+        list.innerHTML = "";
+            if (users.length === 0) {
+                list.style.display = "none";
+            return;
+            }
+        users.forEach(user => {
+        const button = document.createElement("button");
+            button.type = "button";
+            button.className = "recent-user-option";
+            button.textContent = user;
+            button.addEventListener("click", () => {
+        const input = document.getElementById("userNameInput");
+            input.value = user;
+            list.style.display = "none";
+            input.focus();
+        });
+        list.appendChild(button);
     });
+}
+
+function showRecentUsers() {
+    const input = document.getElementById("userNameInput");
+    const list = document.getElementById("recentUsersList");
+        if (!input || !list) {
+            return;
+        }
+    loadRecentUsers(input.value);
+        if ( getRecentUsers().length > 0) {
+            list.style.display = "block";
+        }
+}
+
+function filterRecentUsers() {
+    const input = document.getElementByById("userNameInput");
+    if (!input) {
+        return;
+    }
+    loadRecentUsers(input.value);
 }
 
 function safeFileName(text) {
@@ -1416,6 +1449,15 @@ document.addEventListener("click", (e) => {
     menu.style.display = "none";
   }
 });
+    
+document.addEventListener("click", event => {
+    const wrapper = event.target.closest(".user-name-wrapper");
+    const list = document.getElementById("recentUsersList");
+    if (!wrapper && list) {
+        list.style.display = "none";
+    }
+});
+    
   //✅ LOGIN CHECK
   if (location && name) {
     currentLocation = location;
