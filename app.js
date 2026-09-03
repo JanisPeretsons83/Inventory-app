@@ -21,34 +21,29 @@ let photoBusy = false;
 
 window.APP_STARTED = true;
 
-// ✅ SPLASH SCREEN
+// ✅ Sākuma ekrāns
 document.addEventListener("DOMContentLoaded", () => {
-    const splash =
-        document.getElementById("appSplash");
-    if (!splash) return;
-    setTimeout(() => {
-        splash.style.transition =
-            "opacity 0.35s ease";
-        splash.style.opacity = "0";
-        setTimeout(() => {
-            splash.remove();
-        }, 350);
-    }, 2000);
+    const splash = document.getElementById("appSplash");
+        if (!splash) return;
+            setTimeout(() => {
+                splash.style.transition = "opacity 0.35s ease";
+                splash.style.opacity = "0";
+            setTimeout(() => {
+                splash.remove();
+                }, 350);
+            }, 2000);
 });
 
 function loadAreaPhotos() {
-    try {
-        const saved = localStorage.getItem("areaPhotos");
-            if (!saved) {areaPhotos = {};
-                return;
+    try {const saved = localStorage.getItem("areaPhotos");
+        if (!saved) {areaPhotos = {};
+            return;
                 }
-        const parsed = JSON.parse(saved);
-            if (parsed &&
-                typeof parsed === "object" &&
-                    !Array.isArray(parsed)
-                ) {areaPhotos = parsed;
-            } else {areaPhotos = {};}
-            } catch (error) {
+    const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)
+            ) {areaPhotos = parsed;
+                } else {areaPhotos = {};}
+        } catch (error) {
                 console.error(
                     "❌ Neizdevās ielādēt areaPhotos:",
                 error
@@ -85,135 +80,116 @@ const areasByLocation = {
     // --------------------------------------------------
     //APGABALA MAIŅA
     // --------------------------------------------------
-    function handleAreaChange() {
-    const areaSelect =
-        document.getElementById("area");
-    if (!areaSelect) {
+
+function handleAreaChange() {
+    const areaSelect = document.getElementById("area");
+        if (!areaSelect) {
         return;
-    }
-    const newArea =
-        areaSelect.value;
+        }
+    const newArea = areaSelect.value;
+    
     // Ja nekas nav izvēlēts
-    if (!newArea) {
-        currentArea = null;
-        previousArea = null;
-        photoTargetArea = null;
-        renderAreaPhotoPanel(null);
+    
+        if (!newArea) {
+            currentArea = null;
+            previousArea = null;
+            photoTargetArea = null;
+            renderAreaPhotoPanel(null);
         return;
-    }
-    // --------------------------------------------------
+        }
+    
     // Pārbauda iepriekšējo apgabalu
-    // --------------------------------------------------
-    if (
-        previousArea &&
-        previousArea !== newArea
-    ) {
-        const hasEntries =
-            data.some(
-                e => e.area === previousArea
-            );
-        const hasPhoto =
-            hasAreaPhoto(previousArea);
+    
+        if (previousArea && previousArea !== newArea
+            ) {
+    const hasEntries = data.some(e => e.area === previousArea);
+    const hasPhoto = hasAreaPhoto(previousArea);
+            
         // Iepriekšējam apgabalam ir dati,
         // bet nav foto
-        if (
-            hasEntries &&
-            !hasPhoto
-        ) {
+            
+        if (hasEntries && !hasPhoto
+            ) {
             console.log(
                 "📷 Foto pieprasījums:",
                 previousArea
             );
-            const addPhoto = confirm(
+    const addPhoto = confirm(
                 `Apgabalam ${previousArea} nav foto.\n\n` +
                 `Vai vēlies pievienot foto?`
             );
-            if (addPhoto) {
-                currentArea = previousArea;
-                photoTargetArea = previousArea;
-                const input =
-                    document.getElementById(
-                        "areaPhotoInput"
-                    );
-                if (input) {
-                    input.value = "";
+        if (addPhoto) {currentArea = previousArea;
+                        photoTargetArea = previousArea;
+    const input = document.getElementById("areaPhotoInput");
+        if (input) {input.value = "";
                     input.click();
-                }
+                    }
             }
         }
     }
-    // --------------------------------------------------
+   
     // Jaunais apgabals kļūst par aktīvo
-    // --------------------------------------------------
-    currentArea = newArea;
-    previousArea = newArea;
-    photoTargetArea = newArea;
-    console.log(
-        "📍 Aktīvais apgabals:",
-        currentArea
-    );
-    console.log(
-        "📷 Foto:",
-        hasAreaPhoto(currentArea)
-            ? "IR"
-            : "NAV"
-    );
-    renderAreaPhotoPanel(
-        currentArea
-    );
+    
+            currentArea = newArea;
+            previousArea = newArea;
+            photoTargetArea = newArea;
+        console.log("📍 Aktīvais apgabals:",
+            currentArea);
+        console.log("📷 Foto:",
+            hasAreaPhoto(currentArea)
+                ? "IR"
+                : "NAV");
+        renderAreaPhotoPanel(currentArea);
 }
-    // --------------------------------------------------
+    
     // Saglabā izvēlētā apgabala foto
-    // --------------------------------------------------
-    function saveAreaPhoto(event) {
+    
+function saveAreaPhoto(event) {
         if (photoBusy) {
             return;
             }
-        const input = event.target;
-        const file = input.files &&
+    const input = event.target;
+    const file = input.files &&
             input.files[0];
         if (!file) {
             return;
         }
-        const targetArea =
-            photoTargetArea ||
-            currentArea;
-        if (!targetArea) {
-            showNotice(
-                "⚠️ Nav izvēlēts apgabals!",
-                "error");
+    const targetArea = photoTargetArea || currentArea;
+        if (!targetArea) {showNotice("⚠️ Nav izvēlēts apgabals!",
+                            "error");
             input.value = "";
         return;
         }
+    
     // Pārbauda faila tipu
+    
         if (!file.type.startsWith("image/")) {
-            showNotice(
-                "❌ Lūdzu izvēlies attēla failu!",
+            showNotice("❌ Lūdzu izvēlies attēla failu!",
                 "error");
             input.value = "";
         return;
         }
+    
     // Maksimālais oriģinālā faila izmērs
-        const maxFileSize = 15 * 1024 * 1024;
-            if (file.size > maxFileSize) {
-                showNotice(
-                    "❌ Foto fails ir pārāk liels. " +
-                    "Maksimums 15 MB.",
+    
+    const maxFileSize = 15 * 1024 * 1024;
+        if (file.size > maxFileSize) {
+            showNotice("❌ Foto fails ir pārāk liels. " + "Maksimums 15 MB.",
                     "error");
                 input.value = "";
             return;
             }
             photoBusy = true;
-        const img = new Image();
-        const reader = new FileReader();
-            reader.onload =
-        function (e) {
-            img.onload =
-                function () {
-                    try {
-                        // --------------------------------------------------
+    const img = new Image();
+    const reader = new FileReader();
+        reader.onload =
+            function (e) {
+                img.onload =
+                    function () {
+                        try {
+                        
                         // Maksimālais attēla platums/augstums
-                        // --------------------------------------------------
+                        
                         const maxSize = 600;
                             let width = img.naturalWidth || img.width;
                             let height = img.naturalHeight || img.height;
@@ -223,130 +199,115 @@ const areasByLocation = {
                             );
                         width = Math.round(width * scale);
                         height = Math.round(height * scale);
-                        // --------------------------------------------------
+                       
                         // Canvas
-                        // --------------------------------------------------
+                       
                         const canvas = document.createElement("canvas");
                             canvas.width = width;
                             canvas.height = height;
                         const ctx = canvas.getContext("2d");
-                        if (!ctx) {
-                            throw new Error(
-                                "Canvas nav pieejams");
-                        }
+                            if (!ctx) {
+                                throw new Error(
+                                    "Canvas nav pieejams");
+                            }
+                            
                         // Balts fons JPEG gadījumā
-                        ctx.fillStyle = "#ffffff";
-                        ctx.fillRect(0, 0, width, height
-                        );
-                        ctx.drawImage(img, 0, 0, width, height);
-                        // --------------------------------------------------
-                        // JPEG
-                        // --------------------------------------------------
-                        const photo =
-                            canvas.toDataURL("image/jpeg", 0.5);
-                        if (
-                            !photo ||
-                            photo === "data:,") {
-                            throw new Error(
-                                "Foto konvertēšana neizdevās"
+                            
+                            ctx.fillStyle = "#ffffff";
+                            ctx.fillRect(0, 0, width, height
                             );
-                        }
-                        // --------------------------------------------------
+                            ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // JPEG
+                        
+                        const photo = canvas.toDataURL("image/jpeg", 0.5);
+                            if (!photo || photo === "data:,") {
+                                throw new Error(
+                                    "Foto konvertēšana neizdevās"
+                                );
+                            }
+                        
                         // Saglabā konkrētajam apgabalam
-                        // --------------------------------------------------
+                        
                         areaPhotos[targetArea] = photo;
-                        // --------------------------------------------------
+                        
                         // localStorage
-                        // --------------------------------------------------
-                        const saved =
-                            saveAreaPhotosStorage();
-                        if (!saved) {
-                            // Ja saglabāšana neizdevās,
-                            // atceļ izmaiņu
+                        
+                        const saved = saveAreaPhotosStorage();
+                            if (!saved) {
+                                
+                            // Ja saglabāšana neizdevās, atceļ izmaiņu
+                            
                             delete areaPhotos[targetArea];
                             return;
                         }
-                        dataChanged = true;
+                            dataChanged = true;
+                            
                         // Aktīvais apgabals
-                        currentArea = targetArea;
-                        previousArea = document.getElementById("area")
+                            
+                            currentArea = targetArea;
+                            previousArea = document.getElementById("area")
                             ?.value || targetArea;
-                        // --------------------------------------------------
+                        
                         // Pārzīmē foto paneli
-                        // --------------------------------------------------
+                        
                         renderAreaPhotoPanel(targetArea);
-                        // --------------------------------------------------
+                        
                         // Importēšanas skats
-                        // --------------------------------------------------
-                        if (
-                            typeof renderImportAreas ===
-                                "function" &&
-                            importedBackup &&
-                            importedAreaSummary) {
-                            renderImportAreas();
-                        }
-                        console.log("📷 Foto saglabāts:",
-                            targetArea
-                        );
-                        console.log("📷 Visi foto:",
-                            Object.keys(areaPhotos)
-                        );
-                        showNotice(
-                            `📷 Foto pievienots apgabalam ${targetArea}`,
-                            "success");
-                    } catch (error) {
-                        console.error(
-                            "❌ Foto apstrādes kļūda:",
-                            error);
-                        showNotice(
-                            "❌ Neizdevās apstrādāt foto.",
-                            "error");
-                    } finally {
+                        
+                            if (typeof renderImportAreas === "function" && importedBackup &&
+                                    importedAreaSummary) {
+                                renderImportAreas();
+                                }
+                            console.log("📷 Foto saglabāts:",
+                                targetArea);
+                            console.log("📷 Visi foto:",
+                                Object.keys(areaPhotos));
+                                showNotice(`📷 Foto pievienots apgabalam ${targetArea}`,
+                                        "success");
+                        } catch (error) {
+                            console.error("❌ Foto apstrādes kļūda:",
+                                error);
+                            showNotice("❌ Neizdevās apstrādāt foto.",
+                                "error");
+                        } finally {
+                            photoBusy = false;
+                            input.value = "";}
+                    };
+                    img.onerror =
+                        function () {
+                            photoBusy = false;
+                            input.value = "";
+                                showNotice("❌ Neizdevās ielādēt attēlu!",
+                                    "error");
+                        };
+                    img.src = e.target.result;
+                };
+                reader.onerror =
+                    function () {
                         photoBusy = false;
-                        input.value = "";}
-                };
-            img.onerror =
-                function () {
-                    photoBusy = false;
-                    input.value = "";
-                    showNotice(
-                        "❌ Neizdevās ielādēt attēlu!",
-                        "error");
-                };
-            img.src = e.target.result;
-        };
-    reader.onerror =
-        function () {
-            photoBusy = false;
-            input.value = "";
-            showNotice(
-                "❌ Neizdevās nolasīt foto failu!",
-                "error");
-        };
-    reader.readAsDataURL(file);
+                        input.value = "";
+                            showNotice("❌ Neizdevās nolasīt foto failu!",
+                                "error");
+                    };
+                reader.readAsDataURL(file);
 }
 
 function renderAreaPhotoPanel(area) {
-    const panel =
-        document.getElementById(
-            "areaPhotoPanel"
-        );
-    if (!panel) {
+    const panel = document.getElementById(
+            "areaPhotoPanel");
+        if (!panel) {
+            return;
+        }
+        if ((!area)
+            ) {
+            panel.innerHTML = "";
+            panel.style.display = "none";
         return;
-    }
-    if (
-        (!area)
-    ) {
-        panel.innerHTML = "";
-        panel.style.display = "none";
-        return;
-    }
-    panel.style.display =
-        "block";
-    const photo =
-        areaPhotos[area];
-    if (photo) {
-        panel.innerHTML = `
+            }
+            panel.style.display = "block";
+    const photo = areaPhotos[area];
+        if (photo) {panel.innerHTML = `
             <div class="areaPhotoTitle">
                 📷 Apgabala ${area} foto
             </div>
@@ -370,39 +331,36 @@ function renderAreaPhotoPanel(area) {
                     </button>
                 </div>
             </div> `;
-    } else {
-        panel.innerHTML = `
+        } else {panel.innerHTML = `
             <div class="areaPhotoTitle">
                 📷 Apgabala ${area} foto
             </div>
-        <div class="areaPhotoContent">
-            <div class="areaPhotoPreview areaPhotoPlaceholder">
-                📷 Foto<br>nav<br>pievienots
-            </div>
-            <div class="areaPhotoButtons">
-                <button
-                    type="button"
-                    onclick="chooseAreaPhoto('${area}')">
-                    📷 Pievienot<br>foto
-                </button>
-            </div>
-        </div>
-        `;
-    }
+            <div class="areaPhotoContent">
+                <div class="areaPhotoPreview areaPhotoPlaceholder">
+                    📷 Foto<br>nav<br>pievienots
+                </div>
+                <div class="areaPhotoButtons">
+                    <button
+                        type="button"
+                        onclick="chooseAreaPhoto('${area}')">
+                        📷 Pievienot<br>foto
+                    </button>
+                </div>
+            </div>`;
+            }
 }
 
 function updateAreas() {
-  const location = localStorage.getItem("location");
-  const select = document.getElementById("area");
-    select.innerHTML = `<option value="">Apgabals *</option>`;
-      (areasByLocation[location] || []).forEach(a => {
-        const opt = document.createElement("option");
+    const location = localStorage.getItem("location");
+    const select = document.getElementById("area");
+        select.innerHTML = `<option value="">Apgabals *</option>`;
+          (areasByLocation[location] || []).forEach(a => {
+    const opt = document.createElement("option");
           opt.value = a;
           opt.textContent = a;
           select.appendChild(opt);
       });
-    previousArea =
-        document.getElementById("area").value;
+        previousArea = document.getElementById("area").value;
 }
 
 function startDataViewMode() {
@@ -424,212 +382,177 @@ function openAnalysisBackupFile() {
 }
 
 async function importAnalysisBackup(event) {
-  const files = [...event.target.files];
-    if (!files.length) return;
-  const backups = [];
-    for (const file of files) {
-      let backup;
-      try {
-        const text = await file.text();
-          backup = JSON.parse(text);
-        } catch (error) {
-          alert(`Fails "${file.name}" nav derīgs JSON fails!`);
-          return;
+    const files = [...event.target.files];
+        if (!files.length) return;
+    const backups = [];
+        for (const file of files) {
+            let backup;
+                try {
+                    const text = await file.text();
+                      backup = JSON.parse(text);
+                } catch (error) {
+            alert(`Fails "${file.name}" nav derīgs JSON fails!`);
+                return;
         }
-      if (!backup || typeof backup !== "object") {
-        alert(`Fails "${file.name}" nav derīgs backup fails!`);
-        return;
+        if (!backup || typeof backup !== "object") {
+            alert(`Fails "${file.name}" nav derīgs backup fails!`);
+                return;
         }
-      if (!Array.isArray(backup.entries)) {
-        alert(`Failā "${file.name}" nav derīgu entries datu!`);
-        return;
+        if (!Array.isArray(backup.entries)) {
+            alert(`Failā "${file.name}" nav derīgu entries datu!`);
+                return;
         }
         backups.push(backup);
-    }
-  const baseLocation =
-    backups[0].location;
-  const users =
-    [...new Set(
-      backups.map(b => b.user)
-    )];
-  const baseMonth =
-    backups[0].inventoryMonth;
-  const baseYear =
-    backups[0].inventoryYear;
-  const invalidFile =
-    backups.find(b =>
-      b.location !== baseLocation ||
-      b.inventoryMonth !== baseMonth ||
-      b.inventoryYear !== baseYear
+        }
+    const baseLocation = backups[0].location;
+    const users = [...new Set(backups.map(b => b.user))];
+    const baseMonth = backups[0].inventoryMonth;
+    const baseYear = backups[0].inventoryYear;
+    const invalidFile = backups.find(b =>
+        b.location !== baseLocation ||
+        b.inventoryMonth !== baseMonth ||
+        b.inventoryYear !== baseYear
     );
-    if (invalidFile) {
-    alert(
-      "Izvēlētie faili ir no dažādām ražotnēm vai periodiem!"
-      );
-    return;
-    }
-    analysisData = [];
-      backups.forEach(backup => {
+        if (invalidFile) {
+            alert("Izvēlētie faili ir no dažādām ražotnēm vai periodiem!"
+              );
+        return;
+        }
+        analysisData = [];
+        backups.forEach(backup => {
         analysisData.push(
         ...backup.entries
-        );
-      });
+            );
+        });
     const groups = {};  
       analysisData.forEach(e => {
-    const key =
-      `${e.thickness}x${e.width}`;
-    if (!groups[key]) {
-      groups[key] = {
-        packages: 0,
-        totalM3: 0,
-        rows: []
-        };
+    const key = `${e.thickness}x${e.width}`;
+        if (!groups[key]) {groups[key] = {
+            packages: 0,
+            totalM3: 0,
+            rows: []
+            };
       }
-      groups[key].packages += e.packages || 0;
-      groups[key].totalM3 += e.total || 0;
-      groups[key].rows.push(e);
-  });  
-  const totalPackages =
-    analysisData.reduce(
-      (sum, e) => sum + (e.packages || 0),
-      0
-    );
-  const totalM3 =
-    analysisData.reduce(
-      (sum, e) => sum + (e.total || 0),
-      0
-    );
+        groups[key].packages += e.packages || 0;
+        groups[key].totalM3 += e.total || 0;
+        groups[key].rows.push(e);
+      });  
+  const totalPackages = analysisData.reduce(
+      (sum, e) => sum + (e.packages || 0), 0);
+  const totalM3 = analysisData.reduce(
+      (sum, e) => sum + (e.total || 0), 0);
     document.getElementById("analysisInfo")
-      .innerHTML = `
-    <h3>📊 Kopsavilkums</h3>
-    Ražotne:
-      ${baseLocation}<br>
-    Lietotāji:<br>
-      ${users.join("<br>")}<br><br>
-    Datu reģistrācija:
-      ${String(baseMonth).padStart(2, "0")}.${baseYear}<br>
-    Faili:
-      ${backups.length}<br>
-    Ieraksti:
-      ${analysisData.length}<br>
-    Paletes:
-      ${totalPackages}<br>
-    m³:
-      ${totalM3.toFixed(4)}
-    `;
+        .innerHTML = `
+            <h3>📊 Kopsavilkums</h3>
+            Ražotne:
+              ${baseLocation}<br>
+            Lietotāji:<br>
+              ${users.join("<br>")}<br><br>
+            Datu reģistrācija:
+              ${String(baseMonth).padStart(2, "0")}.${baseYear}<br>
+            Faili:
+              ${backups.length}<br>
+            Ieraksti:
+              ${analysisData.length}<br>
+            Paletes:
+              ${totalPackages}<br>
+            m³:
+              ${totalM3.toFixed(4)}`;
   renderDimensionAnalysis();
 }
 
 function setMaterialFilter(type) {
-  selectedMaterial = type;
-  expandedDimension = null;
-  document
-    .querySelectorAll(".materialTabs button")
-    .forEach(btn =>
-  btn.classList.remove("active")
-    );
-  document
-    .getElementById(`mat_${type}`)
-    .classList.add("active");
+    selectedMaterial = type;
+    expandedDimension = null;
+    document
+        .querySelectorAll(".materialTabs button")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+    document
+        .getElementById(`mat_${type}`)
+        .classList.add("active");
   renderDimensionAnalysis();
 }
 
 function renderDimensionAnalysis() {
-  let filteredData = analysisData;
-    const groups = {};
-  if (selectedMaterial === "egle") {
-    filteredData = analysisData.filter(e =>
-      e.comment !== "Lapegle" &&
-      e.comment !== "Termokoks"
-    );
-  } else if (selectedMaterial === "lapegle") {
-    filteredData = analysisData.filter(e =>
-      e.comment === "Lapegle"
-    );
-  } else if (selectedMaterial === "termokoks") {
-    filteredData = analysisData.filter(e =>
-      e.comment === "Termokoks"
-    );
-  }
-
-  filteredData.forEach(e => {
-    const key = `${e.thickness}x${e.width}`;
-    if (!groups[key]) {
-      groups[key] = {
-        packages: 0,
-        totalM3: 0,
-        rows: []
-      };
-    }
-
-    groups[key].packages += e.packages || 0;
-    groups[key].totalM3 += e.total || 0;
-    groups[key].rows.push(e);
-  });
-
-  let html = `
-    <table>
-      <thead>
-        <tr>
-          <th>Dimensija</th>
-          <th>Pakas</th>
-          <th>m³</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  Object.entries(groups)
-    .sort(([a], [b]) =>
-      a.localeCompare(b, undefined, { numeric: true })
-    )
-    .forEach(([size, info]) => {
-
-      html += `
-        <tr>
-          <td onclick="toggleDimension('${size}')"
-              style="cursor:pointer;">
-            ${expandedDimension === size ? "▼" : "▶"} ${size}
-          </td>
-          <td>${info.packages}</td>
-          <td>${info.totalM3.toFixed(4)}</td>
-        </tr>
-      `;
-
-      if (expandedDimension === size) {
-        info.rows.forEach(row => {
-
-          const lengthText =
-            String(row.length).toLowerCase() === "gali"
+    let filteredData = analysisData;
+        const groups = {};
+          if (selectedMaterial === "egle") {
+            filteredData = analysisData.filter(e =>
+            e.comment !== "Lapegle" &&
+            e.comment !== "Termokoks"
+            );
+          } else if (selectedMaterial === "lapegle") {
+            filteredData = analysisData.filter(e =>
+              e.comment === "Lapegle"
+            );
+          } else if (selectedMaterial === "termokoks") {
+            filteredData = analysisData.filter(e =>
+              e.comment === "Termokoks"
+            );
+          }
+          filteredData.forEach(e => {
+        const key = `${e.thickness}x${e.width}`;
+            if (!groups[key]) {groups[key] = {
+                packages: 0,
+                totalM3: 0,
+                rows: []
+              };
+            }
+            groups[key].packages += e.packages || 0;
+            groups[key].totalM3 += e.total || 0;
+            groups[key].rows.push(e);
+        });
+          let html = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Dimensija</th>
+                  <th>Pakas</th>
+                  <th>m³</th>
+                </tr>
+              </thead>
+              <tbody>`;
+          Object.entries(groups)
+            .sort(([a], [b]) =>
+              a.localeCompare(b, undefined, { numeric: true })
+            )
+            .forEach(([size, info]) => {
+          html += `
+            <tr>
+              <td onclick="toggleDimension('${size}')"
+                  style="cursor:pointer;">
+                    ${expandedDimension === size ? "▼" : "▶"} ${size}
+              </td>
+              <td>${info.packages}</td>
+              <td>${info.totalM3.toFixed(4)}</td>
+            </tr>`;
+          if (expandedDimension === size) {
+            info.rows.forEach(row => {
+        const lengthText = String(row.length).toLowerCase() === "gali"
               ? `≈${row.avgLength} mm`
               : `${row.length} mm`;
-
-          const productionDate =
-            `${String(row.month).padStart(2, "0")}.${String(row.year).slice(-2)}`;
-
-          html += `
-            <tr class="detailRow">
-              <td colspan="3">
-                ${row.area} |
-                ${row.grade} |
-                ${lengthText} |
-                ${row.packages} pal. |
-                ${row.pieces} gab. |
-                ${productionDate} |
-                ${row.total.toFixed(3)} m³
-              </td>
-            </tr>
-          `;
+        const productionDate = `${String(row.month).padStart(2, "0")}.${String(row.year).slice(-2)}`;
+            html += `
+                <tr class="detailRow">
+                    <td colspan="3">
+                        ${row.area} |
+                        ${row.grade} |
+                        ${lengthText} |
+                        ${row.packages} pal. |
+                        ${row.pieces} gab. |
+                        ${productionDate} |
+                        ${row.total.toFixed(3)} m³
+                    </td>
+                </tr>`;
+            });
+          }
         });
-      }
-    });
-
-  html += `
-      </tbody>
-    </table>
-  `;
-
-  document.getElementById("analysisView").innerHTML = html;
+              html += `
+                  </tbody>
+                    </table>`;
+              document.getElementById("analysisView").innerHTML = html;
 }
 
 function toggleArea(area) {
@@ -652,8 +575,7 @@ function toggleAreaEntries(area) {
 }
 
 function toggleSize(area, size) {
-    const key =
-        `${area}_${size}`;
+    const key =`${area}_${size}`;
     expandedSize =
         expandedSize === key
             ? null
@@ -781,28 +703,25 @@ function validateDimensionFields() {
 }
 
 function showSizeSuggestions() {
-  const thickness =
-    document.getElementById("thickness").value.trim();
-  const container =
-    document.getElementById("sizeSuggestions");
-    container.innerHTML = "";
-  if (!thickness) {
-    container.style.display = "none";
-  return;
-  }
+  const thickness = document.getElementById("thickness").value.trim();
+  const container = document.getElementById("sizeSuggestions");
+        container.innerHTML = "";
+      if (!thickness) {
+        container.style.display = "none";
+      return;
+      }
   const matches = dimensionsLibrary.filter(size =>
-    size.startsWith(thickness + "x")
-    )
-    .slice(0, 20);
-  if (matches.length === 0) {
-    container.style.display = "none";
-  return;
-    }
-    matches.forEach(size => {
+        size.startsWith(thickness + "x"))
+            .slice(0, 20);
+      if (matches.length === 0) {
+        container.style.display = "none";
+      return;
+        }
+        matches.forEach(size => {
   const div = document.createElement("div");
-    div.className = "sizeOption";
-    div.textContent = size;
-    div.onclick = () => {
+        div.className = "sizeOption";
+        div.textContent = size;
+        div.onclick = () => {
   const parts = size.split("x");
     document.getElementById("thickness").value =
       parts[0];
@@ -821,25 +740,21 @@ function updateMaps() {
   const location = localStorage.getItem("location");
   const container = document.getElementById("mapLinks");
   const BASE_PATH = "/Inventory-app";
-
-  container.innerHTML = ""; // notīra iepriekšējo
-
-  if (location === "Dārdu") {
-    container.innerHTML = `
-      <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map1.jpeg'); return false;">
-        📍 Karte 1
-      </a>
-      <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map2.jpeg'); return false;">
-        📍 Karte 2
-      </a> 
-      `;
-  } else if (location === "Cecīļu") {
-    container.innerHTML = `
-      <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
-        📍 Karte
-      </a> 
-      `;
-  }
+          container.innerHTML = ""; // notīra iepriekšējo
+      if (location === "Dārdu") {
+            container.innerHTML = `
+              <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map1.jpeg'); return false;">
+                📍 Karte 1
+              </a>
+              <a href="#" onclick="openImageFromSrc('${BASE_PATH}/dardu_map2.jpeg'); return false;">
+                📍 Karte 2
+              </a>`;
+      } else if (location === "Cecīļu") {
+        container.innerHTML = `
+              <a href="#" onclick="openImageFromSrc('${BASE_PATH}/cecilu_map.jpeg'); return false;">
+                📍 Karte
+              </a>`;
+      }
 }
 
 function openImageFromSrc(src) {
@@ -932,20 +847,25 @@ function saveUser() {
     loadAITestScript();
 }
 
-function saveRecentUser(name) {
-    let users = JSON.parse(
-        localStorage.getItem("recentUsers")
-        || "[]"
+function loadRecentUsers() {
+    const list = document.getElementById("userList");
+    if (!list) return;
+    let users = [];
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem("recentUsers") || "[]"
         );
-        users = users.filter(
-        u => u !== name
-        );
-        users.unshift(name);
-        users = users.slice(0, 10);
-        localStorage.setItem(
-        "recentUsers",
-    JSON.stringify(users)
-    );
+        users = Array.isArray(saved) ? saved : [];
+    } catch (error) {
+        console.warn("Neizdevās ielādēt lietotāju sarakstu:", error);
+        users = [];
+    }
+    list.innerHTML = "";
+    users.forEach(user => {
+        const option = document.createElement("option");
+        option.value = user;
+        list.appendChild(option);
+    });
 }
 
 function loadRecentUsers() {
@@ -1353,7 +1273,8 @@ window.onload = () => {
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
-  
+  // ✅ Login lietotāju sarakstu ielādē vienmēr
+    loadRecentUsers();
   if (backupRaw) {
     const backup =
       JSON.parse(backupRaw);
@@ -1454,7 +1375,6 @@ document.addEventListener("click", (e) => {
     currentLocation = location;
     document.getElementById("locationSelect").style.display = "none";
     document.getElementById("appContent").style.display = "block";
-    loadRecentUsers();
     setHeaderInfo();    
     updateAreas();
     updateMaps();
@@ -2160,6 +2080,8 @@ function doLogout() {
       }
   document.getElementById("appContent").style.display = "none";
   document.getElementById("locationSelect").style.display = "block";
+    // ✅ Atjauno login lietotāju sarakstu
+    loadRecentUsers();
   render();
 }
 
