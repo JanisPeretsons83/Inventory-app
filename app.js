@@ -807,49 +807,49 @@ function setHeaderInfo() {
 }
 
 function saveUser() {
-  localStorage.setItem("sessionStart", Date.now());
-  const name = document.getElementById("userNameInput").value.trim();
-  const location = localStorage.getItem("location");
+    const name = document
+        .getElementById("userNameInput")
+        .value
+        .trim();
+
+    const location = localStorage.getItem("location");
+
     if (!location) {
-      showNotice(
-        "⚠️ Izvēlies ražotni",
-        "error"
-        );
-      return;
+        showNotice("⚠️ Izvēlies ražotni", "error");
+        return;
     }
+
     if (!name) {
-      showNotice(
-        "⚠️ Ievadi vārdu",
-        "error"
-        );
-    return;
-  }
+        showNotice("⚠️ Ievadi vārdu", "error");
+        return;
+    }
 
-  // ✅ saglabā
-  localStorage.setItem("userName", name);
-    name.replace(/\s+test$/i, "")
-    saveRecentUser(name.replace(/\s+test$/i, "")
-    );
+    const cleanName = name
+        .replace(/\s+test$/i, "")
+        .trim();
 
-  // ✅ PARĀDA APP
-  document.getElementById("locationSelect").style.display = "none";
-  document.getElementById("appContent").style.display = "block";
-  
-  // ✅ header info
-  setHeaderInfo();
-  updateAreas();
-  updateMaps();
+    localStorage.setItem("sessionStart", String(Date.now()));
+    localStorage.setItem("userName", name);
+
+    saveRecentUser(cleanName);
+
+    document.getElementById("locationSelect").style.display = "none";
+    document.getElementById("appContent").style.display = "block";
+
+    setHeaderInfo();
+    updateAreas();
+    updateMaps();
+
     currentArea = null;
     previousArea = null;
     photoTargetArea = null;
-        renderAreaPhotoPanel(null);
-  checkBetaAccess();
+
+    renderAreaPhotoPanel(null);
+    checkBetaAccess();
     loadAITestScript();
 }
-
-function loadRecentUsers() {
-    const list = document.getElementById("userList");
-    if (!list) return;
+function saveRecentUser(name) {
+    if (!name) return;
     let users = [];
     try {
         const saved = JSON.parse(
@@ -857,32 +857,56 @@ function loadRecentUsers() {
         );
         users = Array.isArray(saved) ? saved : [];
     } catch (error) {
-        console.warn("Neizdevās ielādēt lietotāju sarakstu:", error);
+        console.warn("Lietotāju vēsturi neizdevās nolasīt:", error);
+    }
+
+    // Novērš vienāda lietotāja atkārtošanos
+    users = users.filter(
+        user => user.toLowerCase() !== name.toLowerCase()
+    );
+
+    // Jaunāko ieliek saraksta sākumā
+    users.unshift(name);
+
+    // Saglabā pēdējos 10 lietotājus
+    
+    users = users.slice(0, 10);
+    localStorage.setItem(
+        "recentUsers",
+        JSON.stringify(users)
+    );
+}
+
+function loadRecentUsers() {
+    const list = document.getElementById("userList");
+        if (!list) {
+            return;
+        }
+    let users = [];
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem("recentUsers") || "[]"
+            );
+        users = Array.isArray(saved) ? saved : [];
+        } catch (error) {
+            console.warn("Neizdevās ielādēt lietotāju sarakstu:",
+            error
+        );
+            
+        // Izdzēš tikai bojāto lietotāju sarakstu
+            
+        localStorage.removeItem("recentUsers");
         users = [];
     }
     list.innerHTML = "";
     users.forEach(user => {
+        if (typeof user !== "string" || !user.trim()) {
+            return;
+        }
         const option = document.createElement("option");
-        option.value = user;
+        option.value = user.trim();
         list.appendChild(option);
     });
-}
-
-function loadRecentUsers() {
-    const users = JSON.parse(
-        localStorage.getItem("recentUsers")
-            || "[]"
-        );
-    const list = document.getElementById("userList");
-        if (!list) {
-        return;
-        }
-        list.innerHTML = "";
-        users.forEach(user => {
-    const option = document.createElement("option");
-        option.value = user;
-        list.appendChild(option);
-        });
 }
 
 function safeFileName(text) {
@@ -1269,11 +1293,11 @@ document.getElementById("cancelEditBtn").style.display =
 }
 
 window.onload = () => {
+    loadRecentUsers();
   const location = localStorage.getItem("location");
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
-  // ✅ Login lietotāju sarakstu ielādē vienmēr
     loadRecentUsers();
   if (backupRaw) {
     const backup =
