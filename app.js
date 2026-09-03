@@ -958,7 +958,7 @@ function showRecentUsers() {
 }
 
 function filterRecentUsers() {
-    const input = document.getElementByById("userNameInput");
+    const input = document.getElementById("userNameInput");
     if (!input) {
         return;
     }
