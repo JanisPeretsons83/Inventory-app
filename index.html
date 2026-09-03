@@ -52,8 +52,18 @@
             <div id="error"></div>      
                 <button onclick="setLocation('Cecīļu', this)">Cecīļu ražotne</button>
                 <button onclick="setLocation('Dārdu', this)">Dārdu ražotne</button>
-                    <input id="userNameInput" list="userList" placeholder="Vārds Uzvārds">
-                        <datalist id="userList"></datalist>
+                    <div class="user-name-wrapper">
+                        <input id="userNameInput"
+                            name="userName"
+                            type="text"
+                            autocomplete="name"
+                            placeholder="Vārds Uzvārds"
+                            onfocus="showRecentUsers()"
+                            oninput="filterRecentUsers()">
+                        <div id="recentUsersList"
+                            class="recent-users-list"
+                            style="display:none;"></div>
+                    </div>
                 <button onclick="saveUser()">Turpināt</button>
                 <button onclick="startDataViewMode()">
                     📊 Inventarizācijas analītikas skats
@@ -486,6 +496,6 @@
                 }, 4000);
         </script>
     <script src="app.js"></script>
-    <footer class="footerVersion">versija: v.2-0-99</footer>
+    <footer class="footerVersion">versija: v.2-1-0</footer>
 </body>
 </html>
