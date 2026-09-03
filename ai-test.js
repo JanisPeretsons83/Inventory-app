@@ -898,6 +898,7 @@ function applyAIResult(result) {
     setField("pieces", result.pieces);
     setField("month", result.month);
     setField("year", result.year);
+    validateDimensionFields();
 }
 
 function closeAIResultModal() {
