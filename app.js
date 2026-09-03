@@ -848,59 +848,82 @@ function saveUser() {
     checkBetaAccess();
     loadAITestScript();
 }
+
 function saveRecentUser(name) {
-    if (!name) return;
+    const cleanName =
+        typeof name === "string"
+            ? name.trim()
+            : "";
+    if (!cleanName) {
+        return;
+    }
     let users = [];
     try {
         const saved = JSON.parse(
             localStorage.getItem("recentUsers") || "[]"
         );
-        users = Array.isArray(saved) ? saved : [];
+        users = Array.isArray(saved)
+            ? saved.filter(user =>
+                typeof user === "string" &&
+                user.trim()
+            )
+            : [];
     } catch (error) {
-        console.warn("Lietotāju vēsturi neizdevās nolasīt:", error);
+        console.warn(
+            "Lietotāju vēsturi neizdevās nolasīt:",
+            error
+        );
+        users = [];
     }
-
-    // Novērš vienāda lietotāja atkārtošanos
+    // Novērš viena lietotāja atkārtošanos
     users = users.filter(
-        user => user.toLowerCase() !== name.toLowerCase()
+        user =>
+            user.trim().toLowerCase() !==
+            cleanName.toLowerCase()
     );
-
     // Jaunāko ieliek saraksta sākumā
-    users.unshift(name);
-
+    users.unshift(cleanName);
     // Saglabā pēdējos 10 lietotājus
-    
     users = users.slice(0, 10);
-    localStorage.setItem(
-        "recentUsers",
-        JSON.stringify(users)
-    );
+    try {
+        localStorage.setItem(
+            "recentUsers",
+            JSON.stringify(users)
+        );
+    } catch (error) {
+        console.warn(
+            "Lietotāju vēsturi neizdevās saglabāt:",
+            error
+        );
+    }
 }
 
 function loadRecentUsers() {
     const list = document.getElementById("userList");
-        if (!list) {
-            return;
-        }
+    if (!list) {
+        return;
+    }
     let users = [];
-        try {
-            const saved = JSON.parse(
-                localStorage.getItem("recentUsers") || "[]"
-            );
-        users = Array.isArray(saved) ? saved : [];
-        } catch (error) {
-            console.warn("Neizdevās ielādēt lietotāju sarakstu:",
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem("recentUsers") || "[]"
+        );
+        users = Array.isArray(saved)
+            ? saved
+            : [];
+    } catch (error) {
+        console.warn(
+            "Neizdevās ielādēt lietotāju sarakstu:",
             error
         );
-            
-        // Izdzēš tikai bojāto lietotāju sarakstu
-            
         localStorage.removeItem("recentUsers");
-        users = [];
     }
     list.innerHTML = "";
     users.forEach(user => {
-        if (typeof user !== "string" || !user.trim()) {
+        if (
+            typeof user !== "string" ||
+            !user.trim()
+        ) {
             return;
         }
         const option = document.createElement("option");
@@ -1298,7 +1321,6 @@ window.onload = () => {
   const name = localStorage.getItem("userName");
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
-    loadRecentUsers();
   if (backupRaw) {
     const backup =
       JSON.parse(backupRaw);
