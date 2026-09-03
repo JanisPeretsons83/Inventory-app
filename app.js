@@ -1529,20 +1529,23 @@ document.addEventListener("click", event => {
                     handleAreaChange
                 );
             }
-        document.addEventListener(
-                "input",
-            event => {
+        document.addEventListener("input", event => {
+            const field = event.target;
+
+            // Šos laukus pārvalda validateDimensionFields()
             if (
-            event.target.classList.contains(
-                "aiAttention"
-                )
-            ) {
-            event.target.classList.remove(
-                "aiAttention"
-                    );
-                }
+                field.id === "thickness" ||
+                field.id === "width"
+                ) {
+            return;
             }
-        );
+
+                // Citiem AI laukiem noņem brīdinājumu,
+                // kad lietotājs sāk ievadīt vērtību
+            if (field.classList.contains("aiAttention")) {
+                field.classList.remove("aiAttention");
+                }
+        });
     };
 
 // ✅ ERROR
