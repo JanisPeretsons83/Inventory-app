@@ -665,27 +665,25 @@ function showNotice(message, type = "info", fieldId = null) {
 function validateDimensionFields() {
     const thicknessField = document.getElementById("thickness");
     const widthField = document.getElementById("width");
-        if (!thicknessField || !widthField) {
-            return;
-        }
+    if (!thicknessField || !widthField) {
+        return;
+    }
     const thickness = thicknessField.value.trim();
     const width = widthField.value.trim();
-        // Vienmēr vispirms noņem iepriekšējo krāsojumu
-        thicknessField.classList.remove("aiAttention");
-        widthField.classList.remove("aiAttention");
     const library = Array.isArray(dimensionsLibrary)
         ? dimensionsLibrary
         : [];
     const knownThicknesses = new Set();
     const knownWidths = new Set();
     const knownDimensions = new Set();
-        library.forEach(size => {
+    library.forEach(size => {
         const normalizedSize = String(size)
             .trim()
             .toLowerCase()
             .replaceAll("×", "x")
             .replace(/\s+/g, "");
-        const [savedThickness, savedWidth] = normalizedSize.split("x");
+        const [savedThickness, savedWidth] =
+            normalizedSize.split("x");
         if (savedThickness) {
             knownThicknesses.add(savedThickness);
         }
@@ -699,20 +697,31 @@ function validateDimensionFields() {
         }
     });
 
-    // Tukšus laukus šeit vēl nekrāso
+    /*
+     * Krāsojumu noņem tikai aizpildītam laukam.
+     * Tukšam laukam saglabā AI uzlikto aiAttention.
+     */
+    if (thickness) {
+        thicknessField.classList.remove("aiAttention");
+    }
+    if (width) {
+        widthField.classList.remove("aiAttention");
+    }
+
+    // Abi lauki tukši — saglabā AI brīdinājumus
     if (!thickness && !width) {
         return;
     }
 
-    // Ja ievadīts tikai biezums
+    // Ievadīts tikai biezums
     if (thickness && !width) {
         if (!knownThicknesses.has(thickness)) {
             thicknessField.classList.add("aiAttention");
         }
         return;
     }
-    
-    // Ja ievadīts tikai platums
+
+    // Ievadīts tikai platums
     if (!thickness && width) {
         if (!knownWidths.has(width)) {
             widthField.classList.add("aiAttention");
@@ -720,13 +729,17 @@ function validateDimensionFields() {
         return;
     }
 
-    // Ja aizpildīti abi lauki, pārbauda pilno kombināciju
+    // Aizpildīti abi — pārbauda pilno kombināciju
     const dimension = `${thickness}x${width}`;
-    const dimensionExists = knownDimensions.has(dimension);
-        if (!dimensionExists) {
-            thicknessField.classList.add("aiAttention");
-            widthField.classList.add("aiAttention");
-        }
+    if (!knownDimensions.has(dimension)) {
+        thicknessField.classList.add("aiAttention");
+        widthField.classList.add("aiAttention");
+        return;
+    }
+
+    // Saglabāta un pareiza kombinācija
+    thicknessField.classList.remove("aiAttention");
+    widthField.classList.remove("aiAttention");
 }
 
 function showSizeSuggestions() {
