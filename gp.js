@@ -83,19 +83,19 @@ const GP = (() => {
         if (location === "Dārdu") {
             container.innerHTML = `
                 <a
-                    href="${basePath}/maps/dardu_map1.jpg"
+                    href="${basePath}/dardu_map1.jpg"
                     target="_blank"
                     rel="noopener"
                 >
-                    🗺️ Karte 1
+                    📍 Karte 1
                 </a>
 
                 <a
-                    href="${basePath}/maps/dardu_map2.jpg"
+                    href="${basePath}/dardu_map2.jpg"
                     target="_blank"
                     rel="noopener"
                 >
-                    🗺️ Karte 2
+                    📍 Karte 2
                 </a>
             `;
         }
@@ -103,11 +103,11 @@ const GP = (() => {
         if (location === "Cecīļu") {
             container.innerHTML = `
                 <a
-                    href="${basePath}/maps/cecilu_map.jpg"
+                    href="${basePath}/cecilu_map.jpg"
                     target="_blank"
                     rel="noopener"
                 >
-                    🗺️ Karte
+                    📍 Karte
                 </a>
             `;
         }
