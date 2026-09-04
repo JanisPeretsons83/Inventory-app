@@ -115,7 +115,7 @@
             <div id="analysisInfo"></div>
         </div>
     
-<!-- DARBA REŽĪMS -->
+<!-- DARBA REŽĪMS — INVENTARIZĀCIJA -->
     <div id="appContent" style="display:none;">
         
         <h2>Inventarizācija</h2>
@@ -480,6 +480,37 @@
     style="display:none;">
     🧪 Testēt AI rezultātu
 </button>
+</div>
+    
+<!-- DARBA REŽĪMS — GALA PRODUKTS -->
+<div id="finishedGoodsProfile" style="display:none;">
+
+    <h2>📦 Gala produkts</h2>
+
+    <select id="gpArea">
+        <option value="">Apgabals *</option>
+    </select>
+
+    <input
+        id="gpPackages"
+        type="number"
+        inputmode="numeric"
+        min="1"
+        placeholder="Palešu skaits *">
+
+    <input
+        id="gpProductCode"
+        type="text"
+        autocomplete="off"
+        placeholder="Produkta kods *">
+
+    <button
+        type="button" onclick="addFinishedProduct()">
+        ➕ Pievienot
+    </button>
+
+    <div id="finishedGoodsList"></div>
+
 </div>
     <script src="libs/exceljs.min.js"></script>
     <script src="libs/FileSaver.min.js"></script>
