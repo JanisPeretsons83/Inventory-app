@@ -354,28 +354,6 @@
     <div id="tableContainer">    
         <table id="table"></table>
     </div>
-    <div id="imageModal" class="imageModal">
-      <img id="modalImg" class="modalImage">
-    </div>
-    <div id="confirmModal" class="modal">
-        <div class="modalContent">
-            <h3>🛑 Beigt darbu</h3>
-                <p id="logoutSummary"></p>
-                   <p>
-        📤 Tiks saglabāta JSON rezerves kopija.<br>
-        💾 Android ierīcēs faili parasti tiek saglabāti automātiski.<br>
-        📱 iOS ierīcēs failu saglabāšana jāapstiprina manuāli.
-                    </p>
-            <button class="secondary"
-                onclick="closeConfirmModal()">
-                Turpināt darbu
-            </button>
-            <button class="danger"
-                onclick="saveAndExit()">
-                📤 Saglabāt un iziet
-            </button>
-        </div>
-    </div>
     <div id="restoreModal" class="modal">
         <div class="modalContent">
             <h3>💾 Atrasta rezerves kopija</h3>
@@ -550,8 +528,30 @@
     >
         🛑 Beigt darbu
     </button>
-
 </div>
+    <div id="imageModal" class="imageModal">
+      <img id="modalImg" class="modalImage">
+    </div>
+    <div id="confirmModal" class="modal">
+        <div class="modalContent">
+            <h3>🛑 Beigt darbu</h3>
+                <p id="logoutSummary"></p>
+                   <p>
+        📤 Tiks saglabāta JSON rezerves kopija.<br>
+        💾 Android ierīcēs faili parasti tiek saglabāti automātiski.<br>
+        📱 iOS ierīcēs failu saglabāšana jāapstiprina manuāli.
+                    </p>
+            <button class="secondary"
+                onclick="closeConfirmModal()">
+                Turpināt darbu
+            </button>
+            <button class="danger"
+                onclick="saveAndExit()">
+                📤 Saglabāt un iziet
+            </button>
+        </div>
+    </div>
+    
     <script src="libs/exceljs.min.js"></script>
     <script src="libs/FileSaver.min.js"></script>
         <script>
