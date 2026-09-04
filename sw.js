@@ -11,6 +11,7 @@ const urlsToCache = [
     `${BASE}/manifest.json`,
     `${BASE}/style.css`,
     `${BASE}/app.js`,
+    `${BASE}/gp.js`,
     `${BASE}/ai-test.js`,
     `${BASE}/libs/exceljs.min.js`,
     `${BASE}/libs/FileSaver.min.js`,
