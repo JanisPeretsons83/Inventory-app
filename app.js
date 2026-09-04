@@ -959,6 +959,14 @@ function openUserProfile(profile) {
     loadAITestScript();
 }
 
+function getActiveProfile() {
+    return (
+        selectedUserProfile ||
+        localStorage.getItem("userProfile") ||
+        "inventory"
+    );
+}
+
 function saveRecentUser(name) {
     const cleanName =
         typeof name === "string"
@@ -2353,36 +2361,62 @@ totalM3Row.getCell(2).numFmt = '0.000';
 function doLogout() {
 
     localStorage.removeItem("userProfile");
-        selectedUserProfile = null;
-            if (selectedProfileButton) {
-                selectedProfileButton.classList.remove("activeProfile");
-                selectedProfileButton = null;
-                }
-    localStorage.removeItem("data");
+        const profile = getActiveProfile();
+
+    if (profile === "inventory") {
+        localStorage.removeItem("data");
+        localStorage.removeItem("areaPhotos");
+
+        data = [];
+        areaPhotos = {};
+            currentArea = null;
+            previousArea = null;
+            photoTargetArea = null;
+            renderAreaPhotoPanel(null);
+    }
+
+    if (profile === "finishedGoods") {
+        localStorage.removeItem("finishedGoodsData");
+        finishedGoodsData = [];
+    }
+                
     localStorage.removeItem("userName");
     localStorage.removeItem("location");
-    localStorage.removeItem("areaPhotos");
-  areaPhotos = {};
-    currentArea = null;
-    previousArea = null;
-    photoTargetArea = null;
-    renderAreaPhotoPanel(null);
-    data = [];
+    localStorage.removeItem("userProfile");
+    localStorage.removeItem("sessionStart");
+          selectedUserProfile = null;
     document.getElementById("userNameInput").value = "";
+    document.getElementById("appContent").style.display = "none";
+    document.getElementById("finishedGoodsProfile").style.display = "none";
+    document.getElementById("locationSelect").style.display = "block";
       currentLocation = null;
     if (selectedBtn) {
       selectedBtn.classList.remove("activeLocation");
       selectedBtn = null;
       }
-  document.getElementById("appContent").style.display = "none";
-  document.getElementById("finishedGoodsProfile").style.display = "none";
-  document.getElementById("locationSelect").style.display = "block";
+      selectedUserProfile = null;
+    if (selectedProfileButton) {
+                selectedProfileButton.classList.remove("activeProfile");
+                selectedProfileButton = null;
+                }
+  
     // ✅ Atjauno login lietotāju sarakstu
     loadRecentUsers();
   render();
 }
 
 function endSession() {
+    const profile = getActiveProfile();
+
+    if (profile === "finishedGoods") {
+        showFinishedGoodsLogoutSummary();
+        return;
+    }
+
+    showInventoryLogoutSummary();
+}
+
+function showInventoryLogoutSummary() {
   const sessionStart = Number(localStorage.getItem("sessionStart"));
   const durationMs = Date.now() - sessionStart;
   const minutes = Math.floor(durationMs / 60000);
@@ -2412,13 +2446,56 @@ function endSession() {
     .style.display = "block";
 }
 
+function showFinishedGoodsLogoutSummary() {
+    const sessionStart =
+        Number(localStorage.getItem("sessionStart"));
+
+    const durationMs =
+        Date.now() - sessionStart;
+
+    const minutes =
+        Math.floor(durationMs / 60000);
+
+    const hours =
+        Math.floor(minutes / 60);
+
+    const remainingMinutes =
+        minutes % 60;
+
+    const entries = Array.isArray(finishedGoodsData)
+        ? finishedGoodsData
+        : [];
+
+    const totalPackages = entries.reduce(
+        (sum, entry) =>
+            sum + (Number(entry.packages) || 0),
+        0
+    );
+
+    document.getElementById("logoutSummary").innerHTML = `
+        Profils: Gala produkts<br>
+        Ražotne:
+        ${localStorage.getItem("location") || ""}<br>
+        Lietotājs:
+        ${localStorage.getItem("userName") || ""}<br><br>
+
+        📦 Reģistrētas ${totalPackages} paletes.<br>
+        📝 Veikti ${entries.length} ieraksti.<br>
+        ⏱️ Darbs aizņēma
+        ${hours} h ${remainingMinutes} min.
+    `;
+
+    document.getElementById("confirmModal")
+        .style.display = "flex";
+}
+
 function closeConfirmModal() {
   document.getElementById("confirmModal")
     .style.display = "none";
     }
 
-function saveAndExit() {
-    // JA IR IZMAIŅAS
+function saveInventoryAndExit() {
+     // JA IR IZMAIŅAS
     if (dataChanged) {
         const backupSaved =
             saveBackup();
@@ -2450,6 +2527,42 @@ function saveAndExit() {
     }
     closeConfirmModal();
     doLogout();
+}
+
+function saveFinishedGoodsAndExit() {
+    const backupSaved =
+        saveFinishedGoodsBackup();
+
+    if (!backupSaved) {
+        showNotice(
+            "❌ Gala produkta backup neizdevās.",
+            "error"
+        );
+
+        return;
+    }
+
+    exportFinishedGoodsBackupFile();
+    closeConfirmModal();
+    doLogout();
+}
+
+function saveAndExit() {
+    const profile = getActiveProfile();
+
+    if (profile === "finishedGoods") {
+        saveFinishedGoodsAndExit();
+        return;
+    }
+
+    saveInventoryAndExit();
+}
+
+function saveFinishedGoodsAndExit() {
+    showNotice(
+        "⚠️ Gala produkta saglabāšana vēl nav izveidota.",
+        "error"
+    );
 }
 
 // ✅ BACKUP
