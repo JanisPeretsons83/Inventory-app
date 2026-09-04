@@ -874,8 +874,13 @@ function saveUser() {
 
     saveRecentUser(cleanName);
 
-    document.getElementById("locationSelect").style.display = "none";
-    document.getElementById("appContent").style.display = "block";
+    const userProfile = getUserProfile(name);
+        localStorage.setItem(
+            "userProfile",
+            userProfile
+        );
+
+openUserProfile(userProfile);
 
     setHeaderInfo();
     updateAreas();
@@ -1575,6 +1580,39 @@ document.addEventListener("click", event => {
     checkBetaAccess();
     loadAITestScript();
   }
+
+function getUserProfile(name) {
+    const normalizedName =
+        String(name || "").trim().toLowerCase();
+
+    return normalizedName.endsWith(" gp")
+        ? "finishedGoods"
+        : "inventory";
+}
+
+function openUserProfile(profile) {
+    const login =
+        document.getElementById("locationSelect");
+    const inventory =
+        document.getElementById("appContent");
+    const finishedGoods =
+        document.getElementById("finishedGoodsProfile");
+    login.style.display = "none";
+    inventory.style.display = "none";
+    finishedGoods.style.display = "none";
+    if (profile === "finishedGoods") {
+        finishedGoods.style.display = "block";
+        updateFinishedGoodsAreas();
+        loadFinishedGoods();
+        renderFinishedGoods();
+
+        return;
+    }
+    inventory.style.display = "block";
+    updateAreas();
+    updateMaps();
+    render();
+}
     
   // LOAD DATA
   if (savedData) {
