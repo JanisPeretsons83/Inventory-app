@@ -1629,15 +1629,6 @@ document.addEventListener("click", event => {
     openUserProfile(savedProfile);
 }
 
-function getUserProfile(name) {
-    const normalizedName =
-        String(name || "").trim().toLowerCase();
-
-    return normalizedName.endsWith(" gp")
-        ? "finishedGoods"
-        : "inventory";
-}
-
 function openUserProfile(profile) {
     const login =
         document.getElementById("locationSelect");
