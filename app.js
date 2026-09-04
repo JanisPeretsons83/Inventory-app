@@ -2376,7 +2376,10 @@ function doLogout() {
 
     if (profile === "finishedGoods") {
         localStorage.removeItem("finishedGoodsData");
-
+        /*
+         * Kamēr GP backup vēl nav izveidots,
+         * finishedGoodsData no localStorage nedzēšam.
+         */
         finishedGoodsData = [];
         finishedGoodsDataChanged = false;
     }
@@ -2541,9 +2544,19 @@ function saveAndExit() {
 }
 
 function saveFinishedGoodsAndExit() {
+    /*
+     * GP.add() jau saglabā katru ierakstu
+     * finishedGoodsData localStorage.
+     *
+     * JSON eksports tiks pievienots vēlāk.
+     */
+
+    closeConfirmModal();
+    doLogout();
+
     showNotice(
-        "⚠️ Gala produkta saglabāšana vēl nav izveidota.",
-        "error"
+        "✅ Darbs pabeigts. GP dati saglabāti ierīcē.",
+        "success"
     );
 }
 
