@@ -959,31 +959,96 @@ function getRecentUsers() {
 
 function loadRecentUsers(filterText = "") {
     const list = document.getElementById("recentUsersList");
-        if (!list) {
-            return;
-        }
-    const search = filterText.trim().toLowerCase();
+    if (!list) {
+        return;
+    }
+    const search = String(filterText)
+        .trim()
+        .toLowerCase();
     const users = getRecentUsers().filter(user =>
         user.toLowerCase().includes(search)
-        );
-        list.innerHTML = "";
-            if (users.length === 0) {
-                list.style.display = "none";
-            return;
+    );
+    list.innerHTML = "";
+    if (users.length === 0) {
+        list.style.display = "none";
+        return;
+    }
+    users.forEach(user => {
+        const row = document.createElement("div");
+        row.className = "recent-user-row";
+
+        // Lietotāja izvēles poga
+        const selectButton =
+            document.createElement("button");
+        selectButton.type = "button";
+        selectButton.className = "recent-user-option";
+        selectButton.textContent = user;
+        selectButton.addEventListener("click", () => {
+            const input =
+                document.getElementById("userNameInput");
+            if (input) {
+                input.value = user;
+                input.focus();
             }
-        users.forEach(user => {
-        const button = document.createElement("button");
-            button.type = "button";
-            button.className = "recent-user-option";
-            button.textContent = user;
-            button.addEventListener("click", () => {
-        const input = document.getElementById("userNameInput");
-            input.value = user;
             list.style.display = "none";
-            input.focus();
         });
-        list.appendChild(button);
+
+        // Dzēšanas poga
+        const deleteButton =
+            document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "recent-user-delete";
+        deleteButton.textContent = "🗑️";
+        deleteButton.setAttribute(
+            "aria-label",
+            `Dzēst lietotāju ${user}`
+        );
+        deleteButton.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            deleteRecentUser(user);
+        });
+        row.appendChild(selectButton);
+        row.appendChild(deleteButton);
+        list.appendChild(row);
     });
+    list.style.display = "block";
+}
+
+function deleteRecentUser(userToDelete) {
+    const confirmed = confirm(
+        `Vai izdzēst lietotāju "${userToDelete}" no saraksta?`
+    );
+    if (!confirmed) {
+        return;
+    }
+    const users = getRecentUsers().filter(user =>
+        user.toLowerCase() !==
+        userToDelete.toLowerCase()
+    );
+    try {
+        localStorage.setItem(
+            "recentUsers",
+            JSON.stringify(users)
+        );
+    } catch (error) {
+        console.warn(
+            "Neizdevās saglabāt lietotāju sarakstu:",
+            error
+        );
+        showNotice(
+            "❌ Lietotāju neizdevās izdzēst.",
+            "error"
+        );
+        return;
+    }
+    const input = document.getElementById("userNameInput");
+    loadRecentUsers(input ? input.value : "");
+    showNotice(
+        `✅ Lietotājs "${userToDelete}" izdzēsts no saraksta.`,
+        "success"
+    );
 }
 
 function showRecentUsers() {
