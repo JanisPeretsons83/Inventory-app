@@ -2466,24 +2466,7 @@ function showInventoryLogoutSummary() {
 }
 
 function showFinishedGoodsLogoutSummary() {
-    const sessionStart =
-        Number(localStorage.getItem("sessionStart"));
-
-    const durationMs =
-        Date.now() - sessionStart;
-
-    const minutes =
-        Math.floor(durationMs / 60000);
-
-    const hours =
-        Math.floor(minutes / 60);
-
-    const remainingMinutes =
-        minutes % 60;
-
-    const entries = Array.isArray(finishedGoodsData)
-        ? finishedGoodsData
-        : [];
+    const entries = GP.getEntries();
 
     const totalPackages = entries.reduce(
         (sum, entry) =>
@@ -2499,9 +2482,7 @@ function showFinishedGoodsLogoutSummary() {
         ${localStorage.getItem("userName") || ""}<br><br>
 
         📦 Reģistrētas ${totalPackages} paletes.<br>
-        📝 Veikti ${entries.length} ieraksti.<br>
-        ⏱️ Darbs aizņēma
-        ${hours} h ${remainingMinutes} min.
+        📝 Veikti ${entries.length} ieraksti.
     `;
 
     document.getElementById("confirmModal")
