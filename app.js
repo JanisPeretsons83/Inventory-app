@@ -937,11 +937,7 @@ function openUserProfile(profile) {
     if (profile === "finishedGoods") {
         finishedGoods.style.display = "block";
 
-        // Šīs funkcijas pievienosim,
-        // kad būvēsim GP režīmu.
-        // updateFinishedGoodsAreas();
-        // loadFinishedGoods();
-        // renderFinishedGoods();
+        GP.init();
 
         return;
     }
