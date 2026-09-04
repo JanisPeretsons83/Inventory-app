@@ -64,6 +64,21 @@
                             class="recent-users-list"
                             style="display:none;"></div>
                     </div>
+                    <!-- Darba režīma izvēle -->
+                    <div id="profileSelect" class="profile-select">
+                        <button type="button"
+                                class="profile-button"
+                                data-profile="inventory"
+                                onclick="selectUserProfile('inventory', this)">
+                            NI
+                        </button>
+                        <button type="button"
+                                class="profile-button"
+                                data-profile="finishedGoods"
+                                onclick="selectUserProfile('finishedGoods', this)">
+                            GP
+                        </button>
+                    </div>
                 <button onclick="saveUser()">Turpināt</button>
                 <button onclick="startDataViewMode()">
                     📊 Inventarizācijas analītikas skats
