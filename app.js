@@ -18,6 +18,8 @@ let currentArea = null;
 let previousArea = null;
 let photoTargetArea = null;
 let photoBusy = false;
+let selectedUserProfile = null;
+let selectedProfileButton = null;
 
 window.APP_STARTED = true;
 
@@ -864,6 +866,12 @@ function saveUser() {
         showNotice("⚠️ Ievadi vārdu", "error");
         return;
     }
+    if (!selectedUserProfile) {
+        showNotice("⚠️ Izvēlies darba režīmu NI vai GP",
+        "error"
+        );
+        return;
+    }
 
     const cleanName = name
         .replace(/\s+test$/i, "")
@@ -871,7 +879,7 @@ function saveUser() {
 
     localStorage.setItem("sessionStart", String(Date.now()));
     localStorage.setItem("userName", name);
-
+    localStorage.setItem("userProfile", selectedUserProfile);
     saveRecentUser(cleanName);
 
     const userProfile = getUserProfile(name);
@@ -880,7 +888,7 @@ function saveUser() {
             userProfile
         );
 
-openUserProfile(userProfile);
+    openUserProfile(selectedUserProfile);
 
     setHeaderInfo();
     updateAreas();
@@ -891,6 +899,45 @@ openUserProfile(userProfile);
     photoTargetArea = null;
 
     renderAreaPhotoPanel(null);
+    checkBetaAccess();
+    loadAITestScript();
+}
+
+function openUserProfile(profile) {
+    const login =
+        document.getElementById("locationSelect");
+
+    const inventory =
+        document.getElementById("appContent");
+
+    const finishedGoods =
+        document.getElementById("finishedGoodsProfile");
+
+    login.style.display = "none";
+    inventory.style.display = "none";
+    finishedGoods.style.display = "none";
+
+    if (profile === "finishedGoods") {
+        finishedGoods.style.display = "block";
+
+     //   updateFinishedGoodsAreas();
+     //   loadFinishedGoods();
+     //   renderFinishedGoods();
+
+        return;
+    }
+
+    inventory.style.display = "block";
+
+    updateAreas();
+    updateMaps();
+
+    currentArea = null;
+    previousArea = null;
+    photoTargetArea = null;
+
+    renderAreaPhotoPanel(null);
+    render();
     checkBetaAccess();
     loadAITestScript();
 }
@@ -1572,14 +1619,15 @@ document.addEventListener("click", event => {
   //✅ LOGIN CHECK
   if (location && name) {
     currentLocation = location;
-    document.getElementById("locationSelect").style.display = "none";
-    document.getElementById("appContent").style.display = "block";
-    setHeaderInfo();    
-    updateAreas();
-    updateMaps();
-    checkBetaAccess();
-    loadAITestScript();
-  }
+
+    const savedProfile =
+        localStorage.getItem("userProfile") ||
+        "inventory";
+
+    selectedUserProfile = savedProfile;
+
+    openUserProfile(savedProfile);
+}
 
 function getUserProfile(name) {
     const normalizedName =
@@ -1612,6 +1660,19 @@ function openUserProfile(profile) {
     updateAreas();
     updateMaps();
     render();
+}
+
+function selectUserProfile(profile, button) {
+    selectedUserProfile = profile;
+    if (selectedProfileButton) {
+        selectedProfileButton.classList.remove(
+            "activeProfile"
+        );
+    }
+    selectedProfileButton = button;
+    selectedProfileButton.classList.add(
+        "activeProfile"
+    );
 }
     
   // LOAD DATA
@@ -2297,6 +2358,12 @@ totalM3Row.getCell(2).numFmt = '0.000';
 
 function doLogout() {
 
+    localStorage.removeItem("userProfile");
+        selectedUserProfile = null;
+            if (selectedProfileButton) {
+                selectedProfileButton.classList.remove("activeProfile");
+                selectedProfileButton = null;
+                }
     localStorage.removeItem("data");
     localStorage.removeItem("userName");
     localStorage.removeItem("location");
@@ -2314,6 +2381,7 @@ function doLogout() {
       selectedBtn = null;
       }
   document.getElementById("appContent").style.display = "none";
+  document.getElementById("finishedGoodsProfile").style.display = "none";
   document.getElementById("locationSelect").style.display = "block";
     // ✅ Atjauno login lietotāju sarakstu
     loadRecentUsers();
