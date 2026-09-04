@@ -809,11 +809,31 @@ function openImageFromSrc(src) {
     modalImg.src = src;
 }
 
+function closeImageModal() {
+    const modal =
+        document.getElementById("imageModal");
+
+    const modalImg =
+        document.getElementById("modalImg");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+
+    if (modalImg) {
+        modalImg.src = "";
+    }
+}
+
     // ✅ aizver uz klikšķa
 
-    document.getElementById("imageModal").onclick = function () {
-      this.style.display = "none";
-};
+    document
+    .getElementById("imageModal")
+    ?.addEventListener("click", event => {
+        if (event.target.id === "imageModal") {
+            closeImageModal();
+        }
+    });
 
 function setLocation(loc, btn) {
       currentLocation = loc;
