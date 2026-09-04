@@ -20,6 +20,8 @@ let photoTargetArea = null;
 let photoBusy = false;
 let selectedUserProfile = null;
 let selectedProfileButton = null;
+let finishedGoodsData = [];
+let finishedGoodsDataChanged = false;
 
 window.APP_STARTED = true;
 
@@ -2359,9 +2361,8 @@ totalM3Row.getCell(2).numFmt = '0.000';
   // ✅ LOG OUT
 
 function doLogout() {
-
-    localStorage.removeItem("userProfile");
-        const profile = getActiveProfile();
+    // Profils jānosaka pirms localStorage tīrīšanas
+    const profile = getActiveProfile();
 
     if (profile === "inventory") {
         localStorage.removeItem("data");
@@ -2369,40 +2370,62 @@ function doLogout() {
 
         data = [];
         areaPhotos = {};
-            currentArea = null;
-            previousArea = null;
-            photoTargetArea = null;
-            renderAreaPhotoPanel(null);
+
+        currentArea = null;
+        previousArea = null;
+        photoTargetArea = null;
+
+        renderAreaPhotoPanel(null);
     }
 
     if (profile === "finishedGoods") {
         localStorage.removeItem("finishedGoodsData");
+
         finishedGoodsData = [];
+        finishedGoodsDataChanged = false;
     }
-                
+
     localStorage.removeItem("userName");
     localStorage.removeItem("location");
     localStorage.removeItem("userProfile");
     localStorage.removeItem("sessionStart");
-          selectedUserProfile = null;
+
+    selectedUserProfile = null;
+    currentLocation = null;
+
     document.getElementById("userNameInput").value = "";
-    document.getElementById("appContent").style.display = "none";
-    document.getElementById("finishedGoodsProfile").style.display = "none";
-    document.getElementById("locationSelect").style.display = "block";
-      currentLocation = null;
+
+    document.getElementById("appContent")
+        .style.display = "none";
+
+    document.getElementById("finishedGoodsProfile")
+        .style.display = "none";
+
+    document.getElementById("confirmModal")
+        .style.display = "none";
+
+    document.getElementById("locationSelect")
+        .style.display = "block";
+
     if (selectedBtn) {
-      selectedBtn.classList.remove("activeLocation");
-      selectedBtn = null;
-      }
-      selectedUserProfile = null;
+        selectedBtn.classList.remove("activeLocation");
+        selectedBtn = null;
+    }
+
     if (selectedProfileButton) {
-                selectedProfileButton.classList.remove("activeProfile");
-                selectedProfileButton = null;
-                }
-  
-    // ✅ Atjauno login lietotāju sarakstu
+        selectedProfileButton.classList.remove(
+            "activeProfile"
+        );
+
+        selectedProfileButton = null;
+    }
+
     loadRecentUsers();
-  render();
+
+    // NI tabulu pārzīmē tikai pēc NI sesijas
+    if (profile === "inventory") {
+        render();
+    }
 }
 
 function endSession() {
@@ -2486,7 +2509,7 @@ function showFinishedGoodsLogoutSummary() {
     `;
 
     document.getElementById("confirmModal")
-        .style.display = "flex";
+        .style.display = "block";
 }
 
 function closeConfirmModal() {
@@ -2525,24 +2548,6 @@ function saveInventoryAndExit() {
             "ℹ️ Izmaiņu nav, rezerves kopija netika veidota",
             "info");
     }
-    closeConfirmModal();
-    doLogout();
-}
-
-function saveFinishedGoodsAndExit() {
-    const backupSaved =
-        saveFinishedGoodsBackup();
-
-    if (!backupSaved) {
-        showNotice(
-            "❌ Gala produkta backup neizdevās.",
-            "error"
-        );
-
-        return;
-    }
-
-    exportFinishedGoodsBackupFile();
     closeConfirmModal();
     doLogout();
 }
