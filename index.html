@@ -488,13 +488,13 @@
         <!-- ==========================================
          🧪 PAGaidu AI TESTA POGA
         =========================================== -->
-<button
-    id="aiResultTestBtn"
-    type="button"
-    onclick="testAIResultFlow()"
-    style="display:none;">
-    🧪 Testēt AI rezultātu
-</button>
+    <button
+        id="aiResultTestBtn"
+        type="button"
+        onclick="testAIResultFlow()"
+        style="display:none;">
+        🧪 Testēt AI rezultātu
+    </button>
 </div>
     
 <!-- DARBA REŽĪMS — GALA PRODUKTS -->
@@ -502,29 +502,54 @@
 
     <h2>📦 Gala produkts</h2>
 
-    <select id="gpArea">
-        <option value="">Apgabals *</option>
-    </select>
+    <div id="gpInfoLine" class="info"></div>
+
+    <!-- Apgabals un kartes -->
+    <div class="areaRow">
+
+        <select
+            id="gpArea"
+            onchange="GP.handleAreaChange()"
+        >
+            <option value="">Apgabals *</option>
+        </select>
+
+        <div id="gpMapLinks"></div>
+
+    </div>
 
     <input
         id="gpPackages"
         type="number"
         inputmode="numeric"
         min="1"
-        placeholder="Palešu skaits *">
+        placeholder="Palešu skaits *"
+    >
 
     <input
         id="gpProductCode"
         type="text"
         autocomplete="off"
-        placeholder="Produkta kods *">
+        placeholder="Produkta kods *"
+    >
 
     <button
-        type="button" onclick="addFinishedProduct()">
+        type="button"
+        onclick="GP.add()"
+    >
         ➕ Pievienot
     </button>
 
+    <div id="gpSummary"></div>
     <div id="finishedGoodsList"></div>
+
+    <button
+        type="button"
+        class="danger"
+        onclick="endSession()"
+    >
+        🛑 Beigt darbu
+    </button>
 
 </div>
     <script src="libs/exceljs.min.js"></script>
