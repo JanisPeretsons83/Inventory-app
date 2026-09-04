@@ -869,3 +869,23 @@ background-color: #fff8d6 !important;
 .recent-user-delete:active {
     background: #ffe3e3;
 }
+.profile-select {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+.profile-button {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #1f4e46;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f4e46;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+}
+.profile-button.activeProfile {
+    background: #1f4e46;
+    color: #ffffff;
+}
