@@ -850,26 +850,40 @@ function setHeaderInfo() {
 }
 
 function saveUser() {
-    const name = document
-        .getElementById("userNameInput")
-        .value
-        .trim();
+    const input =
+        document.getElementById("userNameInput");
 
-    const location = localStorage.getItem("location");
+    const name = input
+        ? input.value.trim()
+        : "";
+
+    const location =
+        localStorage.getItem("location");
 
     if (!location) {
-        showNotice("⚠️ Izvēlies ražotni", "error");
+        showNotice(
+            "⚠️ Izvēlies ražotni",
+            "error"
+        );
+
         return;
     }
 
     if (!name) {
-        showNotice("⚠️ Ievadi vārdu", "error");
+        showNotice(
+            "⚠️ Ievadi vārdu",
+            "error"
+        );
+
         return;
     }
+
     if (!selectedUserProfile) {
-        showNotice("⚠️ Izvēlies darba režīmu NI vai GP",
-        "error"
+        showNotice(
+            "⚠️ Izvēlies darba režīmu NI vai GP",
+            "error"
         );
+
         return;
     }
 
@@ -877,30 +891,23 @@ function saveUser() {
         .replace(/\s+test$/i, "")
         .trim();
 
-    localStorage.setItem("sessionStart", String(Date.now()));
-    localStorage.setItem("userName", name);
-    localStorage.setItem("userProfile", selectedUserProfile);
+    localStorage.setItem(
+        "sessionStart",
+        String(Date.now())
+    );
+
+    localStorage.setItem(
+        "userName",
+        name
+    );
+
+    localStorage.setItem(
+        "userProfile",
+        selectedUserProfile
+    );
+
     saveRecentUser(cleanName);
-
-    const userProfile = getUserProfile(name);
-        localStorage.setItem(
-            "userProfile",
-            userProfile
-        );
-
     openUserProfile(selectedUserProfile);
-
-    setHeaderInfo();
-    updateAreas();
-    updateMaps();
-
-    currentArea = null;
-    previousArea = null;
-    photoTargetArea = null;
-
-    renderAreaPhotoPanel(null);
-    checkBetaAccess();
-    loadAITestScript();
 }
 
 function openUserProfile(profile) {
@@ -913,6 +920,14 @@ function openUserProfile(profile) {
     const finishedGoods =
         document.getElementById("finishedGoodsProfile");
 
+    if (!login || !inventory || !finishedGoods) {
+        console.error(
+            "Nav atrasti profilu HTML bloki."
+        );
+
+        return;
+    }
+
     login.style.display = "none";
     inventory.style.display = "none";
     finishedGoods.style.display = "none";
@@ -920,22 +935,24 @@ function openUserProfile(profile) {
     if (profile === "finishedGoods") {
         finishedGoods.style.display = "block";
 
-     //   updateFinishedGoodsAreas();
-     //   loadFinishedGoods();
-     //   renderFinishedGoods();
+        // Šīs funkcijas pievienosim,
+        // kad būvēsim GP režīmu.
+        // updateFinishedGoodsAreas();
+        // loadFinishedGoods();
+        // renderFinishedGoods();
 
         return;
     }
 
     inventory.style.display = "block";
 
-    updateAreas();
-    updateMaps();
-
     currentArea = null;
     previousArea = null;
     photoTargetArea = null;
 
+    setHeaderInfo();
+    updateAreas();
+    updateMaps();
     renderAreaPhotoPanel(null);
     render();
     checkBetaAccess();
@@ -1506,6 +1523,29 @@ document.getElementById("cancelEditBtn").style.display =
   "inline-block";
 }
 
+function selectUserProfile(profile, button) {
+    if (
+        profile !== "inventory" &&
+        profile !== "finishedGoods"
+    ) {
+        return;
+    }
+
+    selectedUserProfile = profile;
+
+    document
+        .querySelectorAll(".profile-button")
+        .forEach(profileButton => {
+            profileButton.classList.remove("activeProfile");
+        });
+
+    selectedProfileButton = button;
+
+    if (selectedProfileButton) {
+        selectedProfileButton.classList.add("activeProfile");
+    }
+}
+
 window.onload = () => {
     loadRecentUsers();
   const location = localStorage.getItem("location");
@@ -1628,44 +1668,7 @@ document.addEventListener("click", event => {
 
     openUserProfile(savedProfile);
 }
-
-function openUserProfile(profile) {
-    const login =
-        document.getElementById("locationSelect");
-    const inventory =
-        document.getElementById("appContent");
-    const finishedGoods =
-        document.getElementById("finishedGoodsProfile");
-    login.style.display = "none";
-    inventory.style.display = "none";
-    finishedGoods.style.display = "none";
-    if (profile === "finishedGoods") {
-        finishedGoods.style.display = "block";
-        updateFinishedGoodsAreas();
-        loadFinishedGoods();
-        renderFinishedGoods();
-
-        return;
-    }
-    inventory.style.display = "block";
-    updateAreas();
-    updateMaps();
-    render();
-}
-
-function selectUserProfile(profile, button) {
-    selectedUserProfile = profile;
-    if (selectedProfileButton) {
-        selectedProfileButton.classList.remove(
-            "activeProfile"
-        );
-    }
-    selectedProfileButton = button;
-    selectedProfileButton.classList.add(
-        "activeProfile"
-    );
-}
-    
+   
   // LOAD DATA
   if (savedData) {
     try {
