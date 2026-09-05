@@ -66,49 +66,53 @@ const GP = (() => {
     }
 
     function updateMaps() {
-        const container =
-            document.getElementById("gpMapLinks");
+    const location =
+        localStorage.getItem("location");
 
-        if (!container) {
-            return;
-        }
+    const container =
+        document.getElementById("gpMapLinks");
 
-        const location =
-            localStorage.getItem("location");
+    const BASE_PATH = "/Inventory-app";
 
-        const basePath = "/Inventory-app";
-
-        container.innerHTML = "";
-
-        if (location === "Dārdu") {
-            container.innerHTML = `
-                <a href="${BASE_PATH}/dardu_map1.jpeg"
-                    target="_blank"
-                    rel="noopener">
-                    📍 Karte 1
-                </a>
-                <a
-                    href="${basePath}/dardu_map2.jpg"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    📍 Karte 2
-                </a>
-            `;
-        }
-
-        if (location === "Cecīļu") {
-            container.innerHTML = `
-                <a
-                    href="${basePath}/cecilu_map.jpg"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    📍 Karte
-                </a>
-            `;
-        }
+    if (!container) {
+        return;
     }
+
+    container.innerHTML = "";
+
+    if (location === "Dārdu") {
+        container.innerHTML = `
+            <a
+                href="#"
+                onclick="openImageFromSrc(
+                    '${BASE_PATH}/dardu_map1.jpeg'
+                ); return false;"
+            >
+                📍 Karte 1
+            </a>
+
+            <a
+                href="#"
+                onclick="openImageFromSrc(
+                    '${BASE_PATH}/dardu_map2.jpeg'
+                ); return false;"
+            >
+                📍 Karte 2
+            </a>
+        `;
+    } else if (location === "Cecīļu") {
+        container.innerHTML = `
+            <a
+                href="#"
+                onclick="openImageFromSrc(
+                    '${BASE_PATH}/cecilu_map.jpeg'
+                ); return false;"
+            >
+                📍 Karte
+            </a>
+        `;
+    }
+}
 
     function handleAreaChange() {
         const area =
