@@ -82,14 +82,11 @@ const GP = (() => {
 
         if (location === "Dārdu") {
             container.innerHTML = `
-                <a
-                    href="${basePath}/dardu_map1.jpg"
+                <a href="${BASE_PATH}/dardu_map1.jpeg"
                     target="_blank"
-                    rel="noopener"
-                >
+                    rel="noopener">
                     📍 Karte 1
                 </a>
-
                 <a
                     href="${basePath}/dardu_map2.jpg"
                     target="_blank"
