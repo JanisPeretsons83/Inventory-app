@@ -65,7 +65,7 @@ const GP = (() => {
         });
     }
 
-    function updateMaps() {
+function updateMaps() {
     const location =
         localStorage.getItem("location");
 
@@ -113,7 +113,6 @@ const GP = (() => {
         `;
     }
 }
-
     function handleAreaChange() {
         const area =
             document.getElementById("gpArea")?.value || "";
