@@ -789,14 +789,11 @@ function updateMaps() {
 
 // ==========================================
 // KARTES ATTĒLA MODĀLIS UN ŽESTI
-// Aizvieto ar šo visu veco kartes žestu bloku.
 // ==========================================
-
 let mapImageScale = 1;
 let mapImageTranslateX = 0;
 let mapImageTranslateY = 0;
-const mapImagePointers = new Map();
-
+    const mapImagePointers = new Map();
 let mapImageDragOffsetX = 0;
 let mapImageDragOffsetY = 0;
 let mapPinchStartDistance = 0;
@@ -809,14 +806,22 @@ let mapPinchStartTranslateY = 0;
 function openImageFromSrc(src) {
     const modal = document.getElementById("imageModal");
     const image = document.getElementById("modalImg");
+        if (!modal || !image) return;
+        resetImageZoom();
+            image.src = src;
+            modal.style.display = "block";
+            document.body.style.overflow = "hidden";
+        initImageGestures();
+}
 
-    if (!modal || !image) return;
+function closeImageModal() {
+const modal = document.getElementById("imageModal");
+const image = document.getElementById("modalImg");
 
-    resetImageZoom();
-    image.src = src;
-    modal.style.display = "block";
-    document.body.style.overflow = "hidden";
-    initImageGestures();
+resetImageZoom();
+    if (modal) modal.style.display = "none";
+    if (image) image.src = "";
+        document.body.style.overflow = "";
 }
 
 function limitImageScale(value) {
@@ -825,11 +830,9 @@ function limitImageScale(value) {
 
 function applyImageTransform() {
     const image = document.getElementById("modalImg");
-    if (!image) return;
-
-    image.style.transform =
-        `translate(${mapImageTranslateX}px, ${mapImageTranslateY}px) ` +
-        `scale(${mapImageScale})`;
+        if (!image) return;
+            image.style.transform =`translate(${mapImageTranslateX}px,
+                ${mapImageTranslateY}px) scale(${mapImageScale})`;
 }
 
 function resetImageZoom() {
@@ -839,269 +842,154 @@ function resetImageZoom() {
     mapImagePointers.clear();
     mapPinchStartDistance = 0;
     mapPinchStartScale = 1;
+    
     applyImageTransform();
 }
 
 function getImagePointerDistance() {
     const points = Array.from(mapImagePointers.values());
-    if (points.length < 2) return 0;
-
-    return Math.hypot(
-        points[1].x - points[0].x,
-        points[1].y - points[0].y
-    );
+        if (points.length < 2) return 0;
+        return Math.hypot(
+            points[1].x - points[0].x,
+            points[1].y - points[0].y
+        );
 }
 
 function getImagePointerCenter() {
     const points = Array.from(mapImagePointers.values());
-
-    if (points.length < 2) {
+        if (points.length < 2) {
+            return {
+                x: points[0]?.x || 0,
+                y: points[0]?.y || 0
+            };
+        }
         return {
-            x: points[0]?.x || 0,
-            y: points[0]?.y || 0
-        };
-    }
-
-    return {
         x: (points[0].x + points[1].x) / 2,
         y: (points[0].y + points[1].y) / 2
-    };
+        };
 }
 
 function initImageGestures() {
     const modal = document.getElementById("imageModal");
     const image = document.getElementById("modalImg");
-
-    if (!modal || !image) return;
-    if (image.dataset.gesturesReady === "true") return;
-
-    image.dataset.gesturesReady = "true";
-
-    image.addEventListener("pointerdown", event => {
-        event.preventDefault();
-        event.stopPropagation();
-        image.setPointerCapture?.(event.pointerId);
-
-        mapImagePointers.set(event.pointerId, {
-            x: event.clientX,
-            y: event.clientY
-        });
-
-        if (mapImagePointers.size === 1) {
-            mapImageDragOffsetX =
-                event.clientX - mapImageTranslateX;
-            mapImageDragOffsetY =
-                event.clientY - mapImageTranslateY;
+        if (!modal || !image) return;
+        if (image.dataset.gesturesReady === "true") {
+        return;
         }
-
+        image.dataset.gesturesReady = "true";
+        image.style.touchAction = "none";
+        image.addEventListener("pointerdown", event => {
+            event.preventDefault();
+            event.stopPropagation();
+        image.setPointerCapture?.(event.pointerId);
+            mapImagePointers.set(event.pointerId, {
+                x: event.clientX,
+                y: event.clientY
+            });
+        if (mapImagePointers.size === 1) {
+            mapImageDragOffsetX = event.clientX - mapImageTranslateX;
+            mapImageDragOffsetY = event.clientY - mapImageTranslateY;
+        }
         if (mapImagePointers.size === 2) {
             const center = getImagePointerCenter();
-            mapPinchStartDistance = getImagePointerDistance();
-            mapPinchStartScale = mapImageScale;
-            mapPinchStartCenterX = center.x;
-            mapPinchStartCenterY = center.y;
-            mapPinchStartTranslateX = mapImageTranslateX;
-            mapPinchStartTranslateY = mapImageTranslateY;
+        mapPinchStartDistance = getImagePointerDistance();
+        mapPinchStartScale = mapImageScale;
+        mapPinchStartCenterX = center.x;
+        mapPinchStartCenterY = center.y;
+        mapPinchStartTranslateX = mapImageTranslateX;
+        mapPinchStartTranslateY = mapImageTranslateY;
         }
     });
-
     image.addEventListener("pointermove", event => {
-        if (!mapImagePointers.has(event.pointerId)) return;
+        if (!mapImagePointers.has(event.pointerId)) {
+            return;
 
+        }
         event.preventDefault();
         event.stopPropagation();
-
         mapImagePointers.set(event.pointerId, {
             x: event.clientX,
             y: event.clientY
         });
-
         if (
             mapImagePointers.size >= 2 &&
             mapPinchStartDistance > 0
-        ) {
-            const distance = getImagePointerDistance();
-            const center = getImagePointerCenter();
-
-            mapImageScale = limitImageScale(
-                mapPinchStartScale *
-                (distance / mapPinchStartDistance)
-            );
-
-            mapImageTranslateX =
-                mapPinchStartTranslateX +
-                (center.x - mapPinchStartCenterX);
-            mapImageTranslateY =
-                mapPinchStartTranslateY +
-                (center.y - mapPinchStartCenterY);
-
-            applyImageTransform();
-            return;
-        }
-
+            ) {
+    const distance = getImagePointerDistance();
+    const center = getImagePointerCenter();
+        mapImageScale = limitImageScale(
+        mapPinchStartScale *
+        (distance / mapPinchStartDistance)
+        );
+        mapImageTranslateX = mapPinchStartTranslateX +
+            (center.x - mapPinchStartCenterX);
+        mapImageTranslateY = mapPinchStartTranslateY +
+            (center.y - mapPinchStartCenterY);
+        applyImageTransform();
+        return;
+            }
         if (
             mapImagePointers.size === 1 &&
             mapImageScale > 1
-        ) {
-            mapImageTranslateX =
-                event.clientX - mapImageDragOffsetX;
-            mapImageTranslateY =
-                event.clientY - mapImageDragOffsetY;
-            applyImageTransform();
-        }
-    });
-
-    function finishImagePointer(event) {
-        mapImagePointers.delete(event.pointerId);
-
-        if (mapImagePointers.size === 1) {
-            const remaining =
-                Array.from(mapImagePointers.values())[0];
-            mapImageDragOffsetX =
-                remaining.x - mapImageTranslateX;
-            mapImageDragOffsetY =
-                remaining.y - mapImageTranslateY;
-        }
-
-        if (mapImagePointers.size === 0) {
-            mapPinchStartDistance = 0;
-            if (mapImageScale <= 1) resetImageZoom();
-        }
-    }
-
-    image.addEventListener("pointerup", finishImagePointer);
-    image.addEventListener("pointercancel", finishImagePointer);
-
-    image.addEventListener(
-        "wheel",
-        event => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const zoomAmount = event.deltaY < 0 ? 0.2 : -0.2;
-            mapImageScale = limitImageScale(
-                mapImageScale + zoomAmount
-            );
-
-            if (mapImageScale === 1) {
-                mapImageTranslateX = 0;
-                mapImageTranslateY = 0;
+            ) {
+            mapImageTranslateX = event.clientX -
+                mapImageDragOffsetX;
+            mapImageTranslateY = event.clientY -
+                mapImageDragOffsetY;
+        applyImageTransform();
             }
+    });
 
-            applyImageTransform();
-        },
-        { passive: false }
+function finishImagePointer(event) {
+    mapImagePointers.delete(
+    event.pointerId
     );
-
-    image.addEventListener("dblclick", event => {
-        event.preventDefault();
-        event.stopPropagation();
-        resetImageZoom();
-    });
-
-    modal.addEventListener("click", event => {
-        if (event.target === modal) closeImageModal();
-    });
-}
-
-function closeImageModal() {
-    const modal = document.getElementById("imageModal");
-    const image = document.getElementById("modalImg");
-
+    if (mapImagePointers.size === 1) {
+const remaining = Array.from(
+    mapImagePointers.values()
+    )[0];
+    mapImageDragOffsetX = remaining.x -
+        mapImageTranslateX;
+    mapImageDragOffsetY = remaining.y -
+        mapImageTranslateY;
+    }
+    if (mapImagePointers.size === 0) {
+        mapPinchStartDistance = 0;
+    if (mapImageScale <= 1) {
     resetImageZoom();
-
-    if (modal) modal.style.display = "none";
-    if (image) image.src = "";
-
-    document.body.style.overflow = "";
-}
-
-
-    function finishImagePointer(event) {
-        mapImagePointers.delete(
-            event.pointerId
-        );
-
-        if (mapImagePointers.size === 1) {
-            const remaining =
-                Array.from(
-                    mapImagePointers.values()
-                )[0];
-
-            mapImageDragOffsetX =
-                remaining.x -
-                mapImageTranslateX;
-
-            mapImageDragOffsetY =
-                remaining.y -
-                mapImageTranslateY;
-        }
-
-        if (mapImagePointers.size === 0) {
-            mapPinchStartDistance = 0;
-
-            if (mapImageScale <= 1) {
-                resetImageZoom();
-            }
         }
     }
-
-    // Šis viss joprojām ir initImageGestures() iekšpusē
-
-    image.addEventListener(
-        "pointerup",
-        finishImagePointer
-    );
-
-    image.addEventListener(
-        "pointercancel",
-        finishImagePointer
-    );
-
-    image.addEventListener(
-        "wheel",
-        event => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const zoomAmount =
-                event.deltaY < 0 ? 0.2 : -0.2;
-
-            mapImageScale =
-                limitImageScale(
-                    mapImageScale + zoomAmount
-                );
-
-            if (mapImageScale === 1) {
-                mapImageTranslateX = 0;
-                mapImageTranslateY = 0;
-            }
-
-            applyImageTransform();
-        },
-        { passive: false }
-    );
-
-    image.addEventListener(
-        "dblclick",
-        event => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            resetImageZoom();
-        }
-    );
-
-    modal.addEventListener(
-        "click",
-        event => {
-            if (event.target === modal) {
-                closeImageModal();
-            }
-        }
-    );
 }
-
+image.addEventListener("pointerup", finishImagePointer);
+image.addEventListener("pointercancel", finishImagePointer);
+image.addEventListener("wheel", event => {
+    event.preventDefault();
+    event.stopPropagation();
+const zoomAmount = event.deltaY < 0 ? 0.2 : -0.2;
+    mapImageScale = limitImageScale(
+    mapImageScale + zoomAmount
+    );
+    if (mapImageScale === 1) {
+        mapImageTranslateX = 0;
+        mapImageTranslateY = 0;
+    }
+    applyImageTransform();
+},
+{ passive: false }
+);
+image.addEventListener("dblclick", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    resetImageZoom();
+    }
+);
+modal.addEventListener("click", event => {
+    if (event.target === modal) {
+    closeImageModal();
+    }
+    }
+);
+}
 function setLocation(loc, btn) {
       currentLocation = loc;
       localStorage.setItem("location", loc);
