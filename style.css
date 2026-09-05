@@ -52,16 +52,16 @@ body {
   overflow-x: hidden;
 }
 #appContent {
-width: min(100%, 800px);
-margin: 0 auto;
+    width: min(100%, 800px);
+    margin: 0 auto;
 }
 #area,
 #comment{
-max-width: 300px;
+    max-width: 300px;
 }
 #packages,
 #pieces{
-max-width: 250px;
+    max-width: 250px;
 }
 #thickness,
 #width,
@@ -69,26 +69,26 @@ max-width: 250px;
 #year,
 #name,
 #productCode{
-max-width: 170px;
+    max-width: 170px;
 }
 #locationSelect {
-width: min(90vw, 500px);
-margin: 0 auto;
+    width: min(90vw, 500px);
+    margin: 0 auto;
 }
 #locationSelect input,
 #locationSelect button {
-width: 90%;
-margin: 6px auto;
-display: block;
-box-sizing: border-box;
+    width: 90%;
+    margin: 6px auto;
+    display: block;
+    box-sizing: border-box;
 }
 #sizeSuggestions {
-display: none;
-margin: 5px 0;
-border-radius: 8px;
-max-height: 250px;
-overflow-y: auto;
-overflow-x: hidden;
+    display: none;
+    margin: 5px 0;
+    border-radius: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .sizeOption {
   background: white;
@@ -107,27 +107,27 @@ overflow-x: hidden;
   margin-bottom: 10px;
 }
 .materialTabs {
-display: flex;
-gap: 6px;
-margin: 10px 0;
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
 }
 .materialTabs button {
-flex: 1;
+    flex: 1;
 }
 .materialTabs button.active {
-background: #4CAF50;
-color: white;
+    background: #4CAF50;
+    color: white;
 }
 #tableContainer {
-max-height: 420px;
-overflow-x: auto;
-overflow-y: auto;
-margin-top: 15px;
-border-radius: 12px;
+    max-height: 420px;
+    overflow-x: auto;
+    overflow-y: auto;
+    margin-top: 15px;
+    border-radius: 12px;
 }
 #table th:nth-child(1),
 #table td:nth-child(1) {
-width: 30px;
+    width: 30px;
 }
 #table th:nth-child(2),
 #table td:nth-child(2) {
@@ -165,60 +165,60 @@ z-index: 10;
 background: #f0f0f0;
 }
 #table button {
-width: 28px;
-height: 28px;
-padding: 0;
-margin: 1px;
-font-size: 14px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 1px;
+    font-size: 14px;
 }
 .tableScroll {
-overflow-x: auto;
-width: 100%;
+    overflow-x: auto;
+    width: 100%;
 }
 #analysisView {
-max-height: 70vh;
-overflow: auto
+    max-height: 70vh;
+    overflow: auto
 }
 .modalContent {
-max-height: 90vh;
-overflow-y: auto;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 #areaList {
-max-height: 40vh;
-overflow-y: auto;
-padding: 10px;
+    max-height: 40vh;
+    overflow-y: auto;
+    padding: 10px;
 }
 #notice {
-opacity: 0;
-transition: opacity .25s ease;
-display: none;
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-min-width: 260px;
-max-width: 90vw;
-padding: 18px 22px;
-border-radius: 16px;
-text-align: center;
-font-weight: bold;
-font-size: 16px;
-color: white;
-z-index: 2147483647;
-box-shadow:
-0 10px 30px rgba(0,0,0,.3);
+    opacity: 0;
+    transition: opacity .25s ease;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 260px;
+    max-width: 90vw;
+    padding: 18px 22px;
+    border-radius: 16px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    z-index: 2147483647;
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.3);
 }
 #notice.show {
-opacity: 1;
+    opacity: 1;
 }
 .notice-success {
-background: #2e7d32;
+    background: #2e7d32;
 }
 .notice-error {
-background: #c62828;
+    background: #c62828;
 }
 .notice-info {
-background: #1976d2;
+    background: #1976d2;
 }
 #message {
   display: none;
@@ -241,11 +241,11 @@ background: #1976d2;
   font-size: 16px;
 }
 #GaliContainer {
-display: flex;
-align-items: center;
-gap: 12px;
-width: 100%;
-grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    grid-column: 1 / -1;
 }
 #length {
 flex: 1;
