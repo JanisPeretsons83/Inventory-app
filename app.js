@@ -19,6 +19,22 @@ let previousArea = null;
 let photoTargetArea = null;
 let photoBusy = false;
 
+let imageScale = 1;
+let imageTranslateX = 0;
+let imageTranslateY = 0;
+
+function resetImageZoom() {
+    imageScale = 1;
+    imageTranslateX = 0;
+    imageTranslateY = 0;
+
+    const image = document.getElementById("modalImg");
+
+    if (image) {
+        image.style.transform =
+            "translate(0px, 0px) scale(1)";
+    }
+}
 window.APP_STARTED = true;
 
 // ✅ Sākuma ekrāns
@@ -788,31 +804,201 @@ function updateMaps() {
 }
 
 function openImageFromSrc(src) {
-  const modal = document.getElementById("imageModal");
-  const modalImg = document.getElementById("modalImg");
+    const modal = document.getElementById("imageModal");
+    const image = document.getElementById("modalImg");
+    if (!modal || !image) return;
+    resetImageZoom();
+    image.src = src;
     modal.style.display = "block";
-    modalImg.src = src;
+    document.body.style.overflow = "hidden";
+    initImageGestures();
+}
+
+let imageScale = 1;
+let imageTranslateX = 0;
+let imageTranslateY = 0;
+const imagePointers = new Map();
+let imageDragOffsetX = 0;
+let imageDragOffsetY = 0;
+let pinchStartDistance = 0;
+let pinchStartScale = 1;
+let pinchStartCenterX = 0;
+let pinchStartCenterY = 0;
+let pinchStartTranslateX = 0;
+let pinchStartTranslateY = 0;
+
+function limitImageScale(value) {
+    return Math.min(5, Math.max(1, value));
+}
+
+function applyImageTransform() {
+    const image = document.getElementById("modalImg");
+    if (!image) return;
+    image.style.transform = `translate(${imageTranslateX}px, ` +
+        `${imageTranslateY}px) ` +
+        `scale(${imageScale})`;
+}
+
+function resetImageZoom() {
+    imageScale = 1;
+    imageTranslateX = 0;
+    imageTranslateY = 0;
+    imagePointers.clear();
+    applyImageTransform();
+}
+
+function getImagePointerDistance() {
+    const points = Array.from(imagePointers.values());
+    if (points.length < 2) return 0;
+    return Math.hypot(
+        points[1].x - points[0].x,
+        points[1].y - points[0].y
+    );
+}
+
+function getImagePointerCenter() {
+    const points = Array.from(imagePointers.values());
+    if (points.length < 2) {
+        return {
+            x: points[0]?.x || 0,
+            y: points[0]?.y || 0
+        };
+    }
+    return {
+        x: (points[0].x + points[1].x) / 2,
+        y: (points[0].y + points[1].y) / 2
+    };
+}
+
+function initImageGestures() {
+    const modal = document.getElementById("imageModal");
+    const image = document.getElementById("modalImg");
+    if (!modal || !image) return;
+    if (image.dataset.gesturesReady === "true") {
+        return;
+    }
+
+    image.dataset.gesturesReady = "true";
+    image.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        image.setPointerCapture?.(event.pointerId);
+        imagePointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY
+        });
+
+        if (imagePointers.size === 1) {
+            imageDragOffsetX = event.clientX - imageTranslateX;
+            imageDragOffsetY = event.clientY - imageTranslateY;
+        }
+        if (imagePointers.size === 2) {
+            const center = getImagePointerCenter();
+            pinchStartDistance = getImagePointerDistance();
+            pinchStartScale = imageScale;
+            pinchStartCenterX = center.x;
+            pinchStartCenterY = center.y;
+            pinchStartTranslateX = imageTranslateX;
+            pinchStartTranslateY = imageTranslateY;
+        }
+    });
+    image.addEventListener("pointermove", event => {
+        if (!imagePointers.has(event.pointerId)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        imagePointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY
+        });
+        if (
+            imagePointers.size >= 2 &&
+            pinchStartDistance > 0
+        ) {
+            const distance = getImagePointerDistance();
+            const center = getImagePointerCenter();
+            imageScale = limitImageScale(
+                pinchStartScale *
+                (distance / pinchStartDistance)
+            );
+            imageTranslateX = pinchStartTranslateX +
+                (center.x - pinchStartCenterX);
+            imageTranslateY = pinchStartTranslateY +
+                (center.y - pinchStartCenterY);
+            applyImageTransform();
+            return;
+        }
+        if (
+            imagePointers.size === 1 &&
+            imageScale > 1
+        ) {
+            imageTranslateX = event.clientX - imageDragOffsetX;
+            imageTranslateY = event.clientY - imageDragOffsetY;
+            applyImageTransform();
+        }
+    });
+
+    function finishImagePointer(event) {
+        imagePointers.delete(event.pointerId);
+        if (imagePointers.size === 1) {
+            const remaining = Array.from(imagePointers.values())[0];
+            imageDragOffsetX = remaining.x - imageTranslateX;
+            imageDragOffsetY = remaining.y - imageTranslateY;
+        }
+        if (imagePointers.size === 0) {
+            pinchStartDistance = 0;
+            if (imageScale <= 1) {
+                resetImageZoom();
+            }
+        }
+    }
+    image.addEventListener("pointerup",
+        finishImagePointer
+    );
+    image.addEventListener("pointercancel",
+        finishImagePointer
+    );
+    image.addEventListener("wheel",
+        event => {event.preventDefault();
+                event.stopPropagation();
+            const zoomAmount = event.deltaY < 0 ? 0.2 : -0.2;
+            imageScale = limitImageScale(
+                imageScale + zoomAmount
+            );
+            if (imageScale === 1) {
+                imageTranslateX = 0;
+                imageTranslateY = 0;
+            }
+            applyImageTransform();
+        },
+        { passive: false }
+    );
+    image.addEventListener("dblclick", event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        resetImageZoom();
+    });
+
+     // Klikšķis uz melnā fona aizver karti.
+    modal.addEventListener("click", event => {
+        if (event.target === modal) {
+            closeImageModal();
+        }
+    });
 }
 
 function closeImageModal() {
     const modal = document.getElementById("imageModal");
-    const modalImg = document.getElementById("modalImg");
-        if (modal) {
-            modal.style.display = "none";
-        }
-        if (modalImg) {
-            modalImg.src = "";
-        }
-}
+    const image = document.getElementById("modalImg");
 
-    // ✅ aizver uz klikšķa
-   document
-    .getElementById("imageModal")
-    ?.addEventListener("click", event => {
-        if (event.target.id === "imageModal") {
-            closeImageModal();
-        }
-    });
+    resetImageZoom();
+
+    if (modal) {modal.style.display = "none";}
+    if (image) {image.src = "";}
+    document.body.style.overflow = "";
+}
 
 function setLocation(loc, btn) {
       currentLocation = loc;
