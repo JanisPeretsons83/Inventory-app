@@ -438,8 +438,8 @@ box-shadow: 0 10px 30px rgba(0,0,0,.3);
   background: rgba(0,0,0,.9);
   z-index: 999999;
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
   touch-action: none;
+  user-select: none;
 }
 .modalImage {
   display: block;
@@ -451,6 +451,14 @@ box-shadow: 0 10px 30px rgba(0,0,0,.3);
      transform: translate(0, 0) scale(1);
     transform-origin: center;
   object-fit: contain;
+touch-action: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: grab;
+}
+
+.modalImage:active {
+    cursor: grabbing;
 }
 /* =======================================
    IMPORT MODAL
