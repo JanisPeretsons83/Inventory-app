@@ -64,21 +64,7 @@
                             class="recent-users-list"
                             style="display:none;"></div>
                     </div>
-                    <!-- Darba režīma izvēle -->
-                    <div id="profileSelect" class="profile-select">
-                        <button type="button"
-                                class="profile-button"
-                                data-profile="inventory"
-                                onclick="selectUserProfile('inventory', this)">
-                            NI
-                        </button>
-                        <button type="button"
-                                class="profile-button"
-                                data-profile="finishedGoods"
-                                onclick="selectUserProfile('finishedGoods', this)">
-                            GP
-                        </button>
-                    </div>
+                    
                 <button onclick="saveUser()">Turpināt</button>
                 <button onclick="startDataViewMode()">
                     📊 Inventarizācijas analītikas skats
@@ -463,44 +449,6 @@
     </div>
 </div>
     
-<!-- DARBA REŽĪMS — GALA PRODUKTS -->
-<div id="finishedGoodsProfile" style="display:none;">
-
-    <h2>📦 Gala produkts</h2>
-
-    <div id="gpInfoLine" class="info"></div>
-
-    <!-- Apgabals un kartes -->
-    <div class="areaRow">
-
-        <select id="gpArea" onchange="GP.handleAreaChange()">
-            <option value="">Apgabals *</option>
-        </select>
-        <div id="gpMapLinks"></div>
-    </div>
-
-    <input id="gpPackages"
-            type="number"
-            inputmode="numeric"
-            min="1"
-            placeholder="Palešu skaits *">
-    <input id="gpProductCode"
-            type="text"
-            autocomplete="off"
-            placeholder="Produkta kods *">
-    <button type="button"
-        onclick="GP.add()">
-        ➕ Pievienot
-    </button>
-    <div id="gpSummary"></div>
-    <div id="finishedGoodsList"></div>
-
-    <button type="button"
-            class="danger"
-            onclick="endSession()">
-        🛑 Beigt darbu
-    </button>
-</div>
 
     <!-- KOPĪGS KARTES ATTĒLA MODĀLIS -->
 <div id="imageModal"
@@ -549,7 +497,6 @@
                 }, 4000);
         </script>
     <script src="app.js"></script>
-    <script src="gp.js"></script>
     <footer class="footerVersion">versija: v.2-1-7</footer>
 </body>
 </html>
