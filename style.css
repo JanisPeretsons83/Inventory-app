@@ -37,14 +37,22 @@
     font-weight: bold;
     color: #222;
 }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f2f4f7;
   padding: 15px;
+  padding-left: max(15px, env(safe-area-inset-left));
+  padding-right: max(15px, env(safe-area-inset-right));
   margin: 0;
+  overflow-x: hidden;
 }
 #appContent {
-width: min(95vw, 800px);
+width: min(100%, 800px);
 margin: 0 auto;
 }
 #area,
@@ -63,10 +71,8 @@ max-width: 250px;
 #productCode{
 max-width: 170px;
 }
-#locationSelect,
-#profile-button.activeProfile{
+#locationSelect {
 width: min(90vw, 500px);
-margin-top: 90px;
 margin: 0 auto;
 }
 #locationSelect input,
@@ -313,9 +319,11 @@ flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 .areaRow select {
-  flex: 1; /* aizņem vietu */
+  flex: 1 1 180px;
+  min-width: 0;
 }
 .areaRow a {
   white-space: nowrap; /* lai neiet jaunā rindā */
@@ -338,6 +346,7 @@ select:focus {
 }
 input, select {
   width: 100%;
+  min-width: 0;
   padding: 14px;
   margin: 6px 0;
   border-radius: 12px;
@@ -387,6 +396,9 @@ th {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+.row > * {
+  min-width: 0;
+}
 .modal {
 display: none;
 position: fixed;
@@ -425,12 +437,18 @@ box-shadow: 0 10px 30px rgba(0,0,0,.3);
   inset: 0;
   background: rgba(0,0,0,.9);
   z-index: 999999;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y pinch-zoom;
 }
 .modalImage {
   display: block;
+  width: auto;
+  height: auto;
   margin: 20px auto;
-  max-width: 95%;
-  max-height: 95%;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 40px);
+  object-fit: contain;
 }
 /* =======================================
    IMPORT MODAL
@@ -520,33 +538,6 @@ button:hover {
 button:active {
   transform: scale(.98);
 }
-/* =======================================
-   RESPONSIVE
-======================================= */
-@media (max-width: 768px) {
-  .row {
-    grid-template-columns: 1fr 1fr;
-  }
-  .piecesRow {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  #GaliContainer {
-    flex-direction: row;
-    align-items: center;
-  }
-  #length {
-    min-width: auto;
-  }
-  #galiBtn {
-    width: 90px;
-  }
-  .modalContent {
-    width: calc(100vw - 40px);
-    max-width: 500px;
-    margin: 10vh auto;
-  }
-}
 .areaPhotoContent {
 display: flex;
 align-items: center;
@@ -566,7 +557,6 @@ font-size: 13px;
 .areaPhotoTitle {
 font-weight: 500;
 font-size: 11px;
-margin-bottom: 2px;
 margin-bottom: 2px;
 }
 .areaPhotoPreview {
@@ -623,7 +613,7 @@ gap: 4px;
 margin-bottom: 2px;
 }
 .packagesRow input {
-width: 30%;
+width: 100%;
 }
 #aiLabelBtn {
 margin-top: 0;
@@ -870,36 +860,91 @@ background-color: #fff8d6 !important;
 .recent-user-delete:active {
     background: #ffe3e3;
 }
-.profile-select {
-    display: flex;
-    gap: 10px;
-    margin: 10px 0;
-}
-.profile-button {
-    flex: 1;
-    padding: 12px;
-    border: 2px solid #1f4e46;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #1f4e46;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-}
-.profile-button.activeProfile {
-    background: #1f4e46;
-    color: #ffffff;
-}
-#mapLinks,
-#gpMapLinks {
+#mapLinks {
     display: block;
     margin: 5px 0;
 }
 
-#mapLinks a,
-#gpMapLinks a {
+#mapLinks a {
     display: block;
     text-decoration: none;
     margin: 6px 0;
     font-size: 16px;
+}
+
+/* =======================================
+   RESPONSIVE
+======================================= */
+@media (max-width: 768px) {
+  body {
+    padding-top: 10px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .areaRow {
+    flex-wrap: wrap;
+  }
+  #mapLinks {
+    flex: 1 1 100%;
+  }
+  .piecesRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #GaliContainer {
+    flex-direction: row;
+    align-items: center;
+  }
+  #length {
+    min-width: 0;
+  }
+  #galiBtn {
+    width: 90px;
+  }
+  .modalContent {
+    width: calc(100vw - 40px);
+    max-width: 500px;
+    margin: 10vh auto;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+  }
+  h2 {
+    font-size: 21px;
+  }
+  .row {
+    gap: 8px;
+  }
+  #GaliContainer {
+    gap: 8px;
+  }
+  #galiBtn {
+    width: 82px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .modalContent {
+    width: calc(100vw - 24px);
+    margin: 6vh auto;
+    padding: 16px;
+  }
+  .aiPreviewButtons,
+  .aiResultButtons {
+    flex-direction: column;
+  }
+  .aiCameraControls {
+    gap: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .aiCameraControls button {
+    min-width: 0;
+    flex: 1;
+  }
 }
