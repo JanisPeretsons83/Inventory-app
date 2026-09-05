@@ -19,9 +19,6 @@ let previousArea = null;
 let photoTargetArea = null;
 let photoBusy = false;
 
-let imageScale = 1;
-let imageTranslateX = 0;
-let imageTranslateY = 0;
 
 function resetImageZoom() {
     imageScale = 1;
