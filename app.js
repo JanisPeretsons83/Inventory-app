@@ -18,10 +18,6 @@ let currentArea = null;
 let previousArea = null;
 let photoTargetArea = null;
 let photoBusy = false;
-let selectedUserProfile = null;
-let selectedProfileButton = null;
-let finishedGoodsData = [];
-let finishedGoodsDataChanged = false;
 
 window.APP_STARTED = true;
 
@@ -855,62 +851,55 @@ function setHeaderInfo() {
 }
 
 function saveUser() {
-    const input = document.getElementById("userNameInput");
+    const input =
+        document.getElementById("userNameInput");
+
     const name = input
         ? input.value.trim()
         : "";
-    const location = localStorage.getItem("location");
-        if (!location) {
-            showNotice("⚠️ Izvēlies ražotni",
-                "error"
-            );
-        return;
-        }
-        if (!name) {
-            showNotice("⚠️ Ievadi vārdu",
-                "error"
-            );
-        return;
-        }
-        if (!selectedUserProfile) {
-            showNotice("⚠️ Izvēlies darba režīmu NI vai GP",
-                "error"
-            );
-        return;
-        }
-    const cleanName = name
-        .replace(/\s+test$/i, "")
-        .trim();
-    localStorage.setItem("sessionStart", String(Date.now()));
-    localStorage.setItem("userName", name);
-    localStorage.setItem("userProfile", selectedUserProfile);
 
-    saveRecentUser(cleanName);
-    openUserProfile(selectedUserProfile);
-}
+    const location =
+        localStorage.getItem("location");
 
-function openUserProfile(profile) {
-    const login = document.getElementById("locationSelect");
-    const inventory = document.getElementById("appContent");
-    const finishedGoods = document.getElementById("finishedGoodsProfile");
-        if (!login || !inventory || !finishedGoods) {
-            console.error(
-                "Nav atrasti profilu HTML bloki.");
-        return;
-        }
-    login.style.display = "none";
-    inventory.style.display = "none";
-    finishedGoods.style.display = "none";
-
-        if (profile === "finishedGoods") {
-            finishedGoods.style.display = "block";
-
-        GP.init();
+    if (!location) {
+        showNotice(
+            "⚠️ Izvēlies ražotni",
+            "error"
+        );
 
         return;
     }
 
-    inventory.style.display = "block";
+    if (!name) {
+        showNotice(
+            "⚠️ Ievadi vārdu",
+            "error"
+        );
+
+        return;
+    }
+
+    const cleanName = name
+        .replace(/\s+test$/i, "")
+        .trim();
+
+    localStorage.setItem(
+        "sessionStart",
+        String(Date.now())
+    );
+
+    localStorage.setItem(
+        "userName",
+        name
+    );
+
+    saveRecentUser(cleanName);
+
+    document.getElementById("locationSelect")
+        .style.display = "none";
+
+    document.getElementById("appContent")
+        .style.display = "block";
 
     currentArea = null;
     previousArea = null;
@@ -923,14 +912,6 @@ function openUserProfile(profile) {
     render();
     checkBetaAccess();
     loadAITestScript();
-}
-
-function getActiveProfile() {
-    return (
-        selectedUserProfile ||
-        localStorage.getItem("userProfile") ||
-        "inventory"
-    );
 }
 
 function saveRecentUser(name) {
@@ -1494,24 +1475,6 @@ document.getElementById("cancelEditBtn").style.display =
   "inline-block";
 }
 
-function selectUserProfile(profile, button) {
-    if (profile !== "inventory" &&
-        profile !== "finishedGoods"
-        ) {
-    return;
-    }
-    selectedUserProfile = profile;
-    document
-        .querySelectorAll(".profile-button")
-        .forEach(profileButton => {
-            profileButton.classList.remove("activeProfile");
-        });
-    selectedProfileButton = button;
-    if (selectedProfileButton) {
-        selectedProfileButton.classList.add("activeProfile");
-    }
-}
-
 window.onload = () => {
     loadRecentUsers();
   const location = localStorage.getItem("location");
@@ -1616,10 +1579,19 @@ document.addEventListener("click", event => {
   //✅ LOGIN CHECK
   if (location && name) {
     currentLocation = location;
-    const savedProfile = localStorage.getItem("userProfile") ||
-        "inventory";
-    selectedUserProfile = savedProfile;
-    openUserProfile(savedProfile);
+
+    document.getElementById("locationSelect")
+        .style.display = "none";
+
+    document.getElementById("appContent")
+        .style.display = "block";
+
+    setHeaderInfo();
+    updateAreas();
+    updateMaps();
+    renderAreaPhotoPanel(null);
+    checkBetaAccess();
+    loadAITestScript();
 }
    
   // LOAD DATA
@@ -2278,192 +2250,148 @@ totalM3Row.getCell(2).numFmt = '0.000';
   // ✅ LOG OUT
 
 function doLogout() {
-    // Profils jānosaka pirms localStorage tīrīšanas
-    const profile = getActiveProfile();
-
-    if (profile === "inventory") {
-        localStorage.removeItem("data");
-        localStorage.removeItem("areaPhotos");
-        data = [];
-        areaPhotos = {};
-        currentArea = null;
-        previousArea = null;
-        photoTargetArea = null;
-
-        renderAreaPhotoPanel(null);
-    }
-
-    if (profile === "finishedGoods") {
-        localStorage.removeItem("finishedGoodsData");
-        
-        // Kamēr GP backup vēl nav izveidots,
-         // finishedGoodsData no localStorage nedzēšam.
-         
-        finishedGoodsData = [];
-        finishedGoodsDataChanged = false;
-    }
-
+    localStorage.removeItem("data");
     localStorage.removeItem("userName");
     localStorage.removeItem("location");
-    localStorage.removeItem("userProfile");
+    localStorage.removeItem("areaPhotos");
     localStorage.removeItem("sessionStart");
 
-    selectedUserProfile = null;
+    // Veca GP atslēga — nekaitīgi iztīra,
+    // ja tā palikusi pēc testēšanas
+    localStorage.removeItem("userProfile");
+
+    data = [];
+    areaPhotos = {};
+    dataChanged = false;
+
     currentLocation = null;
+    currentArea = null;
+    previousArea = null;
+    photoTargetArea = null;
 
     document.getElementById("userNameInput").value = "";
+
     document.getElementById("appContent")
         .style.display = "none";
-    document.getElementById("finishedGoodsProfile")
-        .style.display = "none";
+
     document.getElementById("confirmModal")
         .style.display = "none";
+
     document.getElementById("locationSelect")
         .style.display = "block";
+
     if (selectedBtn) {
-        selectedBtn.classList.remove("activeLocation");
+        selectedBtn.classList.remove(
+            "activeLocation"
+        );
+
         selectedBtn = null;
     }
-    if (selectedProfileButton) {
-        selectedProfileButton.classList.remove(
-            "activeProfile"
-        );
-        selectedProfileButton = null;
-    }
 
+    renderAreaPhotoPanel(null);
     loadRecentUsers();
-
-    // NI tabulu pārzīmē tikai pēc NI sesijas
-    if (profile === "inventory") {
-        render();
-    }
+    render();
 }
 
+
 function endSession() {
-    const profile = getActiveProfile();
-    if (profile === "finishedGoods") {
-        showFinishedGoodsLogoutSummary();
+    const sessionStart =
+        Number(localStorage.getItem("sessionStart"));
+
+    const durationMs =
+        Date.now() - sessionStart;
+
+    const minutes =
+        Math.floor(durationMs / 60000);
+
+    const hours =
+        Math.floor(minutes / 60);
+
+    const remainingMinutes =
+        minutes % 60;
+
+    if (data.length === 0) {
+        doLogout();
         return;
     }
 
-    showInventoryLogoutSummary();
-}
-
-function showInventoryLogoutSummary() {
-  const sessionStart = Number(localStorage.getItem("sessionStart"));
-  const durationMs = Date.now() - sessionStart;
-  const minutes = Math.floor(durationMs / 60000);
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-    if (data.length === 0) {
-    doLogout();
-  return;
-  }
     const totalPackages = data.reduce(
-      (sum, e) => sum + (e.packages || 0), 0);
-    const totalM3 = data.reduce(
-        (sum, e) => sum + (e.total || 0), 0);
-      document.getElementById("logoutSummary")
-        .innerHTML = `
-          Ražotne: ${localStorage.getItem("location")}<br>
-          Lietotājs: ${localStorage.getItem("userName")}<br><br>
-          📊 Inventarizācija pabeigta!<br><br>
-          📦 Reģistrētas ${totalPackages} paletes.<br>
-          🪵 Kopā reģistrēti ${totalM3.toFixed(4)} m³.<br>
-          📝 Veikti ${data.length} ieraksti.<br><br>
-          ⏱️ Reģistrācija aizņēma ${hours} h ${remainingMinutes} min.
-          `;
-      document.getElementById("confirmModal")
-    .style.display = "block";
-}
-
-function showFinishedGoodsLogoutSummary() {
-    const entries = GP.getEntries();
-    const totalPackages = entries.reduce(
         (sum, entry) =>
             sum + (Number(entry.packages) || 0),
         0
     );
 
-    document.getElementById("logoutSummary").innerHTML = `
-        Profils: Gala produkts<br>
-        Ražotne:
-        ${localStorage.getItem("location") || ""}<br>
-        Lietotājs:
-        ${localStorage.getItem("userName") || ""}<br><br>
+    const totalM3 = data.reduce(
+        (sum, entry) =>
+            sum + (Number(entry.total) || 0),
+        0
+    );
 
-        📦 Reģistrētas ${totalPackages} paletes.<br>
-        📝 Veikti ${entries.length} ieraksti.
-    `;
+    document.getElementById("logoutSummary")
+        .innerHTML = `
+            Ražotne:
+            ${localStorage.getItem("location") || ""}<br>
+
+            Lietotājs:
+            ${localStorage.getItem("userName") || ""}<br><br>
+
+            📊 Inventarizācija pabeigta!<br><br>
+
+            📦 Reģistrētas ${totalPackages} paletes.<br>
+            🪵 Kopā reģistrēti
+            ${totalM3.toFixed(4)} m³.<br>
+            📝 Veikti ${data.length} ieraksti.<br><br>
+
+            ⏱️ Reģistrācija aizņēma
+            ${hours} h ${remainingMinutes} min.
+        `;
 
     document.getElementById("confirmModal")
         .style.display = "block";
 }
 
-function closeConfirmModal() {
-  document.getElementById("confirmModal")
-    .style.display = "none";
-    }
 
-function saveInventoryAndExit() {
-     // JA IR IZMAIŅAS
+function closeConfirmModal() {
+    const modal =
+        document.getElementById("confirmModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+function saveAndExit() {
     if (dataChanged) {
-        const backupSaved = saveBackup();
-            // ❌ Ja lokālais backup neizdevās,
-            // NEIZLOGOJAM lietotāju.
+        const backupSaved =
+            saveBackup();
         if (!backupSaved) {
             showNotice(
                 "❌ Backup neizdevās. Darbs netika pabeigts.",
-                "error");
+                "error"
+            );
             return;
         }
         const exported = exportBackupFile();
-        // ❌ Ja pat failu neizdevās sagatavot
         if (!exported) {
             showNotice(
                 "❌ Backup failu neizdevās izveidot. Darbs netika pabeigts.",
-                "error");
+                "error"
+            );
             return;
         }
         dataChanged = false;
         showNotice(
             "✅ Izveidota rezerves kopija",
-            "success");
-    }
-    else {
+            "success"
+        );
+    } else {
         showNotice(
             "ℹ️ Izmaiņu nav, rezerves kopija netika veidota",
-            "info");
+            "info"
+        );
     }
     closeConfirmModal();
     doLogout();
-}
-
-function saveAndExit() {
-    const profile = getActiveProfile();
-    if (profile === "finishedGoods") {
-        saveFinishedGoodsAndExit();
-        return;
-    }
-
-    saveInventoryAndExit();
-}
-
-function saveFinishedGoodsAndExit() {
-    
-     // GP.add() jau saglabā katru ierakstu
-     // finishedGoodsData localStorage.
-     
-     // JSON eksports tiks pievienots vēlāk.
-     
-
-    closeConfirmModal();
-    doLogout();
-
-    showNotice(
-        "✅ Darbs pabeigts. GP dati saglabāti ierīcē.",
-        "success"
-    );
 }
 
 // ✅ BACKUP
