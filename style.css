@@ -883,9 +883,6 @@ background-color: #fff8d6 !important;
   .row {
     grid-template-columns: 1fr 1fr;
   }
-  .areaRow {
-    flex-wrap: wrap;
-  }
   .piecesRow {
     flex-direction: column;
     align-items: stretch;
@@ -944,4 +941,36 @@ background-color: #fff8d6 !important;
     min-width: 0;
     flex: 1;
   }
+}
+/* Apgabals + foto + karšu saites vienmēr vienā rindā */
+#mapsContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+}
+/* Saraujas atbilstoši brīvajai vietai */
+#mapsContainer #area {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+}
+/* Foto bloks saglabā savu izmēru */
+#mapsContainer #areaPhotoPanel {
+    flex: 0 0 137px;
+    width: 137px;
+}
+/* Karšu saites nepāriet citā rindā */
+#mapsContainer #mapLinks {
+    flex: 0 0 auto;
+    min-width: max-content;
+    margin: 0;
+}
+#mapsContainer #mapLinks a {
+    display: block;
+    margin: 4px 0;
+    white-space: nowrap;
 }
