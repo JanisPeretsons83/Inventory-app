@@ -1477,36 +1477,79 @@ document.getElementById("cancelEditBtn").style.display =
 
 window.onload = () => {
     loadRecentUsers();
-  const location = localStorage.getItem("location");
-  const name = localStorage.getItem("userName");
-  const savedData = localStorage.getItem("data");
-  const backupRaw = localStorage.getItem("backupData");
-  if (backupRaw) {
-    const backup = JSON.parse(backupRaw);
-    const age = Date.now() - new Date(backup.timestamp).getTime();
-    const sevenDays = 7 * 24 * 60 * 60 * 1000;
-    if (age > sevenDays) {
-      localStorage.removeItem(
-        "backupData");
-    } else {
-      document.getElementById("restoreInfo")
-        .innerHTML = `
-          Ražotne: ${backup.location}<br>
-          Lietotājs: ${backup.user}<br><br>
-          📊 Inventarizācija<br>
-          Ieraksti: ${backup.summary.entries}<br>
-          Paletes: ${backup.summary.packages}<br>
-          m³: ${backup.summary.totalM3.toFixed(4)}<br><br>
-          Datums:<br>
-          ${new Date(
-            backup.timestamp
-            ).toLocaleString()}
-        `;
-    document.getElementById(
-      "restoreModal"
-      ).style.display = "block";
+
+    const location =
+        localStorage.getItem("location");
+
+    const name =
+        localStorage.getItem("userName");
+
+    const savedData =
+        localStorage.getItem("data");
+
+    const backupRaw =
+        localStorage.getItem("backupData");
+
+    if (backupRaw) {
+        try {
+            const backup =
+                JSON.parse(backupRaw);
+
+            const age =
+                Date.now() -
+                new Date(backup.timestamp).getTime();
+
+            const sevenDays =
+                7 * 24 * 60 * 60 * 1000;
+
+            if (age > sevenDays) {
+                localStorage.removeItem(
+                    "backupData"
+                );
+            } else {
+                document
+                    .getElementById("restoreInfo")
+                    .innerHTML = `
+                        Ražotne:
+                        ${backup.location || ""}<br>
+
+                        Lietotājs:
+                        ${backup.user || ""}<br><br>
+
+                        📊 Inventarizācija<br>
+
+                        Ieraksti:
+                        ${backup.summary?.entries || 0}<br>
+
+                        Paletes:
+                        ${backup.summary?.packages || 0}<br>
+
+                        m³:
+                        ${Number(
+                            backup.summary?.totalM3 || 0
+                        ).toFixed(4)}<br><br>
+
+                        Datums:<br>
+                        ${new Date(
+                            backup.timestamp
+                        ).toLocaleString()}
+                    `;
+
+                document
+                    .getElementById("restoreModal")
+                    .style.display = "block";
+            }
+        } catch (error) {
+            console.warn(
+                "Bojāts lokālais backup:",
+                error
+            );
+
+            localStorage.removeItem(
+                "backupData"
+            );
+        }
     }
-}
   // ✅ KOMENTĀRU IZVĒLNE
 
       document.getElementById("thickness")
