@@ -786,19 +786,19 @@ function updateMaps() {
               </a>`;
       }
 }
+
 // ==========================================
-// KARTES ATTĒLA ATVĒRŠANA UN ŽESTI
+// KARTES ATTĒLA MODĀLIS UN ŽESTI
+// Aizvieto ar šo visu veco kartes žestu bloku.
 // ==========================================
 
 let mapImageScale = 1;
 let mapImageTranslateX = 0;
 let mapImageTranslateY = 0;
-
 const mapImagePointers = new Map();
 
 let mapImageDragOffsetX = 0;
 let mapImageDragOffsetY = 0;
-
 let mapPinchStartDistance = 0;
 let mapPinchStartScale = 1;
 let mapPinchStartCenterX = 0;
@@ -806,87 +806,44 @@ let mapPinchStartCenterY = 0;
 let mapPinchStartTranslateX = 0;
 let mapPinchStartTranslateY = 0;
 
-
-// ==========================================
-// ATTĒLA ATVĒRŠANA
-// ==========================================
-
 function openImageFromSrc(src) {
-    const modal =
-        document.getElementById("imageModal");
-
-    const image =
-        document.getElementById("modalImg");
+    const modal = document.getElementById("imageModal");
+    const image = document.getElementById("modalImg");
 
     if (!modal || !image) return;
 
     resetImageZoom();
-
     image.src = src;
     modal.style.display = "block";
-
     document.body.style.overflow = "hidden";
-
     initImageGestures();
 }
 
-
-// ==========================================
-// PALIELINĀJUMA IEROBEŽOJUMS
-// ==========================================
-
 function limitImageScale(value) {
-    return Math.min(
-        5,
-        Math.max(1, value)
-    );
+    return Math.min(5, Math.max(1, value));
 }
 
-
-// ==========================================
-// TRANSFORMĀCIJAS PIELIETOŠANA
-// ==========================================
-
 function applyImageTransform() {
-    const image =
-        document.getElementById("modalImg");
-
+    const image = document.getElementById("modalImg");
     if (!image) return;
 
     image.style.transform =
-        `translate(
-            ${mapImageTranslateX}px,
-            ${mapImageTranslateY}px
-        ) scale(${mapImageScale})`;
+        `translate(${mapImageTranslateX}px, ${mapImageTranslateY}px) ` +
+        `scale(${mapImageScale})`;
 }
-
-
-// ==========================================
-// ATTĒLA ATIESTATĪŠANA
-// ==========================================
 
 function resetImageZoom() {
     mapImageScale = 1;
     mapImageTranslateX = 0;
     mapImageTranslateY = 0;
-
     mapImagePointers.clear();
-
     mapPinchStartDistance = 0;
     mapPinchStartScale = 1;
-
     applyImageTransform();
 }
 
-
-// ==========================================
-// ATTĀLUMS STARP DIVIEM PIRKSTIEM
-// ==========================================
-
 function getImagePointerDistance() {
-    const points =
-        Array.from(mapImagePointers.values());
-
+    const points = Array.from(mapImagePointers.values());
     if (points.length < 2) return 0;
 
     return Math.hypot(
@@ -895,14 +852,8 @@ function getImagePointerDistance() {
     );
 }
 
-
-// ==========================================
-// DIVU PIRKSTU CENTRS
-// ==========================================
-
 function getImagePointerCenter() {
-    const points =
-        Array.from(mapImagePointers.values());
+    const points = Array.from(mapImagePointers.values());
 
     if (points.length < 2) {
         return {
@@ -917,174 +868,154 @@ function getImagePointerCenter() {
     };
 }
 
-
-// ==========================================
-// ŽESTU PIESAISTĪŠANA
-// ==========================================
-
 function initImageGestures() {
-    const modal =
-        document.getElementById("imageModal");
-
-    const image =
-        document.getElementById("modalImg");
+    const modal = document.getElementById("imageModal");
+    const image = document.getElementById("modalImg");
 
     if (!modal || !image) return;
-
-    // Nepievieno klausītājus atkārtoti
-    if (image.dataset.gesturesReady === "true") {
-        return;
-    }
+    if (image.dataset.gesturesReady === "true") return;
 
     image.dataset.gesturesReady = "true";
 
+    image.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        image.setPointerCapture?.(event.pointerId);
 
-    // --------------------------------------
-    // ŽESTA SĀKUMS
-    // --------------------------------------
+        mapImagePointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY
+        });
+
+        if (mapImagePointers.size === 1) {
+            mapImageDragOffsetX =
+                event.clientX - mapImageTranslateX;
+            mapImageDragOffsetY =
+                event.clientY - mapImageTranslateY;
+        }
+
+        if (mapImagePointers.size === 2) {
+            const center = getImagePointerCenter();
+            mapPinchStartDistance = getImagePointerDistance();
+            mapPinchStartScale = mapImageScale;
+            mapPinchStartCenterX = center.x;
+            mapPinchStartCenterY = center.y;
+            mapPinchStartTranslateX = mapImageTranslateX;
+            mapPinchStartTranslateY = mapImageTranslateY;
+        }
+    });
+
+    image.addEventListener("pointermove", event => {
+        if (!mapImagePointers.has(event.pointerId)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        mapImagePointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY
+        });
+
+        if (
+            mapImagePointers.size >= 2 &&
+            mapPinchStartDistance > 0
+        ) {
+            const distance = getImagePointerDistance();
+            const center = getImagePointerCenter();
+
+            mapImageScale = limitImageScale(
+                mapPinchStartScale *
+                (distance / mapPinchStartDistance)
+            );
+
+            mapImageTranslateX =
+                mapPinchStartTranslateX +
+                (center.x - mapPinchStartCenterX);
+            mapImageTranslateY =
+                mapPinchStartTranslateY +
+                (center.y - mapPinchStartCenterY);
+
+            applyImageTransform();
+            return;
+        }
+
+        if (
+            mapImagePointers.size === 1 &&
+            mapImageScale > 1
+        ) {
+            mapImageTranslateX =
+                event.clientX - mapImageDragOffsetX;
+            mapImageTranslateY =
+                event.clientY - mapImageDragOffsetY;
+            applyImageTransform();
+        }
+    });
+
+    function finishImagePointer(event) {
+        mapImagePointers.delete(event.pointerId);
+
+        if (mapImagePointers.size === 1) {
+            const remaining =
+                Array.from(mapImagePointers.values())[0];
+            mapImageDragOffsetX =
+                remaining.x - mapImageTranslateX;
+            mapImageDragOffsetY =
+                remaining.y - mapImageTranslateY;
+        }
+
+        if (mapImagePointers.size === 0) {
+            mapPinchStartDistance = 0;
+            if (mapImageScale <= 1) resetImageZoom();
+        }
+    }
+
+    image.addEventListener("pointerup", finishImagePointer);
+    image.addEventListener("pointercancel", finishImagePointer);
 
     image.addEventListener(
-        "pointerdown",
+        "wheel",
         event => {
             event.preventDefault();
             event.stopPropagation();
 
-            image.setPointerCapture?.(
-                event.pointerId
+            const zoomAmount = event.deltaY < 0 ? 0.2 : -0.2;
+            mapImageScale = limitImageScale(
+                mapImageScale + zoomAmount
             );
 
-            mapImagePointers.set(
-                event.pointerId,
-                {
-                    x: event.clientX,
-                    y: event.clientY
-                }
-            );
-
-            // Viens pirksts — pārvietošanas sākums
-            if (mapImagePointers.size === 1) {
-                mapImageDragOffsetX =
-                    event.clientX -
-                    mapImageTranslateX;
-
-                mapImageDragOffsetY =
-                    event.clientY -
-                    mapImageTranslateY;
+            if (mapImageScale === 1) {
+                mapImageTranslateX = 0;
+                mapImageTranslateY = 0;
             }
 
-            // Divi pirksti — palielināšanas sākums
-            if (mapImagePointers.size === 2) {
-                const center =
-                    getImagePointerCenter();
-
-                mapPinchStartDistance =
-                    getImagePointerDistance();
-
-                mapPinchStartScale =
-                    mapImageScale;
-
-                mapPinchStartCenterX =
-                    center.x;
-
-                mapPinchStartCenterY =
-                    center.y;
-
-                mapPinchStartTranslateX =
-                    mapImageTranslateX;
-
-                mapPinchStartTranslateY =
-                    mapImageTranslateY;
-            }
-        }
+            applyImageTransform();
+        },
+        { passive: false }
     );
 
+    image.addEventListener("dblclick", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        resetImageZoom();
+    });
 
-    // --------------------------------------
-    // ŽESTA KUSTĪBA
-    // --------------------------------------
+    modal.addEventListener("click", event => {
+        if (event.target === modal) closeImageModal();
+    });
+}
 
-    image.addEventListener(
-        "pointermove",
-        event => {
-            if (
-                !mapImagePointers.has(
-                    event.pointerId
-                )
-            ) {
-                return;
-            }
+function closeImageModal() {
+    const modal = document.getElementById("imageModal");
+    const image = document.getElementById("modalImg");
 
-            event.preventDefault();
-            event.stopPropagation();
+    resetImageZoom();
 
-            mapImagePointers.set(
-                event.pointerId,
-                {
-                    x: event.clientX,
-                    y: event.clientY
-                }
-            );
+    if (modal) modal.style.display = "none";
+    if (image) image.src = "";
 
-            // Divi pirksti — palielina
-            if (
-                mapImagePointers.size >= 2 &&
-                mapPinchStartDistance > 0
-            ) {
-                const distance =
-                    getImagePointerDistance();
+    document.body.style.overflow = "";
+}
 
-                const center =
-                    getImagePointerCenter();
-
-                mapImageScale =
-                    limitImageScale(
-                        mapPinchStartScale *
-                        (
-                            distance /
-                            mapPinchStartDistance
-                        )
-                    );
-
-                mapImageTranslateX =
-                    mapPinchStartTranslateX +
-                    (
-                        center.x -
-                        mapPinchStartCenterX
-                    );
-
-                mapImageTranslateY =
-                    mapPinchStartTranslateY +
-                    (
-                        center.y -
-                        mapPinchStartCenterY
-                    );
-
-                applyImageTransform();
-                return;
-            }
-
-            // Viens pirksts — pārvieto
-            if (
-                mapImagePointers.size === 1 &&
-                mapImageScale > 1
-            ) {
-                mapImageTranslateX =
-                    event.clientX -
-                    mapImageDragOffsetX;
-
-                mapImageTranslateY =
-                    event.clientY -
-                    mapImageDragOffsetY;
-
-                applyImageTransform();
-            }
-        }
-    );
-
-
-    // --------------------------------------
-    // ŽESTA BEIGAS
-    // --------------------------------------
 
     function finishImagePointer(event) {
         mapImagePointers.delete(
@@ -1115,6 +1046,8 @@ function initImageGestures() {
         }
     }
 
+    // Šis viss joprojām ir initImageGestures() iekšpusē
+
     image.addEventListener(
         "pointerup",
         finishImagePointer
@@ -1125,11 +1058,6 @@ function initImageGestures() {
         finishImagePointer
     );
 
-
-    // --------------------------------------
-    // PELES RULLĪTIS DATORĀ
-    // --------------------------------------
-
     image.addEventListener(
         "wheel",
         event => {
@@ -1137,14 +1065,11 @@ function initImageGestures() {
             event.stopPropagation();
 
             const zoomAmount =
-                event.deltaY < 0
-                    ? 0.2
-                    : -0.2;
+                event.deltaY < 0 ? 0.2 : -0.2;
 
             mapImageScale =
                 limitImageScale(
-                    mapImageScale +
-                    zoomAmount
+                    mapImageScale + zoomAmount
                 );
 
             if (mapImageScale === 1) {
@@ -1157,8 +1082,6 @@ function initImageGestures() {
         { passive: false }
     );
 
-
-    // Dubultklikšķis atiestata attēlu
     image.addEventListener(
         "dblclick",
         event => {
@@ -1169,8 +1092,6 @@ function initImageGestures() {
         }
     );
 
-
-    // Klikšķis uz melnā fona aizver logu
     modal.addEventListener(
         "click",
         event => {
@@ -1179,77 +1100,6 @@ function initImageGestures() {
             }
         }
     );
-}
-
-
-// ==========================================
-// ATTĒLA AIZVĒRŠANA
-// ==========================================
-
-function closeImageModal() {
-    const modal =
-        document.getElementById("imageModal");
-
-    const image =
-        document.getElementById("modalImg");
-
-    resetImageZoom();
-
-    if (modal) {
-        modal.style.display = "none";
-    }
-
-    if (image) {
-        image.src = "";
-    }
-
-    document.body.style.overflow = "";
-}
-    image.addEventListener("pointerup",
-        finishImagePointer
-    );
-    image.addEventListener("pointercancel",
-        finishImagePointer
-    );
-    image.addEventListener("wheel",
-        event => {event.preventDefault();
-                event.stopPropagation();
-            const zoomAmount = event.deltaY < 0 ? 0.2 : -0.2;
-            imageScale = limitImageScale(
-                imageScale + zoomAmount
-            );
-            if (imageScale === 1) {
-                imageTranslateX = 0;
-                imageTranslateY = 0;
-            }
-            applyImageTransform();
-        },
-        { passive: false }
-    );
-    image.addEventListener("dblclick", event => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        resetImageZoom();
-    });
-
-     // Klikšķis uz melnā fona aizver karti.
-    modal.addEventListener("click", event => {
-        if (event.target === modal) {
-            closeImageModal();
-        }
-    });
-}
-
-function closeImageModal() {
-    const modal = document.getElementById("imageModal");
-    const image = document.getElementById("modalImg");
-
-    resetImageZoom();
-
-    if (modal) {modal.style.display = "none";}
-    if (image) {image.src = "";}
-    document.body.style.overflow = "";
 }
 
 function setLocation(loc, btn) {
