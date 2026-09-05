@@ -886,9 +886,6 @@ background-color: #fff8d6 !important;
   .areaRow {
     flex-wrap: wrap;
   }
-  #mapLinks {
-    flex: 1 1 100%;
-  }
   .piecesRow {
     flex-direction: column;
     align-items: stretch;
