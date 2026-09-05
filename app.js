@@ -827,9 +827,13 @@ function closeImageModal() {
 
     // ✅ aizver uz klikšķa
 
-   document.getElementById("imageModal").onclick = function () {
-    this.style.display = "none";
-};
+   document
+    .getElementById("imageModal")
+    ?.addEventListener("click", event => {
+        if (event.target.id === "imageModal") {
+            closeImageModal();
+        }
+    });
 
 function setLocation(loc, btn) {
       currentLocation = loc;
