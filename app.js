@@ -109,8 +109,7 @@ function handleAreaChange() {
     const hasEntries = data.some(e => e.area === previousArea);
     const hasPhoto = hasAreaPhoto(previousArea);
             
-        // Iepriekšējam apgabalam ir dati,
-        // bet nav foto
+        // Iepriekšējam apgabalam ir dati, bet nav foto
             
         if (hasEntries && !hasPhoto
             ) {
@@ -448,20 +447,13 @@ async function importAnalysisBackup(event) {
     document.getElementById("analysisInfo")
         .innerHTML = `
             <h3>📊 Kopsavilkums</h3>
-            Ražotne:
-              ${baseLocation}<br>
-            Lietotāji:<br>
-              ${users.join("<br>")}<br><br>
-            Datu reģistrācija:
-              ${String(baseMonth).padStart(2, "0")}.${baseYear}<br>
-            Faili:
-              ${backups.length}<br>
-            Ieraksti:
-              ${analysisData.length}<br>
-            Paletes:
-              ${totalPackages}<br>
-            m³:
-              ${totalM3.toFixed(4)}`;
+            Ražotne: ${baseLocation}<br>
+            Lietotāji:<br> ${users.join("<br>")}<br><br>
+            Datu reģistrācija: ${String(baseMonth).padStart(2, "0")}.${baseYear}<br>
+            Faili: ${backups.length}<br>
+            Ieraksti: ${analysisData.length}<br>
+            Paletes: ${totalPackages}<br>
+            m³: ${totalM3.toFixed(4)}`;
   renderDimensionAnalysis();
 }
 
@@ -686,36 +678,33 @@ function validateDimensionFields() {
             .toLowerCase()
             .replaceAll("×", "x")
             .replace(/\s+/g, "");
-        const [savedThickness, savedWidth] =
-            normalizedSize.split("x");
-        if (savedThickness) {
-            knownThicknesses.add(savedThickness);
-        }
-        if (savedWidth) {
-            knownWidths.add(savedWidth);
-        }
-        if (savedThickness && savedWidth) {
-            knownDimensions.add(
+        const [savedThickness, savedWidth] = normalizedSize.split("x");
+            if (savedThickness) {
+                knownThicknesses.add(savedThickness);
+            }
+            if (savedWidth) {
+                knownWidths.add(savedWidth);
+            }
+            if (savedThickness && savedWidth) {
+                knownDimensions.add(
                 `${savedThickness}x${savedWidth}`
-            );
-        }
+                );
+            }
     });
 
-    /*
-     * Krāsojumu noņem tikai aizpildītam laukam.
-     * Tukšam laukam saglabā AI uzlikto aiAttention.
-     */
-    if (thickness) {
-        thicknessField.classList.remove("aiAttention");
-    }
-    if (width) {
-        widthField.classList.remove("aiAttention");
-    }
+     // Krāsojumu noņem tikai aizpildītam laukam.
+     // Tukšam laukam saglabā AI uzlikto aiAttention.
+            if (thickness) {
+                thicknessField.classList.remove("aiAttention");
+            }
+            if (width) {
+                widthField.classList.remove("aiAttention");
+            }
 
     // Abi lauki tukši — saglabā AI brīdinājumus
-    if (!thickness && !width) {
-        return;
-    }
+            if (!thickness && !width) {
+            return;
+            }
 
     // Ievadīts tikai biezums
     if (thickness && !width) {
@@ -726,24 +715,24 @@ function validateDimensionFields() {
     }
 
     // Ievadīts tikai platums
-    if (!thickness && width) {
-        if (!knownWidths.has(width)) {
-            widthField.classList.add("aiAttention");
+        if (!thickness && width) {
+            if (!knownWidths.has(width)) {
+                widthField.classList.add("aiAttention");
+            }
+            return;
         }
-        return;
-    }
 
     // Aizpildīti abi — pārbauda pilno kombināciju
     const dimension = `${thickness}x${width}`;
-    if (!knownDimensions.has(dimension)) {
-        thicknessField.classList.add("aiAttention");
-        widthField.classList.add("aiAttention");
+        if (!knownDimensions.has(dimension)) {
+            thicknessField.classList.add("aiAttention");
+            widthField.classList.add("aiAttention");
         return;
-    }
+        }    
 
     // Saglabāta un pareiza kombinācija
-    thicknessField.classList.remove("aiAttention");
-    widthField.classList.remove("aiAttention");
+            thicknessField.classList.remove("aiAttention");
+            widthField.classList.remove("aiAttention");
 }
 
 function showSizeSuggestions() {
@@ -810,23 +799,17 @@ function openImageFromSrc(src) {
 }
 
 function closeImageModal() {
-    const modal =
-        document.getElementById("imageModal");
-
-    const modalImg =
-        document.getElementById("modalImg");
-
-    if (modal) {
-        modal.style.display = "none";
-    }
-
-    if (modalImg) {
-        modalImg.src = "";
-    }
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImg");
+        if (modal) {
+            modal.style.display = "none";
+        }
+        if (modalImg) {
+            modalImg.src = "";
+        }
 }
 
     // ✅ aizver uz klikšķa
-
    document
     .getElementById("imageModal")
     ?.addEventListener("click", event => {
@@ -872,90 +855,55 @@ function setHeaderInfo() {
 }
 
 function saveUser() {
-    const input =
-        document.getElementById("userNameInput");
-
+    const input = document.getElementById("userNameInput");
     const name = input
         ? input.value.trim()
         : "";
-
-    const location =
-        localStorage.getItem("location");
-
-    if (!location) {
-        showNotice(
-            "⚠️ Izvēlies ražotni",
-            "error"
-        );
-
+    const location = localStorage.getItem("location");
+        if (!location) {
+            showNotice("⚠️ Izvēlies ražotni",
+                "error"
+            );
         return;
-    }
-
-    if (!name) {
-        showNotice(
-            "⚠️ Ievadi vārdu",
-            "error"
-        );
-
+        }
+        if (!name) {
+            showNotice("⚠️ Ievadi vārdu",
+                "error"
+            );
         return;
-    }
-
-    if (!selectedUserProfile) {
-        showNotice(
-            "⚠️ Izvēlies darba režīmu NI vai GP",
-            "error"
-        );
-
+        }
+        if (!selectedUserProfile) {
+            showNotice("⚠️ Izvēlies darba režīmu NI vai GP",
+                "error"
+            );
         return;
-    }
-
+        }
     const cleanName = name
         .replace(/\s+test$/i, "")
         .trim();
-
-    localStorage.setItem(
-        "sessionStart",
-        String(Date.now())
-    );
-
-    localStorage.setItem(
-        "userName",
-        name
-    );
-
-    localStorage.setItem(
-        "userProfile",
-        selectedUserProfile
-    );
+    localStorage.setItem("sessionStart", String(Date.now()));
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userProfile", selectedUserProfile);
 
     saveRecentUser(cleanName);
     openUserProfile(selectedUserProfile);
 }
 
 function openUserProfile(profile) {
-    const login =
-        document.getElementById("locationSelect");
-
-    const inventory =
-        document.getElementById("appContent");
-
-    const finishedGoods =
-        document.getElementById("finishedGoodsProfile");
-
-    if (!login || !inventory || !finishedGoods) {
-        console.error(
-            "Nav atrasti profilu HTML bloki."
-        );
-
+    const login = document.getElementById("locationSelect");
+    const inventory = document.getElementById("appContent");
+    const finishedGoods = document.getElementById("finishedGoodsProfile");
+        if (!login || !inventory || !finishedGoods) {
+            console.error(
+                "Nav atrasti profilu HTML bloki.");
         return;
-    }
-
+        }
     login.style.display = "none";
     inventory.style.display = "none";
     finishedGoods.style.display = "none";
 
-    if (profile === "finishedGoods") {
-        finishedGoods.style.display = "block";
+        if (profile === "finishedGoods") {
+            finishedGoods.style.display = "block";
 
         GP.init();
 
@@ -986,23 +934,20 @@ function getActiveProfile() {
 }
 
 function saveRecentUser(name) {
-    const cleanName =
-        typeof name === "string"
+    const cleanName = typeof name === "string"
             ? name.trim()
             : "";
-    if (!cleanName) {
-        return;
-    }
+        if (!cleanName) {
+            return;
+        }
     let users = [];
-    try {
-        const saved = JSON.parse(
-            localStorage.getItem("recentUsers") || "[]"
-        );
-        users = Array.isArray(saved)
-            ? saved.filter(user =>
-                typeof user === "string" &&
-                user.trim()
-            )
+        try {
+            const saved = JSON.parse(localStorage.getItem("recentUsers") || "[]");
+                users = Array.isArray(saved)
+                ? saved.filter(user =>
+                    typeof user === "string" &&
+                    user.trim()
+                )
             : [];
     } catch (error) {
         console.warn(
@@ -1550,23 +1495,18 @@ document.getElementById("cancelEditBtn").style.display =
 }
 
 function selectUserProfile(profile, button) {
-    if (
-        profile !== "inventory" &&
+    if (profile !== "inventory" &&
         profile !== "finishedGoods"
-    ) {
-        return;
+        ) {
+    return;
     }
-
     selectedUserProfile = profile;
-
     document
         .querySelectorAll(".profile-button")
         .forEach(profileButton => {
             profileButton.classList.remove("activeProfile");
         });
-
     selectedProfileButton = button;
-
     if (selectedProfileButton) {
         selectedProfileButton.classList.add("activeProfile");
     }
@@ -1579,16 +1519,12 @@ window.onload = () => {
   const savedData = localStorage.getItem("data");
   const backupRaw = localStorage.getItem("backupData");
   if (backupRaw) {
-    const backup =
-      JSON.parse(backupRaw);
-    const age = Date.now() -
-      new Date(backup.timestamp).getTime();
-    const sevenDays =
-      7 * 24 * 60 * 60 * 1000;
+    const backup = JSON.parse(backupRaw);
+    const age = Date.now() - new Date(backup.timestamp).getTime();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
     if (age > sevenDays) {
       localStorage.removeItem(
-        "backupData"
-        );
+        "backupData");
     } else {
       document.getElementById("restoreInfo")
         .innerHTML = `
@@ -1618,8 +1554,7 @@ window.onload = () => {
         .addEventListener("input", validateDimensionFields);
       document.getElementById("width")
         .addEventListener("focus", () => {
-  const container =
-      document.getElementById("sizeSuggestions");
+  const container = document.getElementById("sizeSuggestions");
         container.innerHTML = "";
         container.style.display = "none";
       });
@@ -1637,8 +1572,7 @@ window.onload = () => {
 
 //  ✅ DIMENSIJU BIB IELĀDE
   if (savedLibrary) {
-    dimensionsLibrary =
-    JSON.parse(savedLibrary);
+    dimensionsLibrary = JSON.parse(savedLibrary);
   }  
 //  ✅ MĒNESIS - GADS
   document.getElementById("month")
@@ -1652,18 +1586,15 @@ const menu = document.querySelector(".menu");
 const gradeInput = document.getElementById("grade");
 
   gradeBtn.addEventListener("click", () => {
-    menu.style.display =
-    menu.style.display === "block"
-    ? "none"
-    : "block";
+    menu.style.display = menu.style.display === "block"
+        ? "none"
+        : "block";
     });
   document.querySelectorAll(".menu .item")
     .forEach(item => {
       item.addEventListener("click", () => {
-        gradeInput.value =
-      item.dataset.value;
-        gradeBtn.innerHTML =
-      item.innerHTML + " ▼";
+        gradeInput.value = item.dataset.value;
+        gradeBtn.innerHTML = item.innerHTML + " ▼";
         menu.style.display = "none";
   });
 });
@@ -1685,13 +1616,9 @@ document.addEventListener("click", event => {
   //✅ LOGIN CHECK
   if (location && name) {
     currentLocation = location;
-
-    const savedProfile =
-        localStorage.getItem("userProfile") ||
+    const savedProfile = localStorage.getItem("userProfile") ||
         "inventory";
-
     selectedUserProfile = savedProfile;
-
     openUserProfile(savedProfile);
 }
    
@@ -1706,8 +1633,7 @@ document.addEventListener("click", event => {
   }
     // ✅ Ja gads tukšs, ieliek aktuālo
   if (!document.getElementById("year").value) {
-        document.getElementById("year").value =
-      new Date().getFullYear();
+        document.getElementById("year").value = new Date().getFullYear();
     }
   // ✅ LIVE APRĒĶINS
     document.getElementById("avgLength").addEventListener("input", calculateGali);
@@ -1761,12 +1687,10 @@ function error(msg, fieldId = null) {
 function saveWorkingState() {
     try {
         localStorage.setItem(
-            "data",
-            JSON.stringify(data)
+            "data", JSON.stringify(data)
         );
         localStorage.setItem(
-            "areaPhotos",
-            JSON.stringify(areaPhotos)
+            "areaPhotos", JSON.stringify(areaPhotos)
         );
         return true;
     }
@@ -1775,8 +1699,7 @@ function saveWorkingState() {
             "❌ Neizdevās saglabāt darba datus:",
             error
         );
-        const message =
-            error?.name === "QuotaExceededError"
+        const message = error?.name === "QuotaExceededError"
                 ? "❌ Nepietiek vietas pārlūka krātuvē."
                 : "❌ Neizdevās saglabāt darba datus.";
         showNotice(
@@ -1797,25 +1720,13 @@ function checkBetaAccess() {
         "aiLabelBtn",
         "betaAnalytics"
     ].forEach(id => {
-
-        const el =
-            document.getElementById(id);
-
-        if (el) {
-            el.style.display =
-                testMode
+        const el = document.getElementById(id);
+            if (el) {
+                el.style.display = testMode
                     ? "block"
                     : "none";
         }
-    });
-    
-    // 🧪 Veco fake JSON testa pogu vairs nerādām
-    const testBtn =
-        document.getElementById("aiResultTestBtn");
-
-    if (testBtn) {
-        testBtn.style.display = "none";
-    }
+    });    
 }
 
 function isTestMode() {
@@ -1840,13 +1751,10 @@ function hasAreaPhoto(area) {
 function saveAreaPhotosStorage() {
     try {
         localStorage.setItem(
-            "areaPhotos",
-            JSON.stringify(areaPhotos)
-        );
+            "areaPhotos", JSON.stringify(areaPhotos));
         return true;
     } catch (error) {
-        console.error(
-            "❌ Neizdevās saglabāt foto:",
+        console.error("❌ Neizdevās saglabāt foto:",
             error);
         if (
             error &&
@@ -1937,8 +1845,7 @@ function viewAreaPhoto(area) {
     if (!area) {
         return;
     }
-    const photo =
-        areaPhotos[area];
+    const photo = areaPhotos[area];
     if (!photo) {
         showNotice(
             `ℹ️ Apgabalam ${area} nav foto.`,
@@ -1956,8 +1863,7 @@ function viewImportedAreaPhoto(area) {
         !importedBackup.areaPhotos) {
         return;
     }
-    const photo =
-        importedBackup.areaPhotos[area];
+    const photo = importedBackup.areaPhotos[area];
     if (!photo) {
         showNotice(
             `ℹ️ Apgabalam ${area} nav foto.`,
@@ -1996,8 +1902,7 @@ if (calcInfo) {
   isGaliMode = false;
     document.getElementById("length").disabled = false;
     document.getElementById("galiBtn").classList.remove("active");
-  const field =
-    document.getElementById("packages");
+  const field = document.getElementById("packages");
     if (field) {
     // SVARĪGI:
     // focus uzliek uzreiz, kamēr vēl darbojas
@@ -2006,9 +1911,7 @@ if (calcInfo) {
         preventScroll: true
     });
     // Pārvieto vajadzīgajā vietā
-    const y =
-        field.getBoundingClientRect().top +
-        window.scrollY - 80;
+    const y = field.getBoundingClientRect().top + window.scrollY - 80;
     window.scrollTo({
         top: y,
         behavior: "smooth"
@@ -2048,8 +1951,7 @@ if (
 );
 
   // ✅ PARĀDA AR ≈
-  document.getElementById("pieces").value =
-    "≈ " + piecesPerPack;
+  document.getElementById("pieces").value = "≈ " + piecesPerPack;
   document.getElementById("calcInfo").style.display = "block";
 }
 
@@ -2119,7 +2021,6 @@ function applyRowStyle(row, type) {
   //✅ Export Excel
 
 async function exportExcel() {
-
   if (data.length === 0) {
     return showNotice(
       "⚠️ Nav datu eksportam",
@@ -2383,10 +2284,8 @@ function doLogout() {
     if (profile === "inventory") {
         localStorage.removeItem("data");
         localStorage.removeItem("areaPhotos");
-
         data = [];
         areaPhotos = {};
-
         currentArea = null;
         previousArea = null;
         photoTargetArea = null;
@@ -2396,10 +2295,10 @@ function doLogout() {
 
     if (profile === "finishedGoods") {
         localStorage.removeItem("finishedGoodsData");
-        /*
-         * Kamēr GP backup vēl nav izveidots,
-         * finishedGoodsData no localStorage nedzēšam.
-         */
+        
+        // Kamēr GP backup vēl nav izveidots,
+         // finishedGoodsData no localStorage nedzēšam.
+         
         finishedGoodsData = [];
         finishedGoodsDataChanged = false;
     }
@@ -2413,29 +2312,22 @@ function doLogout() {
     currentLocation = null;
 
     document.getElementById("userNameInput").value = "";
-
     document.getElementById("appContent")
         .style.display = "none";
-
     document.getElementById("finishedGoodsProfile")
         .style.display = "none";
-
     document.getElementById("confirmModal")
         .style.display = "none";
-
     document.getElementById("locationSelect")
         .style.display = "block";
-
     if (selectedBtn) {
         selectedBtn.classList.remove("activeLocation");
         selectedBtn = null;
     }
-
     if (selectedProfileButton) {
         selectedProfileButton.classList.remove(
             "activeProfile"
         );
-
         selectedProfileButton = null;
     }
 
@@ -2449,7 +2341,6 @@ function doLogout() {
 
 function endSession() {
     const profile = getActiveProfile();
-
     if (profile === "finishedGoods") {
         showFinishedGoodsLogoutSummary();
         return;
@@ -2468,11 +2359,9 @@ function showInventoryLogoutSummary() {
     doLogout();
   return;
   }
-    const totalPackages =
-      data.reduce(
+    const totalPackages = data.reduce(
       (sum, e) => sum + (e.packages || 0), 0);
-    const totalM3 =
-      data.reduce(
+    const totalM3 = data.reduce(
         (sum, e) => sum + (e.total || 0), 0);
       document.getElementById("logoutSummary")
         .innerHTML = `
@@ -2490,7 +2379,6 @@ function showInventoryLogoutSummary() {
 
 function showFinishedGoodsLogoutSummary() {
     const entries = GP.getEntries();
-
     const totalPackages = entries.reduce(
         (sum, entry) =>
             sum + (Number(entry.packages) || 0),
@@ -2520,10 +2408,9 @@ function closeConfirmModal() {
 function saveInventoryAndExit() {
      // JA IR IZMAIŅAS
     if (dataChanged) {
-        const backupSaved =
-            saveBackup();
-        // ❌ Ja lokālais backup neizdevās,
-        // NEIZLOGOJAM lietotāju.
+        const backupSaved = saveBackup();
+            // ❌ Ja lokālais backup neizdevās,
+            // NEIZLOGOJAM lietotāju.
         if (!backupSaved) {
             showNotice(
                 "❌ Backup neizdevās. Darbs netika pabeigts.",
@@ -2554,7 +2441,6 @@ function saveInventoryAndExit() {
 
 function saveAndExit() {
     const profile = getActiveProfile();
-
     if (profile === "finishedGoods") {
         saveFinishedGoodsAndExit();
         return;
@@ -2564,12 +2450,12 @@ function saveAndExit() {
 }
 
 function saveFinishedGoodsAndExit() {
-    /*
-     * GP.add() jau saglabā katru ierakstu
-     * finishedGoodsData localStorage.
-     *
-     * JSON eksports tiks pievienots vēlāk.
-     */
+    
+     // GP.add() jau saglabā katru ierakstu
+     // finishedGoodsData localStorage.
+     
+     // JSON eksports tiks pievienots vēlāk.
+     
 
     closeConfirmModal();
     doLogout();
@@ -2640,13 +2526,12 @@ function saveBackup() {
 }
 
 function closeRestoreModal() {
-document.getElementById("restoreModal")
-.style.display = "none";
+    document.getElementById("restoreModal")
+        .style.display = "none";
 }
 
 function restoreBackup() {
-    const backupText =
-        localStorage.getItem("backupData");
+    const backupText = localStorage.getItem("backupData");
     if (!backupText) {
         showNotice(
             "❌ Backup dati nav atrasti!",
@@ -2656,8 +2541,7 @@ function restoreBackup() {
     }
     let backup;
     try {
-        backup =
-            JSON.parse(backupText);
+        backup = JSON.parse(backupText);
     } catch (error) {
         console.error(
             "Backup JSON kļūda:",
@@ -2670,8 +2554,7 @@ function restoreBackup() {
         return;
     }
     // Atjauno ierakstus
-    data =
-        Array.isArray(backup.entries)
+    data = Array.isArray(backup.entries)
             ? backup.entries
             : [];
     let storedPhotos = {};
@@ -2682,8 +2565,7 @@ function restoreBackup() {
 catch (error) {
     storedPhotos = {};
 }
-areaPhotos =
-    Object.keys(storedPhotos).length
+areaPhotos = Object.keys(storedPhotos).length
         ? storedPhotos
         : (
             backup.areaPhotos &&
@@ -2753,8 +2635,7 @@ function exportBackupFile() {
         };
         const location = safeFileName(exportBackup.location);
         const user = safeFileName(exportBackup.user);
-        const d =
-            new Date();
+        const d = new Date();
         const fileDate =
             String(d.getDate()).padStart(2, "0") + "-" +
             String(d.getMonth() + 1).padStart(2, "0") + "-" +
@@ -2932,30 +2813,23 @@ Backup ražotne: ${
         }
         // 6. Nosaka pašreizējo un iepriekšējo mēnesi
         const today = new Date();
-        const currentMonth =
-            today.getMonth() + 1;
-        const currentYear =
-            today.getFullYear();
+        const currentMonth = today.getMonth() + 1;
+        const currentYear = today.getFullYear();
         const previousDate = new Date(
             currentYear,
             currentMonth - 2,
             1
         );
-        const previousMonth =
-            previousDate.getMonth() + 1;
-        const previousYear =
-            previousDate.getFullYear();
+        const previousMonth = previousDate.getMonth() + 1;
+        const previousYear = previousDate.getFullYear();
+        
         // 7. Pārbauda katra backup datumu
         for (const backup of backups) {
-            const backupMonth =
-                Number(backup.inventoryMonth);
-            const backupYear =
-                Number(backup.inventoryYear);
-            const validCurrent =
-                backupMonth === currentMonth &&
+            const backupMonth = Number(backup.inventoryMonth);
+            const backupYear = Number(backup.inventoryYear);
+            const validCurrent = backupMonth === currentMonth &&
                 backupYear === currentYear;
-            const validPrevious =
-                backupMonth === previousMonth &&
+            const validPrevious = backupMonth === previousMonth &&
                 backupYear === previousYear;
             if (!validCurrent && !validPrevious) {
                 alert(
@@ -2963,14 +2837,10 @@ Backup ražotne: ${
                         backup.user || "Nezināms"
                     }" ir pārāk vecs un to nevar ielādēt.
 
-Backup periods: ${
-    backup.inventoryPeriod ||
-    `${backupMonth}.${backupYear}`
-}
-Atļauts:
-${currentMonth}.${currentYear}
-vai
-${previousMonth}.${previousYear}`
+                Backup periods: ${backup.inventoryPeriod ||
+                    `${backupMonth}.${backupYear}`}
+                Atļauts: ${currentMonth}.${currentYear}
+                    vai ${previousMonth}.${previousYear}`
                 );
                 return;
             }
@@ -2985,8 +2855,7 @@ ${previousMonth}.${previousYear}`
                     .filter(Boolean)
             )
         ];
-        const combinedUser =
-            users.length === 0
+        const combinedUser = users.length === 0
                 ? "Nav norādīts"
                 : users.length === 1
                     ? users[0]
@@ -3068,41 +2937,35 @@ ${previousMonth}.${previousYear}`
         // 12. Izveido apgabalu kopsavilkumu
         //     tikai no unikālajiem ierakstiem
         // ==========================================
-        const areaSummary =
-            buildAreaSummary(uniqueEntries);
-        importedAreaSummary =
-            areaSummary;
-        console.log(
-            "Apgabalu kopsavilkums:",
-            areaSummary
-        );
-        // ==========================================
+        const areaSummary = buildAreaSummary(uniqueEntries);
+        importedAreaSummary = areaSummary;
+        console.log("Apgabalu kopsavilkums:",
+            areaSummary);
+        
         // 13. Parāda informāciju import logā
-        // ==========================================
-        const importInfo =
-            document.getElementById("importInfo");
-        importInfo.innerHTML = `
-            Ražotne: ${currentLocation}<br>
-            Lietotājs: ${combinedUser}<br>
-            Backup faili: ${backups.length}<br>
-            Dublikāti: ${duplicates}<br>
-            📷 Foto: ${importPhotos ? "Importēti" : "Izlaisti"}<br><br>
-            📊 Inventarizācija<br>
-            Ieraksti: ${combinedSummary.entries}<br>
-            Paletes: ${combinedSummary.packages}<br>
-            m³: ${Number(
+        
+        const importInfo = document.getElementById("importInfo");
+            importInfo.innerHTML = `
+                Ražotne: ${currentLocation}<br>
+                Lietotājs: ${combinedUser}<br>
+                Backup faili: ${backups.length}<br>
+                Dublikāti: ${duplicates}<br>
+                📷 Foto: ${importPhotos ? "Importēti" : "Izlaisti"}<br><br>
+                📊 Inventarizācija<br>
+                Ieraksti: ${combinedSummary.entries}<br>
+                Paletes: ${combinedSummary.packages}<br>
+                m³: ${Number(
                 combinedSummary.totalM3.toFixed(4)
             )}
         `;
         // ==========================================
         // 14. Atver import modal
         // ==========================================
-        const importModal =
-            document.getElementById("importModal");
-        importModal.style.display = "block";
-        // ==========================================
+        const importModal = document.getElementById("importModal");
+            importModal.style.display = "block";
+        
         // 15. Parāda apgabalu sarakstu
-        // ==========================================
+        
         expandedArea = null;
         expandedAreaEntries = null;
         expandedSize = null;
@@ -3146,8 +3009,7 @@ function renderImportAreas() {
             // ==========================================
             // APGABALA IERAKSTI
             // ==========================================
-            const areaEntries =
-                importedBackup.entries.filter(
+            const areaEntries = importedBackup.entries.filter(
                     entry =>
                         entry.area === area
                 );
@@ -3156,21 +3018,16 @@ function renderImportAreas() {
             // ==========================================
             const sizeGroups = {};
             areaEntries.forEach(entry => {
-                const thickness =
-                    entry.thickness ?? "";
-                const width =
-                    entry.width ?? "";
-                const size =
-                    `${thickness}×${width}`;
-                if (!sizeGroups[size]) {
-                    sizeGroups[size] = [];
-                }
-                sizeGroups[size].push(entry);
+                const thickness = entry.thickness ?? "";
+                const width = entry.width ?? "";
+                const size = `${thickness}×${width}`;
+                    if (!sizeGroups[size]) {
+                        sizeGroups[size] = [];
+                    }
+                    sizeGroups[size].push(entry);
             });
-            const areaOpen =
-                expandedArea === area;
-            const entriesOpen =
-                expandedAreaEntries === area;
+            const areaOpen = expandedArea === area;
+            const entriesOpen = expandedAreaEntries === area;
             // ==========================================
             // 📷 APGABALA FOTO
             // ==========================================
@@ -3245,10 +3102,8 @@ function renderImportAreas() {
                         )
                         .forEach(
                             ([size, entries]) => {
-                                const sizeKey =
-                                    `${area}_${size}`;
-                                const sizeOpen =
-                                    expandedSize === sizeKey;
+                                const sizeKey = `${area}_${size}`;
+                                const sizeOpen = expandedSize === sizeKey;
                                 // ==================================
                                 // IZMĒRS
                                 // ==================================
@@ -3279,20 +3134,15 @@ function renderImportAreas() {
                                                 .toLowerCase()
                                                 !== "gali"
                                             ) {
-                                                lengthText =
-                                                    entry.length ?? "";
+                                                lengthText = entry.length ?? "";
                                             }
                                             // Gali
                                             else {
-                                                lengthText =
-                                                    entry.avgLength
+                                                lengthText = entry.avgLength
                                                         ? `≈${entry.avgLength}`
                                                         : "Gali";
                                             }
-                                            const packages =
-                                                Number(
-                                                    entry.packages
-                                                ) || 0;
+                                            const packages = Number(entry.packages) || 0;
                                             areaHtml += `
                                                 <div class="areaEntry">
                                                     ${entry.thickness}
@@ -3361,8 +3211,7 @@ document.getElementById("importModal")
 function openBackupFile() {
   const fileInput = document.getElementById("backupFile");
     fileInput.value = "";
-  const backupInfo =
-    document.getElementById("backupInfo");
+  const backupInfo = document.getElementById("backupInfo");
       backupInfo.style.display = "none";
       backupInfo.textContent = "";
       fileInput.click();
@@ -3417,13 +3266,11 @@ if (data.length > 0) {
     // ==============================================
     // NOTĪRA BACKUP INPUT
     // ==============================================
-    const backupFile =
-        document.getElementById("backupFile");
+    const backupFile = document.getElementById("backupFile");
     if (backupFile) {
         backupFile.value = "";
     }
-    const backupInfo =
-        document.getElementById("backupInfo");
+    const backupInfo = document.getElementById("backupInfo");
     if (backupInfo) {
         backupInfo.textContent = "";
         backupInfo.style.display = "none";
@@ -3479,26 +3326,22 @@ function restoreSelectedAreas() {
     // ==============================================
     // IZVĒLĒTIE IERAKSTI
     // ==============================================
-    const selectedData =
-        importedBackup.entries.filter(
+    const selectedData = importedBackup.entries.filter(
             e =>
                 selectedAreas.includes(e.area)
         );
     // ==============================================
     // ESOŠO IERAKSTU ATSLĒGAS
     // ==============================================
-    const existingKeys =
-        new Set(
+    const existingKeys = new Set(
             data.map(getEntryKey)
         );
     // ==============================================
     // ATLASA TIKAI JAUNOS IERAKSTUS
     // ==============================================
-    const newEntries =
-        selectedData.filter(e => {
-            const key =
-                getEntryKey(e);
-            if (existingKeys.has(key)) {
+    const newEntries = selectedData.filter(e => {
+            const key = getEntryKey(e);
+                if (existingKeys.has(key)) {
                 return false;
             }
             existingKeys.add(key);
@@ -3513,8 +3356,7 @@ function restoreSelectedAreas() {
             importedBackup.areaPhotos &&
             importedBackup.areaPhotos[area];
         if (photo) {
-            areaPhotos[area] =
-                photo;
+            areaPhotos[area] = photo;
             photosAdded++;
         }
     });
